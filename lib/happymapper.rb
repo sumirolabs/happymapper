@@ -480,10 +480,13 @@ module HappyMapper
   #
   # @param [Nokogiri::XML::Builder] builder an instance of the XML builder which
   #     is being used when called recursively.
-  # @param [String] default_namespace the name of the namespace which is the
-  #     default for the xml being produced; this is specified by the element
-  #     declaration when calling #to_xml recursively.
-  # @param [String] tag_from_parent the xml tag to use on the element when being
+  # @param [String] default_namespace The name of the namespace which is the
+  #     default for the xml being produced; this is the namespace of the
+  #     parent
+  # @param [String] namespace_override The namespace specified with the element
+  #     declaration in the parent. Overrides the namespace declaration in the
+  #     element class itself when calling #to_xml recursively.
+  # @param [String] tag_from_parent The xml tag to use on the element when being
   #     called recursively.  This lets the parent doc define its own structure.
   #     Otherwise the element uses the tag it has defined for itself.  Should only
   #     apply when calling a child HappyMapper element.
@@ -492,7 +495,8 @@ module HappyMapper
   #      HappyMapper object; when called recursively this is going to return
   #      and Nokogiri::XML::Builder object.
   #
-  def to_xml(builder = nil,default_namespace = nil,tag_from_parent = nil)
+  def to_xml(builder = nil, default_namespace = nil, namespace_override = nil,
+             tag_from_parent = nil)
 
     #
     # If to_xml has been called without a passed in builder instance that
@@ -539,7 +543,7 @@ module HappyMapper
         # state that they should be expressed in the output.
         #
         if not value.nil? || attribute.options[:state_when_nil]
-          attribute_namespace = attribute.options[:namespace] || default_namespace
+          attribute_namespace = attribute.options[:namespace]
           [ "#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value ]
         else
           []
@@ -576,16 +580,19 @@ module HappyMapper
       end
 
       #
-      # If the object we are persisting has a namespace declaration we will want
+      # If the object we are serializing has a namespace declaration we will want
       # to use that namespace or we will use the default namespace.
       # When neither are specifed we are simply using whatever is default to the
       # builder
       #
+      namespace_for_parent = namespace_override
       if self.class.respond_to?(:namespace) && self.class.namespace
-        xml.parent.namespace = builder.doc.root.namespace_definitions.find { |x| x.prefix == self.class.namespace }
-      elsif default_namespace
-        xml.parent.namespace = builder.doc.root.namespace_definitions.find { |x| x.prefix == default_namespace }
+        namespace_for_parent ||= self.class.namespace
       end
+      namespace_for_parent ||= default_namespace
+
+      xml.parent.namespace =
+          builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_for_parent }
 
 
       #
@@ -674,7 +681,9 @@ module HappyMapper
               # process should have their contents retrieved and attached
               # to the builder structure
               #
-              item.to_xml(xml,element.options[:namespace],element.options[:tag] || nil)
+              item.to_xml(xml, self.class.namespace || default_namespace,
+                          element.options[:namespace],
+                          element.options[:tag] || nil)
 
             elsif !item.nil?
 

@@ -178,7 +178,7 @@ describe "Saving #to_xml", "with xml namespaces" do
 
     context "when an element type is a HappyMapper subclass" do
       it "saves attributes" do
-        expect(subject.xpath('country:country/@country:countryCode').text).to eq "us"
+        expect(subject.xpath('country:country/@countryCode').text).to eq "us"
       end
 
       it "saves elements" do
@@ -193,4 +193,39 @@ describe "Saving #to_xml", "with xml namespaces" do
       expect(recipe.to_xml).to match /xmlns=\"urn:eventis:prodis:onlineapi:1\.0\"/
     end
   end
+
+  context 'namespace supplied by element declaration trumps namespace ' \
+          'specified by element class' do
+
+    let(:expected_xml) do
+      <<-XML.gsub(/^\s*\|/, '')
+        |<?xml version="1.0"?>
+        |<coffeemachine xmlns:coffee="http://coffee.org/Coffee/0.1" xmlns:beverage="http://beverages.org/Beverage/0.1">
+        |  <beverage:beverage name="coffee"/>
+        |</coffeemachine>
+      XML
+    end
+
+    class Beverage
+      include HappyMapper
+      namespace 'coffee'
+
+      attribute :name, String
+    end
+
+    class CoffeeMachine
+      include HappyMapper
+      register_namespace 'coffee', "http://coffee.org/Coffee/0.1"
+      register_namespace 'beverage', "http://beverages.org/Beverage/0.1"
+
+      element :beverage, 'beverage', namespace: 'beverage'
+    end
+
+    it 'uses the element declaration namespace on the element' do
+      machine = CoffeeMachine.new
+      machine.beverage = Beverage.new.tap {|obj| obj.name = 'coffee'}
+      machine.to_xml.should be == expected_xml
+    end
+  end
+
 end
