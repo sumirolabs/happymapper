@@ -109,12 +109,12 @@ module HappyMapper
       Time.parse(value.to_s) rescue Time.at(value.to_i)
     end
 
-    register_type Date do |value|
-      Date.parse(value.to_s)
-    end
-
     register_type DateTime do |value|
       DateTime.parse(value.to_s)
+    end
+
+    register_type Date do |value|
+      Date.parse(value.to_s)
     end
 
     register_type Boolean do |value|
