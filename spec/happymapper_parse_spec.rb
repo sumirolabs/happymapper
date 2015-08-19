@@ -82,6 +82,32 @@ describe HappyMapper do
       end
     end
 
+    context "after_parse callbacks" do
+      module AfterParseSpec
+        class Address
+          include HappyMapper
+          element :street, String
+        end
+      end
+
+      after do
+        AfterParseSpec::Address.after_parse_callbacks.clear
+      end
+
+      it "should callback with the newly created object" do
+        from_cb = nil
+        called = false
+        cb1 = proc { |object| from_cb = object }
+        cb2 = proc { called = true }
+        AfterParseSpec::Address.after_parse(&cb1)
+        AfterParseSpec::Address.after_parse(&cb2)
+
+        object = AfterParseSpec::Address.parse fixture_file('address.xml')
+        from_cb.should == object
+        called.should == true
+      end
+    end
+
   end
 
 end

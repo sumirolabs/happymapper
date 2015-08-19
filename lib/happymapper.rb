@@ -185,6 +185,22 @@ module HappyMapper
     end
 
     #
+    # The list of registered after_parse callbacks.
+    #
+    def after_parse_callbacks
+      @after_parse_callbacks ||= []
+    end
+
+    #
+    # Register a new after_parse callback, given as a block.
+    #
+    # @yield [object] Yields the newly-parsed object to the block after parsing.
+    #     Sub-objects will be already populated.
+    def after_parse(&block)
+      after_parse_callbacks.push(block)
+    end
+
+    #
     # Specify a namespace if a node and all its children are all namespaced
     # elements. This is simpler than passing the :namespace option to each
     # defined element.
@@ -431,6 +447,10 @@ module HappyMapper
             n = n.children if n.respond_to?(:children)
             obj.xml_content = n.to_xml
           end
+
+          # Call any registered after_parse callbacks for the object's class
+
+          obj.class.after_parse_callbacks.each { |callback| callback.call(obj) }
 
           # collect the object that we have created
 
