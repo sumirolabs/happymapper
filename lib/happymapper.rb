@@ -436,7 +436,7 @@ module HappyMapper
 
           if obj.respond_to?('xml_value=')
             n.namespaces.each {|name,path| n[name] = path }
-            obj.xml_value = n.to_xml
+            obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
           end
 
           # If the HappyMapper class has the method #xml_content=,
@@ -445,7 +445,7 @@ module HappyMapper
 
           if obj.respond_to?('xml_content=')
             n = n.children if n.respond_to?(:children)
-            obj.xml_content = n.to_xml
+            obj.xml_content = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
           end
 
           # Call any registered after_parse callbacks for the object's class

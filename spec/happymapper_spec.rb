@@ -89,6 +89,9 @@ end
 class Address
   include HappyMapper
 
+  attr_accessor :xml_value
+  attr_accessor :xml_content
+
   tag 'address'
   element :street, String
   element :postcode, String
@@ -1110,6 +1113,24 @@ describe HappyMapper do
     it 'can clear @nokogiri_config_callback' do
       custom.with_nokogiri_config {}
       expect { custom.parse(fixture_file('set_config_options.xml')) }.to raise_error(Nokogiri::XML::SyntaxError)
+    end
+  end
+
+  context 'xml_value' do
+    it 'does not reformat the xml' do
+      xml = fixture_file('unformatted_address.xml')
+      address = Address.parse(xml, single: true)
+
+      expect(address.xml_value).to eq %{<address><street>Milchstrasse</street><housenumber>23</housenumber></address>}
+    end
+  end
+
+  context 'xml_content' do
+    it 'does not reformat the xml' do
+      xml = fixture_file('unformatted_address.xml')
+      address = Address.parse(xml)
+
+      expect(address.xml_content).to eq %{<street>Milchstrasse</street><housenumber>23</housenumber>}
     end
   end
 
