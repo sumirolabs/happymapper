@@ -107,6 +107,11 @@ describe HappyMapper::Item do
       item.typecast(nil).should == nil
     end
 
+    it "should handle empty string Dates" do
+      item = HappyMapper::Item.new(:foo, Date)
+      item.typecast("").should == nil
+    end
+
     it "should work with DateTimes" do
       item = HappyMapper::Item.new(:foo, DateTime)
       item.typecast('2000-01-01 00:00:00').should == DateTime.new(2000, 1, 1, 0, 0, 0)
@@ -116,6 +121,12 @@ describe HappyMapper::Item do
       item = HappyMapper::Item.new(:foo, DateTime)
       item.typecast(nil).should == nil
     end
+
+    it "should handle empty string DateTimes" do
+      item = HappyMapper::Item.new(:foo, DateTime)
+      item.typecast("").should == nil
+    end
+
 
     it "should work with Boolean" do
       item = HappyMapper::Item.new(:foo, HappyMapper::Boolean)
