@@ -762,7 +762,7 @@ module HappyMapper
      Class.new do
        include HappyMapper
        tag name
-       instance_eval &blk
+       instance_eval(&blk)
      end
    end
   end

@@ -64,8 +64,8 @@ module HappyMapper
         define_attribute_on_class(happymapper_class,attribute)
       end
 
-      element.children.each do |element|
-        define_element_on_class(happymapper_class,element)
+      element.children.each do |child|
+        define_element_on_class(happymapper_class,child)
       end
 
       happymapper_class
