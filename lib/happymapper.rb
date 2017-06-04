@@ -265,9 +265,7 @@ module HappyMapper
     #
     # @return [Proc] the proc to pass to Nokogiri to setup parse options. nil if empty.
     #
-    def nokogiri_config_callback
-      @nokogiri_config_callback
-    end
+    attr_reader :nokogiri_config_callback
 
     # Register a config callback according to the block Nokogori expects when calling Nokogiri::XML::Document.parse().
     # See http://nokogiri.org/Nokogiri/XML/Document.html#method-c-parse
