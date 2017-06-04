@@ -86,6 +86,18 @@ module Atom
   end
 end
 
+class Country
+  include HappyMapper
+
+  attribute :code, String
+  content :name, String
+end
+
+
+class State
+  include HappyMapper
+end
+
 class Address
   include HappyMapper
 
@@ -97,7 +109,8 @@ class Address
   element :postcode, String
   element :housenumber, String
   element :city, String
-  element :country, String
+  has_one :country, Country
+  has_one :state, State
 end
 
 class Feature
@@ -306,30 +319,6 @@ class CurrentWeather
   element :temperature, Integer, :tag => 'temp'
   element :feels_like, Integer, :tag => 'feels-like'
   element :current_condition, String, :tag => 'current-condition', :attributes => {:icon => String}
-end
-
-class Country
-  include HappyMapper
-
-  attribute :code, String
-  content :name, String
-end
-
-
-class State
-  include HappyMapper
-end
-
-class Address
-  include HappyMapper
-
-  tag 'address'
-  element :street, String
-  element :postcode, String
-  element :housenumber, String
-  element :city, String
-  has_one :country, Country
-  has_one :state, State
 end
 
 # for type coercion
