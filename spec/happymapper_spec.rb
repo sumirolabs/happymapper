@@ -1054,7 +1054,7 @@ describe HappyMapper do
    describe "with limit option" do
      it "should return results with limited size: 6" do
        sizes = []
-       posts = Post.parse(fixture_file('posts.xml'), :in_groups_of => 6) do |a|
+       Post.parse(fixture_file('posts.xml'), :in_groups_of => 6) do |a|
          sizes << a.size
        end
        expect(sizes).to eq([6, 6, 6, 2])
@@ -1062,7 +1062,7 @@ describe HappyMapper do
 
      it "should return results with limited size: 10" do
        sizes = []
-       posts = Post.parse(fixture_file('posts.xml'), :in_groups_of => 10) do |a|
+       Post.parse(fixture_file('posts.xml'), :in_groups_of => 10) do |a|
          sizes << a.size
        end
        expect(sizes).to eq([10, 10])
