@@ -210,7 +210,7 @@ module HappyMapper
     #
     def namespace(namespace = nil)
       @namespace = namespace if namespace
-      @namespace
+      @namespace if defined? @namespace
     end
 
     #
@@ -287,7 +287,7 @@ module HappyMapper
     def parse(xml, options = {})
 
       # create a local copy of the objects namespace value for this parse execution
-      namespace = @namespace
+      namespace = (@namespace if defined? @namespace)
 
       # If the XML specified is an Node then we have what we need.
       if xml.is_a?(Nokogiri::XML::Node) && !xml.is_a?(Nokogiri::XML::Document)
@@ -424,7 +424,7 @@ module HappyMapper
             obj.send("#{elem.method_name}=",elem.from_xml_node(n, namespace, namespaces))
           end
 
-          if @content
+          if (defined? @content) && @content
             obj.send("#{@content.method_name}=",@content.from_xml_node(n, namespace, namespaces))
           end
 
@@ -617,23 +617,25 @@ module HappyMapper
       # When a content has been defined we add the resulting value
       # the output xml
       #
-      if content = self.class.instance_variable_get('@content')
+      if self.class.instance_variable_defined?('@content')
+        if content = self.class.instance_variable_get('@content')
 
-        unless content.options[:read_only]
-          text_accessor = content.tag || content.name
-          value = send(text_accessor)
+          unless content.options[:read_only]
+            text_accessor = content.tag || content.name
+            value = send(text_accessor)
 
-          if on_save_action = content.options[:on_save]
-            if on_save_action.is_a?(Proc)
-              value = on_save_action.call(value)
-            elsif respond_to?(on_save_action)
-              value = send(on_save_action,value)
+            if on_save_action = content.options[:on_save]
+              if on_save_action.is_a?(Proc)
+                value = on_save_action.call(value)
+              elsif respond_to?(on_save_action)
+                value = send(on_save_action,value)
+              end
             end
+
+            builder.text(value)
           end
 
-          builder.text(value)
         end
-
       end
 
       #
