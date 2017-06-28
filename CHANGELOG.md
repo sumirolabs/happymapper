@@ -1,3 +1,12 @@
+## 0.6 / 2017-02-16
+
+* Prevent parsing of empty string for Date, DateTime (wushugene)
+* Rescue nil dates (sarsena)
+* Preserve XML value (benoist)
+* Restore after_parse callback support (codekitchen)
+* Parse specific types before general types (Ivo Wever)
+* Higher priority for namespace on element declarations (Ivo Wever)
+
 ## 0.5.9 / 2014-02-18
 
 * Correctly output boolean element value 'false'  (confusion)
