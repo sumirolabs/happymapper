@@ -1,3 +1,10 @@
+I do not have the time to maintain this project, is you wish to take the project over, please contact me (@its_damo on Twitter), 
+I will transfer ownership to you, as well as the ownership of the gem.
+
+Thanks.
+
+
+
 HappyMapper
 ===========
 
