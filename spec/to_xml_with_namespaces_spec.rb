@@ -191,7 +191,7 @@ describe "Saving #to_xml", "with xml namespaces" do
   context "with a default namespace" do
     it "writes the default namespace to xml without repeating xmlns" do
       recipe = ToXMLWithNamespaces::Recipe.new(:ingredients => ['One Cup Flour', 'Two Scoops of Lovin'])
-      expect(recipe.to_xml).to match /xmlns=\"urn:eventis:prodis:onlineapi:1\.0\"/
+      expect(recipe.to_xml).to match(/xmlns=\"urn:eventis:prodis:onlineapi:1\.0\"/)
     end
   end
 
