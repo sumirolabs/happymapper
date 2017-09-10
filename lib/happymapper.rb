@@ -109,8 +109,8 @@ module HappyMapper
     #
     def element(name, type, options={})
       element = Element.new(name, type, options)
+      attr_accessor element.method_name.intern unless @elements[name]
       @elements[name] = element
-      attr_accessor element.method_name.intern
     end
 
     #
