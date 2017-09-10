@@ -28,6 +28,7 @@ module ToXMLWithNamespaces
     # to_xml will default to the attr_accessor method and not the attribute,
     # allowing for that to be overwritten
     #
+    undef :housenumber
     def housenumber
       "[#{@housenumber}]"
     end
