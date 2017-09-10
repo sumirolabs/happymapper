@@ -1,4 +1,4 @@
-## 0.6 / 2017-02-16
+## 0.6.0 / Unreleased
 
 * Prevent parsing of empty string for Date, DateTime (wushugene)
 * Rescue nil dates (sarsena)
