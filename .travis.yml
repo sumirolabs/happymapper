@@ -17,6 +17,8 @@ matrix:
     - rvm: jruby-head
     - rvm: ruby-head
     - rvm: rubinius-3
+before_install:
+  - gem update bundler
 branches:
   only:
     - master
