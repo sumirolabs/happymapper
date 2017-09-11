@@ -13,10 +13,10 @@ rvm:
   - rubinius-3
 matrix:
   allow_failures:
-    - jruby-9.1.13.0
-    - jruby-head
-    - ruby-head
-    - rubinius-3
+    - rvm: jruby-9.1.13.0
+    - rvm: jruby-head
+    - rvm: ruby-head
+    - rvm: rubinius-3
 branches:
   only:
     - master
