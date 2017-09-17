@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.email = 'matijs@matijs.net'
   s.description = %q{Object to XML Mapping Library, using Nokogiri (fork from John Nunemaker's Happymapper)}
-  s.extra_rdoc_files = [ "README.md", "CHANGELOG.md" ]
+  s.extra_rdoc_files = [ "README.md", "CHANGELOG.md", "License" ]
   s.files = `git ls-files -- lib/*`.split("\n")
   s.homepage = %q{http://github.com/mvz/happymapper}
   s.require_paths = ["lib"]
