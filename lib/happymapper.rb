@@ -9,8 +9,6 @@ module HappyMapper
 
   extend AnonymousMapper
 
-  DEFAULT_NS = "happymapper"
-
   def self.included(base)
     if !(base.superclass <= HappyMapper)
       base.instance_eval do
@@ -331,10 +329,7 @@ module HappyMapper
       if options[:namespace]
         namespace = options[:namespace]
       elsif namespaces.has_key?("xmlns")
-        namespace ||= DEFAULT_NS
-        namespaces[DEFAULT_NS] = namespaces.delete("xmlns")
-      elsif namespaces.has_key?(DEFAULT_NS)
-        namespace ||= DEFAULT_NS
+        namespace ||= "xmlns"
       end
 
       # from the options grab any nodes present and if none are present then
