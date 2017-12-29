@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe "wrap which allows you to specify a wrapper element" do
-
+describe 'wrap which allows you to specify a wrapper element' do
   module Wrap
     class SubClass
       include HappyMapper
       tag 'subclass'
       attribute :myattr, String
-      has_many :items, String, :tag => 'item'
+      has_many :items, String, tag: 'item'
     end
     class Root
       include HappyMapper
@@ -22,8 +23,8 @@ describe "wrap which allows you to specify a wrapper element" do
     end
   end
 
-  describe ".parse" do
-    context "when given valid XML" do
+  describe '.parse' do
+    context 'when given valid XML' do
       let(:subject) { Wrap::Root.parse fixture_file('wrapper.xml') }
 
       it 'sets the values correctly' do
@@ -38,16 +39,16 @@ describe "wrap which allows you to specify a wrapper element" do
       end
     end
 
-    context "when initialized without XML" do
+    context 'when initialized without XML' do
       let(:subject) { Wrap::Root.new }
 
-      it "anonymous classes are created so nil class values does not occur" do
+      it 'anonymous classes are created so nil class values does not occur' do
         expect { subject.description = 'anything' }.to_not raise_error
       end
     end
   end
 
-  describe ".to_xml" do
+  describe '.to_xml' do
     let(:subject) do
       root = Wrap::Root.new
       root.attr1 = 'somevalue'
@@ -66,7 +67,7 @@ describe "wrap which allows you to specify a wrapper element" do
       root
     end
 
-    it "generates the correct xml" do
+    it 'generates the correct xml' do
       xml = Nokogiri::XML(subject.to_xml)
       expect(xml.xpath('/root/@attr1').text).to eq 'somevalue'
       expect(xml.xpath('/root/name').text).to eq 'myname'
@@ -77,6 +78,5 @@ describe "wrap which allows you to specify a wrapper element" do
       expect(xml.xpath('/root/mywraptag/subclass/item[2]').text).to eq 'item2'
       expect(xml.xpath('/root/number').text).to eq '12345'
     end
-
   end
 end

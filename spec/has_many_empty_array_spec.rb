@@ -1,4 +1,6 @@
-require "spec_helper"
+# frozen_string_literal: true
+
+require 'spec_helper'
 
 module Sheep
   class Item
@@ -16,11 +18,10 @@ module Sheep
     has_many :items, Item, tag: 'item'
 
     has_many :items_with_a_different_name, Item, tag: 'item'
-
   end
 end
 
-describe "emptyness" do
+describe 'emptyness' do
   let(:xml) do
     <<-EOF
     <navigator>
@@ -33,11 +34,11 @@ describe "emptyness" do
     Sheep::Navigator.parse(xml)
   end
 
-  it "returns an empty array" do
+  it 'returns an empty array' do
     expect(navigator.items_with_a_different_name).to be_empty
   end
 
-  it "returns an empty array" do
+  it 'returns an empty array' do
     expect(navigator.items).to be_empty
   end
 end

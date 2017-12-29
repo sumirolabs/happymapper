@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HappyMapper
   class Item
     attr_accessor :name, :type, :tag, :options, :namespace
@@ -11,12 +13,12 @@ module HappyMapper
     #   :raw    =>  Boolean Use raw node value (inc. tags) when parsing.
     #   :single =>  Boolean False if object should be collection, True for single object
     #   :tag    =>  String Element name if it doesn't match the specified name.
-    def initialize(name, type, o={})
+    def initialize(name, type, o = {})
       self.name = name.to_s
       self.type = type
-      #self.tag = o.delete(:tag) || name.to_s
+      # self.tag = o.delete(:tag) || name.to_s
       self.tag = o[:tag] || name.to_s
-      self.options = { :single => true }.merge(o.merge(:name => self.name))
+      self.options = { single: true }.merge(o.merge(name: self.name))
 
       @xml_type = self.class.to_s.split('::').last.downcase
     end
@@ -31,7 +33,6 @@ module HappyMapper
     # @param [Hash] xpath_options additional xpath options
     #
     def from_xml_node(node, namespace, xpath_options)
-
       namespace = options[:namespace] if options.key?(:namespace)
 
       if suported_type_registered?
@@ -41,9 +42,8 @@ module HappyMapper
       elsif custom_parser_defined?
         find(node, namespace, xpath_options) { |n| process_node_with_custom_parser(n) }
       else
-        process_node_with_default_parser(node,:namespaces => xpath_options)
+        process_node_with_default_parser(node, namespaces: xpath_options)
       end
-
     end
 
     def xpath(namespace = self.namespace)
@@ -51,7 +51,7 @@ module HappyMapper
       xpath += './/' if options[:deep]
       xpath += "#{namespace}:" if namespace
       xpath += tag
-      #puts "xpath: #{xpath}"
+      # puts "xpath: #{xpath}"
       xpath
     end
 
@@ -72,19 +72,18 @@ module HappyMapper
       typecaster(value).apply(value)
     end
 
-
     private
 
     # @return [Boolean] true if the type defined for the item is defined in the
     #     list of support types.
     def suported_type_registered?
-      SupportedTypes.types.map {|caster| caster.type }.include?(constant)
+      SupportedTypes.types.map(&:type).include?(constant)
     end
 
     # @return [#apply] the typecaster object that will be able to convert
     #   the value into a value with the correct type.
     def typecaster(value)
-      SupportedTypes.types.find { |caster| caster.apply?(value,constant) }
+      SupportedTypes.types.find { |caster| caster.apply?(value, constant) }
     end
 
     #
@@ -126,8 +125,8 @@ module HappyMapper
       end
     end
 
-    def process_node_with_default_parser(node,parse_options)
-      constant.parse(node,options.merge(parse_options))
+    def process_node_with_default_parser(node, parse_options)
+      constant.parse(node, options.merge(parse_options))
     end
 
     #
@@ -155,6 +154,5 @@ module HappyMapper
       end
       constant
     end
-
   end
 end

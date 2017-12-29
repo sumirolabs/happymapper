@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 module HappyMapper
   module AnonymousMapper
-
     def parse(xml_content)
-
       # TODO: this should be able to handle all the types of functionality that parse is able
       #   to handle which includes the text, xml document, node, fragment, etc.
       xml = Nokogiri::XML(xml_content)
@@ -13,8 +13,7 @@ module HappyMapper
       # for the class to actually use the normal HappyMapper powers to parse
       # the content. At this point this code is utilizing all of the existing
       # code implemented for parsing.
-      happymapper_class.parse(xml_content, :single => true)
-
+      happymapper_class.parse(xml_content, single: true)
     end
 
     private
@@ -25,9 +24,9 @@ module HappyMapper
     #
     def underscore(camel_cased_word)
       word = camel_cased_word.to_s.dup
-      word.gsub!(/([A-Z\d]+)([A-Z][a-z])/,'\1_\2')
-      word.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
-      word.tr!("-", "_")
+      word.gsub!(/([A-Z\d]+)([A-Z][a-z])/, '\1_\2')
+      word.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
+      word.tr!('-', '_')
       word.downcase!
       word
     end
@@ -56,33 +55,31 @@ module HappyMapper
 
       happymapper_class.namespace element.namespace.prefix if element.namespace
 
-      element.namespaces.each do |prefix,namespace|
+      element.namespaces.each do |prefix, namespace|
         happymapper_class.register_namespace prefix, namespace
       end
 
-      element.attributes.each do |name,attribute|
-        define_attribute_on_class(happymapper_class,attribute)
+      element.attributes.each do |name, attribute|
+        define_attribute_on_class(happymapper_class, attribute)
       end
 
       element.children.each do |child|
-        define_element_on_class(happymapper_class,child)
+        define_element_on_class(happymapper_class, child)
       end
 
       happymapper_class
     end
 
-
     #
     # Define a HappyMapper element on the provided class based on
     # the element provided.
     #
-    def define_element_on_class(class_instance,element)
-
+    def define_element_on_class(class_instance, element)
       # When a text element has been provided create the necessary
       # HappyMapper content attribute if the text happens to content
       # some content.
 
-      if element.text? and element.content.strip != ""
+      if element.text? and element.content.strip != ''
         class_instance.content :content, String
       end
 
@@ -90,25 +87,23 @@ module HappyMapper
       # elements, then we want to recursively define a new HappyMapper
       # class that will have elements and attributes.
 
-      element_type = if !element.elements.reject {|e| e.text? }.empty? or !element.attributes.empty?
-        create_happymapper_class_with_element(element)
-      else
-        String
-      end
+      element_type = if !element.elements.reject(&:text?).empty? or !element.attributes.empty?
+                       create_happymapper_class_with_element(element)
+                     else
+                       String
+                     end
 
-      method = class_instance.elements.find {|e| e.name == element.name } ? :has_many : :has_one
+      method = class_instance.elements.find { |e| e.name == element.name } ? :has_many : :has_one
 
-      class_instance.send(method,underscore(element.name),element_type)
+      class_instance.send(method, underscore(element.name), element_type)
     end
 
     #
     # Define a HappyMapper attribute on the provided class based on
     # the attribute provided.
     #
-    def define_attribute_on_class(class_instance,attribute)
+    def define_attribute_on_class(class_instance, attribute)
       class_instance.attribute underscore(attribute.name), String
     end
-
   end
-
 end
