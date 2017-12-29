@@ -1,3 +1,9 @@
+# Change log
+
+## Unreleased
+
+* Drop support for Ruby 2.2 and below
+
 ## 0.6.0 / 2017-09-17
 
 * Prevent parsing of empty string for Date, DateTime (wushugene)
