@@ -428,7 +428,6 @@ module HappyMapper
           # assign the current xml that we just parsed to the xml_value
 
           if obj.respond_to?('xml_value=')
-            n.namespaces.each { |name, path| n[name] = path }
             obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
           end
 
@@ -582,7 +581,7 @@ module HappyMapper
       # which means that it is the default namesapce of the code.
       #
       if self.class.instance_variable_get('@registered_namespaces') && builder.doc.root
-        self.class.instance_variable_get('@registered_namespaces').each_pair do |name, href|
+        self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
           name = nil if name == 'xmlns'
           builder.doc.root.add_namespace(name, href)
         end
