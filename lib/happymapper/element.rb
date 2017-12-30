@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module HappyMapper
   class Element < Item
-
     def find(node, namespace, xpath_options)
       if self.namespace
         # from the class definition
@@ -39,17 +40,17 @@ module HappyMapper
 
         result.attribute_nodes.each do |xml_attribute|
           if attribute_options = options[:attributes][xml_attribute.name.to_sym]
-            attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).from_xml_node(result, namespace, xpath_options)
+            attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).
+                              from_xml_node(result, namespace, xpath_options)
 
             result.instance_eval <<-EOV
                 def value.#{xml_attribute.name.gsub(/\-/, '_')}
             #{attribute_value.inspect}
                 end
             EOV
-          end # if attributes_options
-        end # attribute_nodes.each
-      end # if options[:attributes]
-    end # def handle...
-
+          end
+        end
+      end
+    end
   end
 end

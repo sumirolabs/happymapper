@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe "A document with mixed namespaces" do
-
+describe 'A document with mixed namespaces' do
   #
   # Note that the parent element of the xml has the namespacing. The elements
   # contained within the xml do not share the parent element namespace so a
@@ -9,14 +10,14 @@ describe "A document with mixed namespaces" do
   # these child elements.
   #
   let(:xml_document) do
-    %{<prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
+    %(<prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
         xmlns:different="http://www.trollcountry.com/different">
         <street>Milchstrasse</street>
         <street>Another Street</street>
         <housenumber>23</housenumber>
         <different:postcode>26131</different:postcode>
         <city>Oldenburg</city>
-      </prefix:address>}
+      </prefix:address>)
   end
 
   module MixedNamespaces
@@ -41,21 +42,19 @@ describe "A document with mixed namespaces" do
     MixedNamespaces::Address.parse(xml_document, single: true)
   end
 
-
-  it "has the correct streets" do
-    expect(address.streets).to eq [ "Milchstrasse", "Another Street" ]
+  it 'has the correct streets' do
+    expect(address.streets).to eq ['Milchstrasse', 'Another Street']
   end
 
-  it "house number" do
-    expect(address.house_number).to eq "23"
+  it 'house number' do
+    expect(address.house_number).to eq '23'
   end
 
-  it "postcode" do
-    expect(address.postcode).to eq "26131"
+  it 'postcode' do
+    expect(address.postcode).to eq '26131'
   end
 
-  it "city" do
-    expect(address.city).to eq "Oldenburg"
+  it 'city' do
+    expect(address.city).to eq 'Oldenburg'
   end
-
 end

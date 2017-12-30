@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HappyMapper
   module SupportedTypes
     extend self
@@ -45,8 +47,8 @@ module HappyMapper
     #       DateTime.parse(value,to_s)
     #     end
     #
-    def register_type(type,&block)
-      register CastWhenType.new(type,&block)
+    def register_type(type, &block)
+      register CastWhenType.new(type, &block)
     end
 
     #
@@ -57,16 +59,16 @@ module HappyMapper
     class CastWhenType
       attr_reader :type
 
-      def initialize(type,&block)
+      def initialize(type, &block)
         @type = type
         @apply_block = block || no_operation
       end
 
       def no_operation
-        lambda {|value| value }
+        lambda { |value| value }
       end
 
-      def apply?(value,convert_to_type)
+      def apply?(value, convert_to_type)
         convert_to_type == type
       end
 
@@ -81,12 +83,11 @@ module HappyMapper
     # value simply can be returned.
     #
     class NilOrAlreadyConverted
-
       def type
         NilClass
       end
 
-      def apply?(value,convert_to_type)
+      def apply?(value, convert_to_type)
         value.kind_of?(convert_to_type) || value.nil?
       end
 
@@ -97,13 +98,9 @@ module HappyMapper
 
     register NilOrAlreadyConverted.new
 
-    register_type String do |value|
-      value.to_s
-    end
+    register_type String, &:to_s
 
-    register_type Float do |value|
-      value.to_f
-    end
+    register_type Float, &:to_f
 
     register_type Time do |value|
       Time.parse(value.to_s) rescue Time.at(value.to_i)
@@ -134,7 +131,5 @@ module HappyMapper
         value_to_i
       end
     end
-
   end
-
 end

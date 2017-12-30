@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'nokogiri'
 require 'date'
 require 'time'
@@ -20,13 +22,13 @@ module HappyMapper
     else
       base.instance_eval do
         @attributes =
-            superclass.instance_variable_get(:@attributes).dup
+          superclass.instance_variable_get(:@attributes).dup
         @elements =
-            superclass.instance_variable_get(:@elements).dup
+          superclass.instance_variable_get(:@elements).dup
         @registered_namespaces =
-            superclass.instance_variable_get(:@registered_namespaces).dup
+          superclass.instance_variable_get(:@registered_namespaces).dup
         @wrapper_anonymous_classes =
-            superclass.instance_variable_get(:@wrapper_anonymous_classes).dup
+          superclass.instance_variable_get(:@wrapper_anonymous_classes).dup
       end
     end
 
@@ -34,7 +36,6 @@ module HappyMapper
   end
 
   module ClassMethods
-
     #
     # The xml has the following attributes defined.
     #
@@ -50,7 +51,7 @@ module HappyMapper
     #     the object will be converted upon parsing
     # @param [Hash] options additional parameters to send to the relationship
     #
-    def attribute(name, type, options={})
+    def attribute(name, type, options = {})
       attribute = Attribute.new(name, type, options)
       @attributes[name] = attribute
       attr_accessor attribute.method_name.intern
@@ -84,7 +85,7 @@ module HappyMapper
     # @param [String] ns url for the xml namespace
     #
     def register_namespace(namespace, ns)
-      @registered_namespaces.merge!({namespace => ns})
+      @registered_namespaces.merge!({ namespace => ns })
     end
 
     #
@@ -105,7 +106,7 @@ module HappyMapper
     #     the object will be converted upon parsing
     # @param [Hash] options additional parameters to send to the relationship
     #
-    def element(name, type, options={})
+    def element(name, type, options = {})
       element = Element.new(name, type, options)
       attr_accessor element.method_name.intern unless @elements[name]
       @elements[name] = element
@@ -138,7 +139,7 @@ module HappyMapper
     #     the object will be converted upon parsing. By Default String class will be taken.
     # @param [Hash] options additional parameters to send to the relationship
     #
-    def content(name, type=String, options={})
+    def content(name, type = String, options = {})
       @content = TextNode.new(name, type, options)
       attr_accessor @content.method_name.intern
     end
@@ -164,8 +165,8 @@ module HappyMapper
     #
     # @see #element
     #
-    def has_one(name, type, options={})
-      element name, type, {:single => true}.merge(options)
+    def has_one(name, type, options = {})
+      element name, type, { single: true }.merge(options)
     end
 
     #
@@ -178,8 +179,8 @@ module HappyMapper
     #
     # @see #element
     #
-    def has_many(name, type, options={})
-      element name, type, {:single => false}.merge(options)
+    def has_many(name, type, options = {})
+      element name, type, { single: false }.merge(options)
     end
 
     #
@@ -238,7 +239,8 @@ module HappyMapper
       # Get an anonymous HappyMapper that has 'name' as its tag and defined
       # in '&blk'.  Then save that to a class instance variable for later use
       wrapper = AnonymousWrapperClassFactory.get(name, &blk)
-      @wrapper_anonymous_classes[wrapper.inspect] = wrapper
+      wrapper_key = wrapper.inspect
+      @wrapper_anonymous_classes[wrapper_key] = wrapper
 
       # Create getter/setter for each element and attribute defined on the anonymous HappyMapper
       # onto this class. They get/set the value by passing thru to the anonymous class.
@@ -246,11 +248,11 @@ module HappyMapper
       passthrus.each do |item|
         class_eval %{
           def #{item.method_name}
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper.inspect}'].new
+            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
             @#{name}.#{item.method_name}
           end
           def #{item.method_name}=(value)
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper.inspect}'].new
+            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
             @#{name}.#{item.method_name} = value
           end
         }
@@ -265,7 +267,9 @@ module HappyMapper
     #
     attr_reader :nokogiri_config_callback
 
-    # Register a config callback according to the block Nokogori expects when calling Nokogiri::XML::Document.parse().
+    # Register a config callback according to the block Nokogori expects when
+    # calling Nokogiri::XML::Document.parse().
+    #
     # See http://nokogiri.org/Nokogiri/XML/Document.html#method-c-parse
     #
     # @param [Proc] the proc to pass to Nokogiri to setup parse options
@@ -283,7 +287,6 @@ module HappyMapper
     #     :namespace is the namespace to use for additional information.
     #
     def parse(xml, options = {})
-
       # create a local copy of the objects namespace value for this parse execution
       namespace = (@namespace if defined? @namespace)
 
@@ -328,15 +331,14 @@ module HappyMapper
 
       if options[:namespace]
         namespace = options[:namespace]
-      elsif namespaces.has_key?("xmlns")
-        namespace ||= "xmlns"
+      elsif namespaces.has_key?('xmlns')
+        namespace ||= 'xmlns'
       end
 
       # from the options grab any nodes present and if none are present then
       # perform the following to find the nodes for the given class
 
       nodes = options.fetch(:nodes) do
-
         # when at the root use the xpath '/' otherwise use a more gready './/'
         # unless an xpath has been specified, which should overwrite default
         # and finally attach the current namespace if one has been defined
@@ -385,7 +387,7 @@ module HappyMapper
       end
 
       # Nothing matching found, we can go ahead and return
-      return ( ( options[:single] || root ) ? nil : [] ) if nodes.size == 0
+      return ((options[:single] || root) ? nil : []) if nodes.size == 0
 
       # If the :limit option has been specified then we are going to slice
       # our node results by that amount to allow us the ability to deal with
@@ -401,9 +403,7 @@ module HappyMapper
       collection = []
 
       nodes.each_slice(limit) do |slice|
-
         part = slice.map do |n|
-
           # If an existing HappyMapper object is provided, update it with the
           # values from the xml being parsed.  Otherwise, create a new object
 
@@ -416,11 +416,11 @@ module HappyMapper
           end
 
           elements.each do |elem|
-            obj.send("#{elem.method_name}=",elem.from_xml_node(n, namespace, namespaces))
+            obj.send("#{elem.method_name}=", elem.from_xml_node(n, namespace, namespaces))
           end
 
           if (defined? @content) && @content
-            obj.send("#{@content.method_name}=",@content.from_xml_node(n, namespace, namespaces))
+            obj.send("#{@content.method_name}=", @content.from_xml_node(n, namespace, namespaces))
           end
 
           # If the HappyMapper class has the method #xml_value=,
@@ -428,7 +428,7 @@ module HappyMapper
           # assign the current xml that we just parsed to the xml_value
 
           if obj.respond_to?('xml_value=')
-            n.namespaces.each {|name,path| n[name] = path }
+            n.namespaces.each { |name, path| n[name] = path }
             obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
           end
 
@@ -459,7 +459,6 @@ module HappyMapper
         else
           collection += part
         end
-
       end
 
       # per http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000354
@@ -480,7 +479,7 @@ module HappyMapper
   # Set all attributes with a default to their default values
   def initialize
     super
-    self.class.attributes.reject {|attr| attr.default.nil?}.each do |attr|
+    self.class.attributes.reject { |attr| attr.default.nil? }.each do |attr|
       send("#{attr.method_name}=", attr.default)
     end
   end
@@ -527,7 +526,6 @@ module HappyMapper
     # that will be placed into a Hash structure
     #
     attributes = self.class.attributes.collect do |attribute|
-
       #
       # If an attribute is marked as read_only then we want to ignore the attribute
       # when it comes to saving the xml document; so we wiill not go into any of
@@ -547,7 +545,7 @@ module HappyMapper
           if on_save_action.is_a?(Proc)
             value = on_save_action.call(value)
           elsif respond_to?(on_save_action)
-            value = send(on_save_action,value)
+            value = send(on_save_action, value)
           end
         end
 
@@ -557,7 +555,7 @@ module HappyMapper
         #
         if not value.nil? || attribute.options[:state_when_nil]
           attribute_namespace = attribute.options[:namespace]
-          [ "#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value ]
+          ["#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value]
         else
           []
         end
@@ -565,18 +563,16 @@ module HappyMapper
       else
         []
       end
-
     end.flatten
 
-    attributes = Hash[ *attributes ]
+    attributes = Hash[*attributes]
 
     #
     # Create a tag in the builder that matches the class's tag name unless a tag was passed
     # in a recursive call from the parent doc.  Then append
     # any attributes to the element that were defined above.
     #
-    builder.send("#{tag_from_parent || self.class.tag_name}_",attributes) do |xml|
-
+    builder.send("#{tag_from_parent || self.class.tag_name}_", attributes) do |xml|
       #
       # Add all the registered namespaces to the root element.
       # When this is called recurisvely by composed classes the namespaces
@@ -586,9 +582,9 @@ module HappyMapper
       # which means that it is the default namesapce of the code.
       #
       if self.class.instance_variable_get('@registered_namespaces') && builder.doc.root
-        self.class.instance_variable_get('@registered_namespaces').each_pair do |name,href|
-          name = nil if name == "xmlns"
-          builder.doc.root.add_namespace(name,href)
+        self.class.instance_variable_get('@registered_namespaces').each_pair do |name, href|
+          name = nil if name == 'xmlns'
+          builder.doc.root.add_namespace(name, href)
         end
       end
 
@@ -605,8 +601,7 @@ module HappyMapper
       namespace_for_parent ||= default_namespace
 
       xml.parent.namespace =
-          builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_for_parent }
-
+        builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_for_parent }
 
       #
       # When a content has been defined we add the resulting value
@@ -623,7 +618,7 @@ module HappyMapper
               if on_save_action.is_a?(Proc)
                 value = on_save_action.call(value)
               elsif respond_to?(on_save_action)
-                value = send(on_save_action,value)
+                value = send(on_save_action, value)
               end
             end
 
@@ -638,7 +633,6 @@ module HappyMapper
       # going to persist each one
       #
       self.class.elements.each do |element|
-
         #
         # If an element is marked as read only do not consider at all when
         # saving to XML.
@@ -663,7 +657,7 @@ module HappyMapper
             if on_save_action.is_a?(Proc)
               value = on_save_action.call(value)
             elsif respond_to?(on_save_action)
-              value = send(on_save_action,value)
+              value = send(on_save_action, value)
             end
           end
 
@@ -672,7 +666,7 @@ module HappyMapper
           # an empty element will be written to the xml
           #
           if value.nil? && element.options[:single] && element.options[:state_when_nil]
-            xml.send("#{tag}_","")
+            xml.send("#{tag}_", '')
           end
 
           #
@@ -688,7 +682,6 @@ module HappyMapper
           end
 
           values.each do |item|
-
             if item.is_a?(HappyMapper)
 
               #
@@ -708,9 +701,9 @@ module HappyMapper
               # When a value exists we should append the value for the tag
               #
               if item_namespace
-                xml[item_namespace].send("#{tag}_",item.to_s)
+                xml[item_namespace].send("#{tag}_", item.to_s)
               else
-                xml.send("#{tag}_",item.to_s)
+                xml.send("#{tag}_", item.to_s)
               end
 
             else
@@ -719,15 +712,13 @@ module HappyMapper
               # Normally a nil value would be ignored, however if specified then
               # an empty element will be written to the xml
               #
-              xml.send("#{tag}_","") if element.options[:state_when_nil]
+              xml.send("#{tag}_", '') if element.options[:state_when_nil]
 
             end
-
           end
 
         end
       end
-
     end
 
     # Write out to XML, this value was set above, based on whether or not an XML
@@ -737,7 +728,6 @@ module HappyMapper
     # then we assume that has been called recursively to generate a larger
     # XML document.
     write_out_to_xml ? builder.to_xml : builder
-
   end
 
   # Parse the xml and update this instance. This does not update instances
@@ -746,22 +736,21 @@ module HappyMapper
   #
   # Params and return are the same as the class parse() method above.
   def parse(xml, options = {})
-    self.class.parse(xml, options.merge!(:update => self))
+    self.class.parse(xml, options.merge!(update: self))
   end
 
   private
 
   # Factory for creating anonmyous HappyMappers
   class AnonymousWrapperClassFactory
-   def self.get(name, &blk)
-     Class.new do
-       include HappyMapper
-       tag name
-       instance_eval(&blk)
-     end
-   end
+    def self.get(name, &blk)
+      Class.new do
+        include HappyMapper
+        tag name
+        instance_eval(&blk)
+      end
+    end
   end
-
 end
 
 require 'happymapper/supported_types'

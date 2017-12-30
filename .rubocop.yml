@@ -1,0 +1,22 @@
+AllCops:
+  TargetRubyVersion: 2.3
+
+# Trailing dots
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+# Blocks can be any length in spec files
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+# Be lenient with line length
+Metrics/LineLength:
+  Max: 110
+
+# Use older RuboCop default
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%w': ()
+
+inherit_from: .rubocop_todo.yml

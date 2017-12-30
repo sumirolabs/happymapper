@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe "Specifying elements and attributes with an xpath" do
-
+describe 'Specifying elements and attributes with an xpath' do
   class Item
     include HappyMapper
 
@@ -9,15 +10,15 @@ describe "Specifying elements and attributes with an xpath" do
     namespace 'amazing'
 
     element :title, String
-    attribute :link, String, :xpath => 'amazing:link/@href'
-    has_one :different_link, String, :xpath => 'different:link/@href'
-    element :detail, String, :xpath => 'amazing:subitem/amazing:detail'
-    has_many :more_details_text, String, :xpath => 'amazing:subitem/amazing:more'
-    has_many :more_details, String, :xpath => 'amazing:subitem/amazing:more/@first|amazing:subitem/amazing:more/@alternative'
-    has_many :more_details_alternative, String, :xpath => 'amazing:subitem/amazing:more/@*'
+    attribute :link, String, xpath: 'amazing:link/@href'
+    has_one :different_link, String, xpath: 'different:link/@href'
+    element :detail, String, xpath: 'amazing:subitem/amazing:detail'
+    has_many :more_details_text, String, xpath: 'amazing:subitem/amazing:more'
+    has_many :more_details, String,
+             xpath: 'amazing:subitem/amazing:more/@first|amazing:subitem/amazing:more/@alternative'
+    has_many :more_details_alternative, String, xpath: 'amazing:subitem/amazing:more/@*'
 
-    has_one :baby, 'Baby', :name => 'baby', :namespace => 'amazing'
-
+    has_one :baby, 'Baby', name: 'baby', namespace: 'amazing'
   end
 
   class Baby
@@ -26,12 +27,13 @@ describe "Specifying elements and attributes with an xpath" do
     has_one :name, String
   end
 
-  let(:subject) { Item.parse(xml_string,:single => true) }
+  let(:subject) { Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
-    %{
+    %(
     <rss>
-      <amazing:item xmlns:amazing="http://www.amazing.com/amazing" xmlns:different="http://www.different.com/different">
+      <amazing:item xmlns:amazing="http://www.amazing.com/amazing"
+                    xmlns:different="http://www.different.com/different">
         <amazing:title>Test XML</amazing:title>
         <different:link href="different_link" />
         <amazing:link href="link_to_resources" />
@@ -45,45 +47,44 @@ describe "Specifying elements and attributes with an xpath" do
         </amazing:baby>
       </amazing:item>
     </rss>
-    }
+    )
   end
 
-  it "should have a title" do
-    expect(subject.title).to eq "Test XML"
+  it 'should have a title' do
+    expect(subject.title).to eq 'Test XML'
   end
 
-  it "should find the link href value" do
+  it 'should find the link href value' do
     expect(subject.link).to eq 'link_to_resources'
   end
 
-  it "should find the link href value" do
+  it 'should find the link href value' do
     expect(subject.different_link).to eq 'different_link'
   end
 
-  it "should find this subitem based on the xpath" do
+  it 'should find this subitem based on the xpath' do
     expect(subject.detail).to eq 'I want to parse this'
   end
 
-  it "should find the subitems based on the xpath" do
+  it 'should find the subitems based on the xpath' do
     expect(subject.more_details_text.size).to eq(2)
-    expect(subject.more_details_text.first).to eq  "more 1"
-    expect(subject.more_details_text.last).to eq "more 2"
+    expect(subject.more_details_text.first).to eq 'more 1'
+    expect(subject.more_details_text.last).to eq 'more 2'
   end
 
-  it "should find the subitems based on the xpath" do
+  it 'should find the subitems based on the xpath' do
     expect(subject.more_details.size).to eq(2)
-    expect(subject.more_details.first).to eq "this one"
-    expect(subject.more_details.last).to eq "another one"
+    expect(subject.more_details.first).to eq 'this one'
+    expect(subject.more_details.last).to eq 'another one'
   end
 
-  it "should find the subitems based on the xpath" do
+  it 'should find the subitems based on the xpath' do
     expect(subject.more_details_alternative.size).to eq(2)
-    expect(subject.more_details_alternative.first).to eq "this one"
-    expect(subject.more_details_alternative.last).to eq "another one"
+    expect(subject.more_details_alternative.first).to eq 'this one'
+    expect(subject.more_details_alternative.last).to eq 'another one'
   end
 
-  it "should have a baby name" do
-    expect(subject.baby.name).to eq "Jumbo"
+  it 'should have a baby name' do
+    expect(subject.baby.name).to eq 'Jumbo'
   end
-
 end
