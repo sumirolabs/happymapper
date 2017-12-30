@@ -428,7 +428,6 @@ module HappyMapper
           # assign the current xml that we just parsed to the xml_value
 
           if obj.respond_to?('xml_value=')
-            n.namespaces.each { |name, path| n[name] = path }
             obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
           end
 
