@@ -9,7 +9,6 @@ rvm:
   - ruby-head
 matrix:
   allow_failures:
-    - rvm: jruby-9.1.13.0
     - rvm: jruby-head
     - rvm: ruby-head
 before_install:
