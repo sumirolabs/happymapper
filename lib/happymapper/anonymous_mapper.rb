@@ -95,7 +95,12 @@ module HappyMapper
 
       method = class_instance.elements.find { |e| e.name == element.name } ? :has_many : :has_one
 
-      class_instance.send(method, underscore(element.name), element_type, tag: element.name)
+      options = {}
+      options[:tag] = element.name
+      namespace = element.namespace
+      options[:namespace] = namespace.prefix if namespace
+
+      class_instance.send(method, underscore(element.name), element_type, options)
     end
 
     #

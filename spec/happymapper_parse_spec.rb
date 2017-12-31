@@ -81,6 +81,25 @@ describe HappyMapper do
       it 'should parse the elements an values correctly' do
         expect(subject.title).to eq('article title')
       end
+
+      it 'parses attribute names correctly' do
+        expect(subject.name).to eq 'title'
+      end
+    end
+
+    context 'with value elements with different namespace' do
+      let(:xml) do
+        <<~XML
+          <a:foo xmlns:a="http://foo.org/a" xmlns:b="http://foo.org/b">
+            <b:bar>Hello</b:bar>
+          </a:foo>
+        XML
+      end
+      let(:result) { described_class.parse xml }
+
+      it 'parses the value elements correctly' do
+        expect(result.bar).to eq 'Hello'
+      end
     end
 
     context 'after_parse callbacks' do
