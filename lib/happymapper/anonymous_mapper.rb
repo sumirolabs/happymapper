@@ -95,7 +95,7 @@ module HappyMapper
 
       method = class_instance.elements.find { |e| e.name == element.name } ? :has_many : :has_one
 
-      class_instance.send(method, underscore(element.name), element_type)
+      class_instance.send(method, underscore(element.name), element_type, tag: element.name)
     end
 
     #
@@ -103,7 +103,7 @@ module HappyMapper
     # the attribute provided.
     #
     def define_attribute_on_class(class_instance, attribute)
-      class_instance.attribute underscore(attribute.name), String
+      class_instance.attribute underscore(attribute.name), String, tag: attribute.name
     end
   end
 end
