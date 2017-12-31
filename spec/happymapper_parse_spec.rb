@@ -87,6 +87,21 @@ describe HappyMapper do
       end
     end
 
+    context 'with value elements with different namespace' do
+      let(:xml) do
+        <<~XML
+          <a:foo xmlns:a="http://foo.org/a" xmlns:b="http://foo.org/b">
+            <b:bar>Hello</b:bar>
+          </a:foo>
+        XML
+      end
+      let(:result) { described_class.parse xml }
+
+      it 'parses the value elements correctly' do
+        expect(result.bar).to eq 'Hello'
+      end
+    end
+
     context 'after_parse callbacks' do
       module AfterParseSpec
         class Address
