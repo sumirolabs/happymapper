@@ -1123,7 +1123,7 @@ describe HappyMapper do
 
   describe '#to_xml' do
     let(:original) { '<foo><bar>baz</bar></foo>' }
-    let(:parsed) { described_class.parse original}
+    let(:parsed) { described_class.parse original }
 
     it 'has UTF-8 encoding by default' do
       expect(original.encoding).to eq Encoding::UTF_8
