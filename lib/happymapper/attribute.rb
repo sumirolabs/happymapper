@@ -16,7 +16,7 @@ module HappyMapper
       if options[:xpath]
         yield(node.xpath(options[:xpath], xpath_options))
       else
-        yield(node[tag])
+        yield(node.attributes[tag])
       end
     end
   end

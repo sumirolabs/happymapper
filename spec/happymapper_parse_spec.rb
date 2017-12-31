@@ -81,6 +81,10 @@ describe HappyMapper do
       it 'should parse the elements an values correctly' do
         expect(subject.title).to eq('article title')
       end
+
+      it 'parses attribute names correctly' do
+        expect(subject.name).to eq 'title'
+      end
     end
 
     context 'after_parse callbacks' do
