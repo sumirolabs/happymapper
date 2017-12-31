@@ -1120,4 +1120,14 @@ describe HappyMapper do
       expect(address.xml_content).to eq %(<street>Milchstrasse</street><housenumber>23</housenumber>)
     end
   end
+
+  describe '#to_xml' do
+    let(:original) { '<foo><bar>baz</bar></foo>' }
+    let(:parsed) { described_class.parse original}
+
+    it 'has UTF-8 encoding by default' do
+      expect(original.encoding).to eq Encoding::UTF_8
+      expect(parsed.to_xml.encoding).to eq Encoding::UTF_8
+    end
+  end
 end

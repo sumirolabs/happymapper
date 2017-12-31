@@ -726,7 +726,7 @@ module HappyMapper
     # xml generated from the object. If an XML builder instance was specified
     # then we assume that has been called recursively to generate a larger
     # XML document.
-    write_out_to_xml ? builder.to_xml : builder
+    write_out_to_xml ? builder.to_xml.force_encoding('UTF-8') : builder
   end
 
   # Parse the xml and update this instance. This does not update instances
