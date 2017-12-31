@@ -40,10 +40,21 @@ describe HappyMapper do
     context 'element names with camelCased elements and Capital Letters' do
       subject { described_class.parse fixture_file('subclass_namespace.xml') }
 
-      it 'should parse the elements and values correctly' do
-        expect(subject.title).to eq('article title')
+      it 'parses camel-cased child elements correctly' do
         expect(subject.photo.publish_options.author).to eq('Stephanie')
         expect(subject.gallery.photo.title).to eq('photo title')
+      end
+
+      it 'parses camel-cased child properties correctly' do
+        expect(subject.publish_options.created_day).to eq('2011-01-14')
+      end
+    end
+
+    context 'with elements with camelCased attribute names' do
+      subject { described_class.parse '<foo barBaz="quuz"/>' }
+
+      it 'parses attributes correctly' do
+        expect(subject.bar_baz).to eq('quuz')
       end
     end
 
