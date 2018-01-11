@@ -12,7 +12,7 @@ module HappyMapper
       self.default = o[:default]
     end
 
-    def find(node, namespace, xpath_options)
+    def find(node, _namespace, xpath_options)
       if options[:xpath]
         yield(node.xpath(options[:xpath], xpath_options))
       else

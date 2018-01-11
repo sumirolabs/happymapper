@@ -19,23 +19,6 @@ Lint/HandleExceptions:
     - 'lib/happymapper.rb'
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.
-Lint/UnusedBlockArgument:
-  Exclude:
-    - 'lib/happymapper/anonymous_mapper.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
-Lint/UnusedMethodArgument:
-  Exclude:
-    - 'lib/happymapper/attribute.rb'
-    - 'lib/happymapper/element.rb'
-    - 'lib/happymapper/supported_types.rb'
-    - 'lib/happymapper/text_node.rb'
-
-# Offense count: 1
 # Configuration parameters: ContextCreatingMethods, MethodCreatingMethods.
 Lint/UselessAccessModifier:
   Exclude:

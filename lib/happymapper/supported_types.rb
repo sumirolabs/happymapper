@@ -68,7 +68,7 @@ module HappyMapper
         lambda { |value| value }
       end
 
-      def apply?(value, convert_to_type)
+      def apply?(_value, convert_to_type)
         convert_to_type == type
       end
 
