@@ -14,14 +14,6 @@ Lint/AssignmentInCondition:
     - 'lib/happymapper/element.rb'
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith.
-# SupportedStylesAlignWith: either, start_of_block, start_of_line
-Lint/BlockAlignment:
-  Exclude:
-    - 'spec/happymapper_spec.rb'
-
-# Offense count: 1
 Lint/HandleExceptions:
   Exclude:
     - 'lib/happymapper.rb'
