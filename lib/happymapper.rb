@@ -358,6 +358,7 @@ module HappyMapper
           begin
             nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
           rescue StandardError
+            nil
             # This exception takes place when the namespace is often not found
             # and we should continue on with the empty array of nodes.
           end
