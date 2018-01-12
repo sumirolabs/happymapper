@@ -30,8 +30,12 @@ describe 'Wildcard Root Tag' do
       attribute :href, String
       attribute :other, String
 
-      def <=>(compared)
-        name <=> compared.name && href <=> compared.href && other <=> compared.other
+      def <=>(other)
+        result = name <=> other.name
+        return result unless result == 0
+        result = href <=> other.href
+        return result unless result == 0
+        self.other <=> other.other
       end
     end
     class Sub

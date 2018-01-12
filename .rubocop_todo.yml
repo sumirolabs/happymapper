@@ -38,11 +38,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 51
 
-# Offense count: 1
-Naming/BinaryOperatorParameterName:
-  Exclude:
-    - 'spec/wilcard_tag_name_spec.rb'
-
 # Offense count: 2
 # Configuration parameters: Blacklist.
 # Blacklist: END, (?-mix:EO[A-Z]{1})
