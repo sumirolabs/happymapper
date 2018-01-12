@@ -43,11 +43,8 @@ module HappyMapper
             attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).
                               from_xml_node(result, namespace, xpath_options)
 
-            result.instance_eval <<-EOV
-                def value.#{xml_attribute.name.gsub(/\-/, '_')}
-            #{attribute_value.inspect}
-                end
-            EOV
+            method_name = xml_attribute.name.gsub(/\-/, '_')
+            value.define_singleton_method(method_name) { attribute_value }
           end
         end
       end
