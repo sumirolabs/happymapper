@@ -38,14 +38,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 51
 
-# Offense count: 2
-# Configuration parameters: Blacklist.
-# Blacklist: END, (?-mix:EO[A-Z]{1})
-Naming/HeredocDelimiterNaming:
-  Exclude:
-    - 'lib/happymapper/element.rb'
-    - 'spec/has_many_empty_array_spec.rb'
-
 # Offense count: 3
 # Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist, MethodDefinitionMacros.
 # NamePrefix: is_, has_, have_
