@@ -360,7 +360,7 @@ module HappyMapper
         if options.key?(:tag)
           begin
             nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
-          rescue
+          rescue StandardError
             # This exception takes place when the namespace is often not found
             # and we should continue on with the empty array of nodes.
           end
@@ -373,7 +373,7 @@ module HappyMapper
           [options[:name], tag_name].compact.each do |xpath_ext|
             begin
               nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-            rescue
+            rescue StandardError
               break
               # This exception takes place when the namespace is often not found
               # and we should continue with the empty array of nodes or keep looking

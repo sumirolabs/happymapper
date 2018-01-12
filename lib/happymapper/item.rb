@@ -120,7 +120,7 @@ module HappyMapper
 
       begin
         constant.send(options[:parser].to_sym, value)
-      rescue
+      rescue StandardError
         nil
       end
     end
