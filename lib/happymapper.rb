@@ -539,7 +539,7 @@ module HappyMapper
         # a method that the class has defined, then call it with the value as a
         # parameter.
         #
-        if on_save_action = attribute.options[:on_save]
+        if (on_save_action = attribute.options[:on_save])
           if on_save_action.is_a?(Proc)
             value = on_save_action.call(value)
           elsif respond_to?(on_save_action)
@@ -604,13 +604,13 @@ module HappyMapper
       # the output xml
       #
       if self.class.instance_variable_defined?('@content')
-        if content = self.class.instance_variable_get('@content')
+        if (content = self.class.instance_variable_get('@content'))
 
           unless content.options[:read_only]
             text_accessor = content.tag || content.name
             value = send(text_accessor)
 
-            if on_save_action = content.options[:on_save]
+            if (on_save_action = content.options[:on_save])
               if on_save_action.is_a?(Proc)
                 value = on_save_action.call(value)
               elsif respond_to?(on_save_action)
@@ -649,7 +649,7 @@ module HappyMapper
           # operation on the specified value. This allows for operations to be
           # performed to convert the value to a specific value to be saved to the xml.
           #
-          if on_save_action = element.options[:on_save]
+          if (on_save_action = element.options[:on_save])
             if on_save_action.is_a?(Proc)
               value = on_save_action.call(value)
             elsif respond_to?(on_save_action)
