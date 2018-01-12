@@ -736,8 +736,6 @@ module HappyMapper
     self.class.parse(xml, options.merge!(update: self))
   end
 
-  private
-
   # Factory for creating anonmyous HappyMappers
   class AnonymousWrapperClassFactory
     def self.get(name, &blk)
