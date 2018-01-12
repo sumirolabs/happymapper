@@ -152,11 +152,6 @@ Style/GuardClause:
   Exclude:
     - 'lib/happymapper/element.rb'
 
-# Offense count: 2
-Style/IdenticalConditionalBranches:
-  Exclude:
-    - 'lib/happymapper.rb'
-
 # Offense count: 1
 Style/IfInsideElse:
   Exclude:

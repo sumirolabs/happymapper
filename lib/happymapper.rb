@@ -295,11 +295,7 @@ module HappyMapper
         node = xml
       else
 
-        # If xml is an XML document select the root node of the document
-        if xml.is_a?(Nokogiri::XML::Document)
-          node = xml.root
-        else
-
+        unless xml.is_a?(Nokogiri::XML::Document)
           # Attempt to parse the xml value with Nokogiri XML as a document
           # and select the root element
           xml = Nokogiri::XML(
@@ -307,8 +303,9 @@ module HappyMapper
             Nokogiri::XML::ParseOptions::STRICT,
             &nokogiri_config_callback
           )
-          node = xml.root
         end
+        # Now xml is certainly an XML document: Select the root node of the document
+        node = xml.root
 
         # if the node name is equal to the tag name then the we are parsing the
         # root element and that is important to record so that we can apply
