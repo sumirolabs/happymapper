@@ -300,12 +300,6 @@ Style/TrivialAccessors:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/UnlessElse:
-  Exclude:
-    - 'lib/happymapper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Style/ZeroLengthPredicate:
   Exclude:
     - 'lib/happymapper.rb'

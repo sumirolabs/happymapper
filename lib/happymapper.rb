@@ -530,7 +530,9 @@ module HappyMapper
       # when it comes to saving the xml document; so we wiill not go into any of
       # the below process
       #
-      unless attribute.options[:read_only]
+      if attribute.options[:read_only]
+        []
+      else
 
         value = send(attribute.method_name)
         value = nil if value == attribute.default
@@ -559,8 +561,6 @@ module HappyMapper
           []
         end
 
-      else
-        []
       end
     end.flatten
 
