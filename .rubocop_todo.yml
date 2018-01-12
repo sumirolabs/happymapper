@@ -93,15 +93,6 @@ Performance/StringReplacement:
   Exclude:
     - 'lib/happymapper/element.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/happymapper.rb'
-    - 'lib/happymapper/anonymous_mapper.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.

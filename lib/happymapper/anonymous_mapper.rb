@@ -79,7 +79,7 @@ module HappyMapper
       # HappyMapper content attribute if the text happens to content
       # some content.
 
-      if element.text? and element.content.strip != ''
+      if element.text? && (element.content.strip != '')
         class_instance.content :content, String
       end
 
@@ -87,7 +87,7 @@ module HappyMapper
       # elements, then we want to recursively define a new HappyMapper
       # class that will have elements and attributes.
 
-      element_type = if !element.elements.reject(&:text?).empty? or !element.attributes.empty?
+      element_type = if !element.elements.reject(&:text?).empty? || !element.attributes.empty?
                        create_happymapper_class_with_element(element)
                      else
                        String

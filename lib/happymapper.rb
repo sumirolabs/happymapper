@@ -453,7 +453,7 @@ module HappyMapper
         # be handled in groups then we should yield the slice of the objects to them
         # otherwise continue to lump them together
 
-        if block_given? and options[:in_groups_of]
+        if block_given? && options[:in_groups_of]
           yield part
         else
           collection += part
@@ -467,7 +467,7 @@ module HappyMapper
       # then we are going to return the first item in the collection. Otherwise
       # the return response is going to be an entire array of items.
 
-      if options[:single] or root
+      if options[:single] || root
         collection.first
       else
         collection
