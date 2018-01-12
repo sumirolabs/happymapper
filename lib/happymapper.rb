@@ -556,7 +556,7 @@ module HappyMapper
         #
         if not value.nil? || attribute.options[:state_when_nil]
           attribute_namespace = attribute.options[:namespace]
-          ["#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value]
+          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
         else
           []
         end
