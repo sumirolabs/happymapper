@@ -115,7 +115,7 @@ module HappyMapper
     end
 
     register_type Boolean do |value|
-      ['true', 't', '1'].include?(value.to_s.downcase)
+      %w(true t 1).include?(value.to_s.downcase)
     end
 
     register_type Integer do |value|

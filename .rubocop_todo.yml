@@ -304,15 +304,6 @@ Style/UnlessElse:
   Exclude:
     - 'lib/happymapper.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, MinSize, WordRegex.
-# SupportedStyles: percent, brackets
-Style/WordArray:
-  Exclude:
-    - 'lib/happymapper/supported_types.rb'
-    - 'spec/happymapper_parse_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/ZeroLengthPredicate:

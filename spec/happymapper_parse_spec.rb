@@ -71,7 +71,7 @@ describe HappyMapper do
 
       it "should parse the elements as it would a 'has_many'" do
         expect(subject.name).to eq('value')
-        expect(subject.image).to eq(['image1', 'image2'])
+        expect(subject.image).to eq(%w(image1 image2))
       end
     end
 
