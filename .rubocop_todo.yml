@@ -40,12 +40,6 @@ Metrics/PerceivedComplexity:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Performance/StringReplacement:
-  Exclude:
-    - 'lib/happymapper/element.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: braces, no_braces, context_dependent
 Style/BracesAroundHashParameters:
