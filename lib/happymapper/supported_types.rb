@@ -88,7 +88,7 @@ module HappyMapper
       end
 
       def apply?(value, convert_to_type)
-        value.kind_of?(convert_to_type) || value.nil?
+        value.is_a?(convert_to_type) || value.nil?
       end
 
       def apply(value)
