@@ -59,7 +59,7 @@ module HappyMapper
         happymapper_class.register_namespace prefix, namespace
       end
 
-      element.attributes.each do |_name, attribute|
+      element.attributes.each_value do |attribute|
         define_attribute_on_class(happymapper_class, attribute)
       end
 
