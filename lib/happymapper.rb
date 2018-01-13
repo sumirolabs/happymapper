@@ -85,7 +85,7 @@ module HappyMapper
     # @param [String] ns url for the xml namespace
     #
     def register_namespace(namespace, ns)
-      @registered_namespaces.merge!({ namespace => ns })
+      @registered_namespaces.merge!(namespace => ns)
     end
 
     #
