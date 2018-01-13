@@ -38,16 +38,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 51
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SingleLineConditionsOnly, IncludeTernaryExpressions.
-# SupportedStyles: assign_to_condition, assign_inside_condition
-Style/ConditionalAssignment:
-  Exclude:
-    - 'lib/happymapper.rb'
-    - 'lib/happymapper/element.rb'
-    - 'lib/happymapper/item.rb'
-
 # Offense count: 6
 Style/DateTime:
   Exclude:

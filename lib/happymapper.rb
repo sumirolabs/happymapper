@@ -670,13 +670,13 @@ module HappyMapper
           # To allow for us to treat both groups of items and singular items
           # equally we wrap the value and treat it as an array.
           #
-          if value.nil?
-            values = []
-          elsif value.respond_to?(:to_ary) && !element.options[:single]
-            values = value.to_ary
-          else
-            values = [value]
-          end
+          values = if value.nil?
+                     []
+                   elsif value.respond_to?(:to_ary) && !element.options[:single]
+                     value.to_ary
+                   else
+                     [value]
+                   end
 
           values.each do |item|
             if item.is_a?(HappyMapper)

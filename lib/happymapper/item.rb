@@ -112,11 +112,11 @@ module HappyMapper
     end
 
     def process_node_with_custom_parser(node)
-      if node.respond_to?(:content) && !options[:raw]
-        value = node.content
-      else
-        value = node.to_s
-      end
+      value = if node.respond_to?(:content) && !options[:raw]
+                node.content
+              else
+                node.to_s
+              end
 
       begin
         constant.send(options[:parser].to_sym, value)

@@ -11,11 +11,11 @@ module HappyMapper
       end
 
       if options[:single]
-        if options[:xpath]
-          result = node.xpath(options[:xpath], xpath_options)
-        else
-          result = node.xpath(xpath(namespace), xpath_options)
-        end
+        result = if options[:xpath]
+                   node.xpath(options[:xpath], xpath_options)
+                 else
+                   node.xpath(xpath(namespace), xpath_options)
+                 end
 
         if result
           value = yield(result.first)
