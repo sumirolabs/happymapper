@@ -12,14 +12,7 @@ module HappyMapper
   extend AnonymousMapper
 
   def self.included(base)
-    if !(base.superclass <= HappyMapper)
-      base.instance_eval do
-        @attributes = {}
-        @elements = {}
-        @registered_namespaces = {}
-        @wrapper_anonymous_classes = {}
-      end
-    else
+    if base.superclass <= HappyMapper
       base.instance_eval do
         @attributes =
           superclass.instance_variable_get(:@attributes).dup
@@ -29,6 +22,13 @@ module HappyMapper
           superclass.instance_variable_get(:@registered_namespaces).dup
         @wrapper_anonymous_classes =
           superclass.instance_variable_get(:@wrapper_anonymous_classes).dup
+      end
+    else
+      base.instance_eval do
+        @attributes = {}
+        @elements = {}
+        @registered_namespaces = {}
+        @wrapper_anonymous_classes = {}
       end
     end
 
