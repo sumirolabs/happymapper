@@ -53,12 +53,6 @@ Style/Documentation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/IfUnlessModifier:
-  Exclude:
-    - 'lib/happymapper/anonymous_mapper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: InverseMethods, InverseBlocks.
 Style/InverseMethods:
   Exclude:

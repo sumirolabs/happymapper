@@ -76,12 +76,10 @@ module HappyMapper
     #
     def define_element_on_class(class_instance, element)
       # When a text element has been provided create the necessary
-      # HappyMapper content attribute if the text happens to content
+      # HappyMapper content attribute if the text happens to contain
       # some content.
 
-      if element.text? && (element.content.strip != '')
-        class_instance.content :content, String
-      end
+      class_instance.content :content, String if element.text? && (element.content.strip != '')
 
       # When the element has children elements, that are not text
       # elements, then we want to recursively define a new HappyMapper
