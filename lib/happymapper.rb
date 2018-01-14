@@ -703,14 +703,13 @@ module HappyMapper
                 xml.send("#{tag}_", item.to_s)
               end
 
-            else
+            elsif element.options[:state_when_nil]
 
               #
               # Normally a nil value would be ignored, however if specified then
               # an empty element will be written to the xml
               #
-              xml.send("#{tag}_", '') if element.options[:state_when_nil]
-
+              xml.send("#{tag}_", '')
             end
           end
 

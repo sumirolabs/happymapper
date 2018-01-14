@@ -52,11 +52,6 @@ Style/Documentation:
     - 'lib/happymapper/text_node.rb'
 
 # Offense count: 1
-Style/IfInsideElse:
-  Exclude:
-    - 'lib/happymapper.rb'
-
-# Offense count: 1
 # Cop supports --auto-correct.
 Style/IfUnlessModifier:
   Exclude:
