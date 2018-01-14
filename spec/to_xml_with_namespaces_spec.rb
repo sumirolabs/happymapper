@@ -46,13 +46,13 @@ module ToXMLWithNamespaces
     #
     # Perform the on_save operation when saving
     #
-    has_one :date_created, Time, on_save: lambda { |time| DateTime.parse(time).strftime('%T %D') if time }
+    has_one :date_created, Time, on_save: lambda { |time| Time.parse(time).strftime('%T %D') if time }
 
     #
     # Write multiple elements and call on_save when saving
     #
     has_many :dates_updated, Time, on_save: lambda { |times|
-      times.compact.map { |time| DateTime.parse(time).strftime('%T %D') } if times
+      times.compact.map { |time| Time.parse(time).strftime('%T %D') } if times
     }
 
     #
