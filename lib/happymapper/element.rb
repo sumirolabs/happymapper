@@ -33,19 +33,17 @@ module HappyMapper
     end
 
     def handle_attributes_option(result, value, xpath_options)
-      if options[:attributes].is_a?(Hash)
-        result = result.first unless result.respond_to?(:attribute_nodes)
+      return unless options[:attributes].is_a?(Hash)
+      result = result.first unless result.respond_to?(:attribute_nodes)
+      return unless result.respond_to?(:attribute_nodes)
 
-        return unless result.respond_to?(:attribute_nodes)
+      result.attribute_nodes.each do |xml_attribute|
+        if (attribute_options = options[:attributes][xml_attribute.name.to_sym])
+          attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).
+                            from_xml_node(result, namespace, xpath_options)
 
-        result.attribute_nodes.each do |xml_attribute|
-          if (attribute_options = options[:attributes][xml_attribute.name.to_sym])
-            attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).
-                              from_xml_node(result, namespace, xpath_options)
-
-            method_name = xml_attribute.name.tr('-', '_')
-            value.define_singleton_method(method_name) { attribute_value }
-          end
+          method_name = xml_attribute.name.tr('-', '_')
+          value.define_singleton_method(method_name) { attribute_value }
         end
       end
     end
