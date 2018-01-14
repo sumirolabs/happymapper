@@ -51,16 +51,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: line_count_dependent, lambda, literal
-Style/Lambda:
-  Exclude:
-    - 'lib/happymapper/supported_types.rb'
-    - 'spec/to_xml_spec.rb'
-    - 'spec/to_xml_with_namespaces_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: module_function, extend_self

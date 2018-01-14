@@ -40,7 +40,7 @@ describe 'Saving #to_xml' do
       #
       # Perform the on_save operation when saving
       #
-      has_one :date_created, Time, on_save: lambda { |time| Time.parse(time).strftime('%T %D') if time }
+      has_one :date_created, Time, on_save: ->(time) { Time.parse(time).strftime('%T %D') if time }
 
       #
       # Execute the method with the same name

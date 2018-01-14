@@ -65,7 +65,7 @@ module HappyMapper
       end
 
       def no_operation
-        lambda { |value| value }
+        ->(value) { value }
       end
 
       def apply?(_value, convert_to_type)
