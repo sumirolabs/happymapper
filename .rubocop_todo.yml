@@ -51,13 +51,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 1
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: module_function, extend_self
-Style/ModuleFunction:
-  Exclude:
-    - 'lib/happymapper/supported_types.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 Style/MultilineIfThen:

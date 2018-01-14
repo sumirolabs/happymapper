@@ -2,7 +2,7 @@
 
 module HappyMapper
   module SupportedTypes
-    extend self
+    module_function
 
     #
     # All of the registerd supported types that can be parsed.
