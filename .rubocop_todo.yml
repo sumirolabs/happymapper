@@ -38,14 +38,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 51
 
-# Offense count: 6
-Style/DateTime:
-  Exclude:
-    - 'lib/happymapper/supported_types.rb'
-    - 'spec/happymapper/item_spec.rb'
-    - 'spec/to_xml_spec.rb'
-    - 'spec/to_xml_with_namespaces_spec.rb'
-
 # Offense count: 8
 Style/Documentation:
   Exclude:
