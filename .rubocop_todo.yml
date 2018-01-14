@@ -51,12 +51,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 2
-Style/EvalWithLocation:
-  Exclude:
-    - 'lib/happymapper.rb'
-    - 'lib/happymapper/element.rb'
-
 # Offense count: 1
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
