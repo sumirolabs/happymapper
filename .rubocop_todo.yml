@@ -51,15 +51,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, MinBodyLength.
-# SupportedStyles: skip_modifier_ifs, always
-Style/Next:
-  Exclude:
-    - 'lib/happymapper.rb'
-    - 'lib/happymapper/element.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/Not:

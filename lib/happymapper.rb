@@ -634,85 +634,81 @@ module HappyMapper
         # If an element is marked as read only do not consider at all when
         # saving to XML.
         #
-        unless element.options[:read_only]
+        next if element.options[:read_only]
 
-          tag = element.tag || element.name
+        tag = element.tag || element.name
 
-          #
-          # The value to store is the result of the method call to the element,
-          # by default this is simply utilizing the attr_accessor defined. However,
-          # this allows for this method to be overridden
-          #
-          value = send(element.name)
+        #
+        # The value to store is the result of the method call to the element,
+        # by default this is simply utilizing the attr_accessor defined. However,
+        # this allows for this method to be overridden
+        #
+        value = send(element.name)
 
-          #
-          # If the element defines an on_save lambda/proc then we will call that
-          # operation on the specified value. This allows for operations to be
-          # performed to convert the value to a specific value to be saved to the xml.
-          #
-          if (on_save_action = element.options[:on_save])
-            if on_save_action.is_a?(Proc)
-              value = on_save_action.call(value)
-            elsif respond_to?(on_save_action)
-              value = send(on_save_action, value)
-            end
+        #
+        # If the element defines an on_save lambda/proc then we will call that
+        # operation on the specified value. This allows for operations to be
+        # performed to convert the value to a specific value to be saved to the xml.
+        #
+        if (on_save_action = element.options[:on_save])
+          if on_save_action.is_a?(Proc)
+            value = on_save_action.call(value)
+          elsif respond_to?(on_save_action)
+            value = send(on_save_action, value)
           end
+        end
 
-          #
-          # Normally a nil value would be ignored, however if specified then
-          # an empty element will be written to the xml
-          #
-          if value.nil? && element.options[:single] && element.options[:state_when_nil]
+        #
+        # Normally a nil value would be ignored, however if specified then
+        # an empty element will be written to the xml
+        #
+        xml.send("#{tag}_", '') if value.nil? && element.options[:single] && element.options[:state_when_nil]
+
+        #
+        # To allow for us to treat both groups of items and singular items
+        # equally we wrap the value and treat it as an array.
+        #
+        values = if value.nil?
+                   []
+                 elsif value.respond_to?(:to_ary) && !element.options[:single]
+                   value.to_ary
+                 else
+                   [value]
+                 end
+
+        values.each do |item|
+          if item.is_a?(HappyMapper)
+
+            #
+            # Other items are convertable to xml through the xml builder
+            # process should have their contents retrieved and attached
+            # to the builder structure
+            #
+            item.to_xml(xml, self.class.namespace || default_namespace,
+                        element.options[:namespace],
+                        element.options[:tag] || nil)
+
+          elsif !item.nil?
+
+            item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
+
+            #
+            # When a value exists we should append the value for the tag
+            #
+            if item_namespace
+              xml[item_namespace].send("#{tag}_", item.to_s)
+            else
+              xml.send("#{tag}_", item.to_s)
+            end
+
+          elsif element.options[:state_when_nil]
+
+            #
+            # Normally a nil value would be ignored, however if specified then
+            # an empty element will be written to the xml
+            #
             xml.send("#{tag}_", '')
           end
-
-          #
-          # To allow for us to treat both groups of items and singular items
-          # equally we wrap the value and treat it as an array.
-          #
-          values = if value.nil?
-                     []
-                   elsif value.respond_to?(:to_ary) && !element.options[:single]
-                     value.to_ary
-                   else
-                     [value]
-                   end
-
-          values.each do |item|
-            if item.is_a?(HappyMapper)
-
-              #
-              # Other items are convertable to xml through the xml builder
-              # process should have their contents retrieved and attached
-              # to the builder structure
-              #
-              item.to_xml(xml, self.class.namespace || default_namespace,
-                          element.options[:namespace],
-                          element.options[:tag] || nil)
-
-            elsif !item.nil?
-
-              item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
-
-              #
-              # When a value exists we should append the value for the tag
-              #
-              if item_namespace
-                xml[item_namespace].send("#{tag}_", item.to_s)
-              else
-                xml.send("#{tag}_", item.to_s)
-              end
-
-            elsif element.options[:state_when_nil]
-
-              #
-              # Normally a nil value would be ignored, however if specified then
-              # an empty element will be written to the xml
-              #
-              xml.send("#{tag}_", '')
-            end
-          end
-
         end
       end
     end
