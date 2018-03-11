@@ -7,12 +7,12 @@ module HappyMapper
     # @see Item#initialize
     # Additional options:
     #   :default => Object The default value for this
-    def initialize(name, type, o = {})
+    def initialize(name, type, options = {})
       super
-      self.default = o[:default]
+      self.default = options[:default]
     end
 
-    def find(node, namespace, xpath_options)
+    def find(node, _namespace, xpath_options)
       if options[:xpath]
         yield(node.xpath(options[:xpath], xpath_options))
       else

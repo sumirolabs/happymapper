@@ -2,7 +2,7 @@
 
 module HappyMapper
   class TextNode < Item
-    def find(node, namespace, xpath_options)
+    def find(node, _namespace, _xpath_options)
       yield(node.children.detect(&:text?))
     end
   end

@@ -14,6 +14,12 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Max: 110
 
+Naming/PredicateName:
+  NameWhitelist:
+    - 'has_one'
+    - 'has_many'
+    - 'has_xml_content'
+
 # Use older RuboCop default
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

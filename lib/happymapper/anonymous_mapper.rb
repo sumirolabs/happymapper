@@ -59,7 +59,7 @@ module HappyMapper
         happymapper_class.register_namespace prefix, namespace
       end
 
-      element.attributes.each do |name, attribute|
+      element.attributes.each_value do |attribute|
         define_attribute_on_class(happymapper_class, attribute)
       end
 
@@ -76,18 +76,16 @@ module HappyMapper
     #
     def define_element_on_class(class_instance, element)
       # When a text element has been provided create the necessary
-      # HappyMapper content attribute if the text happens to content
+      # HappyMapper content attribute if the text happens to contain
       # some content.
 
-      if element.text? and element.content.strip != ''
-        class_instance.content :content, String
-      end
+      class_instance.content :content, String if element.text? && (element.content.strip != '')
 
       # When the element has children elements, that are not text
       # elements, then we want to recursively define a new HappyMapper
       # class that will have elements and attributes.
 
-      element_type = if !element.elements.reject(&:text?).empty? or !element.attributes.empty?
+      element_type = if !element.elements.reject(&:text?).empty? || !element.attributes.empty?
                        create_happymapper_class_with_element(element)
                      else
                        String

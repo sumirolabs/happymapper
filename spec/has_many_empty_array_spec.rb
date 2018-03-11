@@ -23,11 +23,11 @@ end
 
 describe 'emptyness' do
   let(:xml) do
-    <<-EOF
+    <<-XML
     <navigator>
       <items/>
     </navigator>
-    EOF
+    XML
   end
 
   let(:navigator) do

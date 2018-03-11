@@ -12,14 +12,7 @@ module HappyMapper
   extend AnonymousMapper
 
   def self.included(base)
-    if !(base.superclass <= HappyMapper)
-      base.instance_eval do
-        @attributes = {}
-        @elements = {}
-        @registered_namespaces = {}
-        @wrapper_anonymous_classes = {}
-      end
-    else
+    if base.superclass <= HappyMapper
       base.instance_eval do
         @attributes =
           superclass.instance_variable_get(:@attributes).dup
@@ -29,6 +22,13 @@ module HappyMapper
           superclass.instance_variable_get(:@registered_namespaces).dup
         @wrapper_anonymous_classes =
           superclass.instance_variable_get(:@wrapper_anonymous_classes).dup
+      end
+    else
+      base.instance_eval do
+        @attributes = {}
+        @elements = {}
+        @registered_namespaces = {}
+        @wrapper_anonymous_classes = {}
       end
     end
 
@@ -81,11 +81,11 @@ module HappyMapper
     #     ...
     #     </outputXML>"
     #
-    # @param [String] namespace the xml prefix
-    # @param [String] ns url for the xml namespace
+    # @param [String] name the xml prefix
+    # @param [String] href url for the xml namespace
     #
-    def register_namespace(namespace, ns)
-      @registered_namespaces.merge!({ namespace => ns })
+    def register_namespace(name, href)
+      @registered_namespaces.merge!(name => href)
     end
 
     #
@@ -246,7 +246,7 @@ module HappyMapper
       # onto this class. They get/set the value by passing thru to the anonymous class.
       passthrus = wrapper.attributes + wrapper.elements
       passthrus.each do |item|
-        class_eval %{
+        class_eval <<-RUBY, __FILE__, __LINE__ + 1
           def #{item.method_name}
             @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
             @#{name}.#{item.method_name}
@@ -255,7 +255,7 @@ module HappyMapper
             @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
             @#{name}.#{item.method_name} = value
           end
-        }
+        RUBY
       end
 
       has_one name, wrapper
@@ -295,11 +295,7 @@ module HappyMapper
         node = xml
       else
 
-        # If xml is an XML document select the root node of the document
-        if xml.is_a?(Nokogiri::XML::Document)
-          node = xml.root
-        else
-
+        unless xml.is_a?(Nokogiri::XML::Document)
           # Attempt to parse the xml value with Nokogiri XML as a document
           # and select the root element
           xml = Nokogiri::XML(
@@ -307,8 +303,9 @@ module HappyMapper
             Nokogiri::XML::ParseOptions::STRICT,
             &nokogiri_config_callback
           )
-          node = xml.root
         end
+        # Now xml is certainly an XML document: Select the root node of the document
+        node = xml.root
 
         # if the node name is equal to the tag name then the we are parsing the
         # root element and that is important to record so that we can apply
@@ -360,7 +357,8 @@ module HappyMapper
         if options.key?(:tag)
           begin
             nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
-          rescue
+          rescue StandardError
+            nil
             # This exception takes place when the namespace is often not found
             # and we should continue on with the empty array of nodes.
           end
@@ -373,7 +371,7 @@ module HappyMapper
           [options[:name], tag_name].compact.each do |xpath_ext|
             begin
               nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-            rescue
+            rescue StandardError
               break
               # This exception takes place when the namespace is often not found
               # and we should continue with the empty array of nodes or keep looking
@@ -387,7 +385,7 @@ module HappyMapper
       end
 
       # Nothing matching found, we can go ahead and return
-      return ((options[:single] || root) ? nil : []) if nodes.size == 0
+      return (options[:single] || root ? nil : []) if nodes.size == 0
 
       # If the :limit option has been specified then we are going to slice
       # our node results by that amount to allow us the ability to deal with
@@ -453,7 +451,7 @@ module HappyMapper
         # be handled in groups then we should yield the slice of the objects to them
         # otherwise continue to lump them together
 
-        if block_given? and options[:in_groups_of]
+        if block_given? && options[:in_groups_of]
           yield part
         else
           collection += part
@@ -467,7 +465,7 @@ module HappyMapper
       # then we are going to return the first item in the collection. Otherwise
       # the return response is going to be an entire array of items.
 
-      if options[:single] or root
+      if options[:single] || root
         collection.first
       else
         collection
@@ -530,7 +528,9 @@ module HappyMapper
       # when it comes to saving the xml document; so we wiill not go into any of
       # the below process
       #
-      unless attribute.options[:read_only]
+      if attribute.options[:read_only]
+        []
+      else
 
         value = send(attribute.method_name)
         value = nil if value == attribute.default
@@ -540,7 +540,7 @@ module HappyMapper
         # a method that the class has defined, then call it with the value as a
         # parameter.
         #
-        if on_save_action = attribute.options[:on_save]
+        if (on_save_action = attribute.options[:on_save])
           if on_save_action.is_a?(Proc)
             value = on_save_action.call(value)
           elsif respond_to?(on_save_action)
@@ -554,13 +554,11 @@ module HappyMapper
         #
         if not value.nil? || attribute.options[:state_when_nil]
           attribute_namespace = attribute.options[:namespace]
-          ["#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value]
+          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
         else
           []
         end
 
-      else
-        []
       end
     end.flatten
 
@@ -607,13 +605,13 @@ module HappyMapper
       # the output xml
       #
       if self.class.instance_variable_defined?('@content')
-        if content = self.class.instance_variable_get('@content')
+        if (content = self.class.instance_variable_get('@content'))
 
           unless content.options[:read_only]
             text_accessor = content.tag || content.name
             value = send(text_accessor)
 
-            if on_save_action = content.options[:on_save]
+            if (on_save_action = content.options[:on_save])
               if on_save_action.is_a?(Proc)
                 value = on_save_action.call(value)
               elsif respond_to?(on_save_action)
@@ -636,86 +634,81 @@ module HappyMapper
         # If an element is marked as read only do not consider at all when
         # saving to XML.
         #
-        unless element.options[:read_only]
+        next if element.options[:read_only]
 
-          tag = element.tag || element.name
+        tag = element.tag || element.name
 
-          #
-          # The value to store is the result of the method call to the element,
-          # by default this is simply utilizing the attr_accessor defined. However,
-          # this allows for this method to be overridden
-          #
-          value = send(element.name)
+        #
+        # The value to store is the result of the method call to the element,
+        # by default this is simply utilizing the attr_accessor defined. However,
+        # this allows for this method to be overridden
+        #
+        value = send(element.name)
 
-          #
-          # If the element defines an on_save lambda/proc then we will call that
-          # operation on the specified value. This allows for operations to be
-          # performed to convert the value to a specific value to be saved to the xml.
-          #
-          if on_save_action = element.options[:on_save]
-            if on_save_action.is_a?(Proc)
-              value = on_save_action.call(value)
-            elsif respond_to?(on_save_action)
-              value = send(on_save_action, value)
-            end
+        #
+        # If the element defines an on_save lambda/proc then we will call that
+        # operation on the specified value. This allows for operations to be
+        # performed to convert the value to a specific value to be saved to the xml.
+        #
+        if (on_save_action = element.options[:on_save])
+          if on_save_action.is_a?(Proc)
+            value = on_save_action.call(value)
+          elsif respond_to?(on_save_action)
+            value = send(on_save_action, value)
           end
+        end
 
-          #
-          # Normally a nil value would be ignored, however if specified then
-          # an empty element will be written to the xml
-          #
-          if value.nil? && element.options[:single] && element.options[:state_when_nil]
+        #
+        # Normally a nil value would be ignored, however if specified then
+        # an empty element will be written to the xml
+        #
+        xml.send("#{tag}_", '') if value.nil? && element.options[:single] && element.options[:state_when_nil]
+
+        #
+        # To allow for us to treat both groups of items and singular items
+        # equally we wrap the value and treat it as an array.
+        #
+        values = if value.nil?
+                   []
+                 elsif value.respond_to?(:to_ary) && !element.options[:single]
+                   value.to_ary
+                 else
+                   [value]
+                 end
+
+        values.each do |item|
+          if item.is_a?(HappyMapper)
+
+            #
+            # Other items are convertable to xml through the xml builder
+            # process should have their contents retrieved and attached
+            # to the builder structure
+            #
+            item.to_xml(xml, self.class.namespace || default_namespace,
+                        element.options[:namespace],
+                        element.options[:tag] || nil)
+
+          elsif !item.nil?
+
+            item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
+
+            #
+            # When a value exists we should append the value for the tag
+            #
+            if item_namespace
+              xml[item_namespace].send("#{tag}_", item.to_s)
+            else
+              xml.send("#{tag}_", item.to_s)
+            end
+
+          elsif element.options[:state_when_nil]
+
+            #
+            # Normally a nil value would be ignored, however if specified then
+            # an empty element will be written to the xml
+            #
             xml.send("#{tag}_", '')
           end
-
-          #
-          # To allow for us to treat both groups of items and singular items
-          # equally we wrap the value and treat it as an array.
-          #
-          if value.nil?
-            values = []
-          elsif value.respond_to?(:to_ary) && !element.options[:single]
-            values = value.to_ary
-          else
-            values = [value]
-          end
-
-          values.each do |item|
-            if item.is_a?(HappyMapper)
-
-              #
-              # Other items are convertable to xml through the xml builder
-              # process should have their contents retrieved and attached
-              # to the builder structure
-              #
-              item.to_xml(xml, self.class.namespace || default_namespace,
-                          element.options[:namespace],
-                          element.options[:tag] || nil)
-
-            elsif !item.nil?
-
-              item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
-
-              #
-              # When a value exists we should append the value for the tag
-              #
-              if item_namespace
-                xml[item_namespace].send("#{tag}_", item.to_s)
-              else
-                xml.send("#{tag}_", item.to_s)
-              end
-
-            else
-
-              #
-              # Normally a nil value would be ignored, however if specified then
-              # an empty element will be written to the xml
-              #
-              xml.send("#{tag}_", '') if element.options[:state_when_nil]
-
-            end
-          end
-
         end
       end
     end
@@ -737,8 +730,6 @@ module HappyMapper
   def parse(xml, options = {})
     self.class.parse(xml, options.merge!(update: self))
   end
-
-  private
 
   # Factory for creating anonmyous HappyMappers
   class AnonymousWrapperClassFactory

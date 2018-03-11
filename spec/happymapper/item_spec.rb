@@ -113,19 +113,27 @@ describe HappyMapper::Item do
       expect(item.typecast('')).to eq(nil)
     end
 
-    it 'should work with DateTimes' do
-      item = HappyMapper::Item.new(:foo, DateTime)
-      expect(item.typecast('2000-01-01 00:00:00')).to eq(DateTime.new(2000, 1, 1, 0, 0, 0))
-    end
+    context 'with DateTime' do
+      let(:item) { HappyMapper::Item.new(:foo, DateTime) }
 
-    it 'should handle nil DateTimes' do
-      item = HappyMapper::Item.new(:foo, DateTime)
-      expect(item.typecast(nil)).to eq(nil)
-    end
+      it 'works with a string' do
+        result = item.typecast('2000-01-01 13:42:37')
+        expect(result.to_time).to eq Time.new(2000, 1, 1, 13, 42, 37, '+00:00')
+      end
 
-    it 'should handle empty string DateTimes' do
-      item = HappyMapper::Item.new(:foo, DateTime)
-      expect(item.typecast('')).to eq(nil)
+      it 'works with a historical date in a string' do
+        result = item.typecast('1616-04-23')
+        expect(result.to_time).to eq Time.new(1616, 4, 23, 0, 0, 0, '+00:00')
+        expect(result).to be_gregorian
+      end
+
+      it 'handles nil' do
+        expect(item.typecast(nil)).to eq(nil)
+      end
+
+      it 'handles empty strings' do
+        expect(item.typecast('')).to eq(nil)
+      end
     end
 
     it 'should work with Boolean' do

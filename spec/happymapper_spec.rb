@@ -1035,15 +1035,15 @@ describe HappyMapper do
   end
 
   context 'Namespace is missing because an optional element that uses it is not present' do
-     it 'should parse successfully' do
-       @article = PartiallyBadArticle.parse(fixture_file('subclass_namespace.xml'))
-       expect(@article).not_to be_nil
-       expect(@article.title).not_to be_nil
-       expect(@article.text).not_to be_nil
-       expect(@article.photos).not_to be_nil
-       expect(@article.photos.first.title).not_to be_nil
-     end
-   end
+    it 'should parse successfully' do
+      @article = PartiallyBadArticle.parse(fixture_file('subclass_namespace.xml'))
+      expect(@article).not_to be_nil
+      expect(@article.title).not_to be_nil
+      expect(@article.text).not_to be_nil
+      expect(@article.photos).not_to be_nil
+      expect(@article.photos.first.title).not_to be_nil
+    end
+  end
 
   describe 'with limit option' do
     it 'should return results with limited size: 6' do

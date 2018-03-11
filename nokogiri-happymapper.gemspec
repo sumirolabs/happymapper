@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'happymapper/version'
 
@@ -31,10 +31,10 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.test_files = `git ls-files -- spec/*`.split("\n")
 
-  if s.respond_to? :specification_version then
+  if s.respond_to? :specification_version
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0')
       s.add_runtime_dependency('nokogiri', '~> 1.5')
       s.add_development_dependency('rspec', ['~> 3.0'])
     else

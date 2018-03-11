@@ -13,12 +13,12 @@ module HappyMapper
     #   :raw    =>  Boolean Use raw node value (inc. tags) when parsing.
     #   :single =>  Boolean False if object should be collection, True for single object
     #   :tag    =>  String Element name if it doesn't match the specified name.
-    def initialize(name, type, o = {})
+    def initialize(name, type, options = {})
       self.name = name.to_s
       self.type = type
-      # self.tag = o.delete(:tag) || name.to_s
-      self.tag = o[:tag] || name.to_s
-      self.options = { single: true }.merge(o.merge(name: self.name))
+      # self.tag = options.delete(:tag) || name.to_s
+      self.tag = options[:tag] || name.to_s
+      self.options = { single: true }.merge(options.merge(name: self.name))
 
       @xml_type = self.class.to_s.split('::').last.downcase
     end
@@ -112,15 +112,15 @@ module HappyMapper
     end
 
     def process_node_with_custom_parser(node)
-      if node.respond_to?(:content) && !options[:raw]
-        value = node.content
-      else
-        value = node.to_s
-      end
+      value = if node.respond_to?(:content) && !options[:raw]
+                node.content
+              else
+                node.to_s
+              end
 
       begin
         constant.send(options[:parser].to_sym, value)
-      rescue
+      rescue StandardError
         nil
       end
     end

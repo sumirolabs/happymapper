@@ -2,7 +2,7 @@
 
 module HappyMapper
   module SupportedTypes
-    extend self
+    module_function
 
     #
     # All of the registerd supported types that can be parsed.
@@ -65,10 +65,10 @@ module HappyMapper
       end
 
       def no_operation
-        lambda { |value| value }
+        ->(value) { value }
       end
 
-      def apply?(value, convert_to_type)
+      def apply?(_value, convert_to_type)
         convert_to_type == type
       end
 
@@ -88,7 +88,7 @@ module HappyMapper
       end
 
       def apply?(value, convert_to_type)
-        value.kind_of?(convert_to_type) || value.nil?
+        value.is_a?(convert_to_type) || value.nil?
       end
 
       def apply(value)
@@ -103,19 +103,25 @@ module HappyMapper
     register_type Float, &:to_f
 
     register_type Time do |value|
-      Time.parse(value.to_s) rescue Time.at(value.to_i)
+      begin
+        Time.parse(value.to_s)
+      rescue StandardError
+        Time.at(value.to_i)
+      end
     end
 
+    # rubocop:disable Style/DateTime
     register_type DateTime do |value|
       DateTime.parse(value.to_s) if value && !value.empty?
     end
+    # rubocop:enable Style/DateTime
 
     register_type Date do |value|
       Date.parse(value.to_s) if value && !value.empty?
     end
 
     register_type Boolean do |value|
-      ['true', 't', '1'].include?(value.to_s.downcase)
+      %w(true t 1).include?(value.to_s.downcase)
     end
 
     register_type Integer do |value|
