@@ -81,11 +81,11 @@ module HappyMapper
     #     ...
     #     </outputXML>"
     #
-    # @param [String] namespace the xml prefix
-    # @param [String] ns url for the xml namespace
+    # @param [String] name the xml prefix
+    # @param [String] href url for the xml namespace
     #
-    def register_namespace(namespace, ns)
-      @registered_namespaces.merge!(namespace => ns)
+    def register_namespace(name, href)
+      @registered_namespaces.merge!(name => href)
     end
 
     #
