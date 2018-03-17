@@ -1,8 +1,27 @@
-# Change log
+# Changelog
 
 ## Unreleased
 
+### Breaking Changes
+
+* Remove constant HappyMapper::DEFAULT_NS
 * Drop support for Ruby 2.2 and below
+
+### Improvements
+
+* Support Ruby 2.5
+* Always sort namespaces. This adds support for JRuby.
+
+### Bug fixes
+
+* Ensure `#to_xml` generates UTF-8 content
+  ([#88](https://github.com/mvz/happymapper/pull/88))
+* Handle namespaces for nested value elements when parsing anonymously
+  ([#87](https://github.com/mvz/happymapper/pull/87))
+* Handle attributes with a namespace that is different from the element
+  namespace ([#87](https://github.com/mvz/happymapper/pull/87))
+* Ensure camel-cased elements have content in anonymous parse
+  ([#85](https://github.com/mvz/happymapper/pull/85))
 
 ## 0.6.0 / 2017-09-17
 
