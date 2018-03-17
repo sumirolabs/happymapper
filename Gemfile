@@ -4,6 +4,6 @@ source 'http://rubygems.org'
 
 gemspec
 
-group :development do
-  gem 'rake', '~> 12.0'
+if ENV['CI']
+  gem 'coveralls', group: :development if ENV['TRAVIS_RUBY_VERSION'] == '2.5'
 end

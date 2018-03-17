@@ -3,6 +3,7 @@
 require 'nokogiri'
 require 'date'
 require 'time'
+require 'happymapper/version'
 require 'happymapper/anonymous_mapper'
 
 module HappyMapper
