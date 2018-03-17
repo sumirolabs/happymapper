@@ -1,11 +1,16 @@
-HappyMapper
-===========
+# HappyMapper
 
 Happymapper allows you to parse XML data and convert it quickly and easily into
 ruby data structures.
 
 This project is a fork of the great work done first by
 [jnunemaker](https://github.com/jnunemaker/happymapper).
+
+[![Gem Version](https://badge.fury.io/rb/nokogiri-happymapper.svg)](https://badge.fury.io/rb/nokogiri-happymapper)
+[![Build Status](https://travis-ci.org/mvz/happymapper.svg?branch=master)](https://travis-ci.org/mvz/happymapper)
+[![Coverage Status](https://coveralls.io/repos/github/mvz/happymapper/badge.svg?branch=master)](https://coveralls.io/github/mvz/happymapper?branch=master)
+[![Dependency Status](https://gemnasium.com/badges/github.com/mvz/happymapper.svg)](https://gemnasium.com/github.com/mvz/happymapper)
+[![Maintainability](https://api.codeclimate.com/v1/badges/491015f82bd2a45fd9d3/maintainability)](https://codeclimate.com/github/mvz/happymapper/maintainability)
 
 ## Major Differences
 
@@ -19,20 +24,19 @@ This project is a fork of the great work done first by
 
 ## Installation
 
-### [Rubygems](https://rubyygems.org/gems/nokogiri-happymapper)
+Install via rubygems:
 
     $ gem install nokogiri-happymapper
 
-### [Bundler](http://gembundler.com/)
-Add the `nokogiri-happymapper` gem to your project's `Gemfile`.
+Or add the `nokogiri-happymapper` gem to your project's `Gemfile`.
 
     gem 'nokogiri-happymapper', require: 'happymapper'
 
-Run the bundler command to install the gem:
+Run Bundler to install the gem:
 
     $ bundle install
 
-# Examples
+## Examples
 
 Let's start with a simple example to get our feet wet. Here we have a simple
 example of XML that defines some address information:
@@ -48,7 +52,7 @@ example of XML that defines some address information:
 Happymapper provides support for simple, zero configuration parsing as well as
 the ability to model the XML content in classes.
 
-## HappyMapper.parse(XML)
+### HappyMapper.parse(XML)
 
 With no classes or configuration you can parse the example XML with little
 effort:
@@ -72,7 +76,7 @@ It is important to be aware that this no configuration parsing is limited in cap
 * Determining if there is just one or multiple child elements is hard, so it
   assumes it is one until it finds another with the same name.
 
-## Address.parse(XML)
+### Address.parse(XML)
 
 Happymapper will let you easily model this information as a class:
 
@@ -127,7 +131,7 @@ has_one :street, String
 
 These three statements are equivalent to each other.
 
-## Parsing
+### Parsing
 
 With the mapping of the address XML articulated in our Address class it is time
 to parse the data:
@@ -159,7 +163,7 @@ address = Address.parse(ADDRESS_XML_DATA, single: true)
 The first one returns an array and we return the first instance, the second
 will do that work for us inside of parse.
 
-## Multiple Elements Mapping
+### Multiple Elements Mapping
 
 What if our address XML was a little different, perhaps we allowed multiple
 streets:
@@ -216,7 +220,7 @@ Now when we call the method `streets` we get a single value, but we still have
 the instance variable `@streets` if we ever need to the values as an array.
 
 
-## Attribute Mapping
+### Attribute Mapping
 
     <address location='home'>
       <street>Milchstrasse</street>
@@ -236,8 +240,7 @@ attribute :location, String, tag: 'location
 Again, you can omit the tag if the attribute accessor symbol matches the name
 of the attribute.
 
-
-### Attributes On Empty Child Elements
+#### Attributes On Empty Child Elements
 
     <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
       <id>tag:all-the-episodes.heroku.com,2005:/tv_shows</id>
@@ -284,7 +287,7 @@ generally do) it would be DRY-er to use the first syntax, i.e. with a separate
 `Link` class.
 
 
-## Class composition (and Text Node)
+### Class composition (and Text Node)
 
 Our address has a country and that country element has a code. Up until this
 point we neglected it as we declared a `country` as being a `String`.
@@ -351,9 +354,9 @@ in quotes, is that you do not have to define your class before this class. So
 Country and Address can live in separate files and as long as both constants
 are available when it comes time to parse you are golden.
 
-## Custom XPATH
+### Custom XPATH
 
-### Has One, Has Many
+#### Has One, Has Many
 
 Getting to elements deep down within your XML can be a little more work if you
 did not have xpath support. Consider the following example:
@@ -386,9 +389,9 @@ class Media
 end
 ```
 
-## Shared Functionality
+### Shared Functionality
 
-### Inheritance Approach
+#### Inheritance Approach
 
 While mapping XML to objects you may arrive at a point where you have two or
 more very similar structures.
@@ -443,7 +446,7 @@ class Gallery < Content
 end
 ```
 
-### Module Mixins Approach
+#### Module Mixins Approach
 
 You can also solve the above problem through mixins.
 
@@ -482,7 +485,7 @@ any other methods that may rely on those instance variables that come along in
 the package.
 
 
-## Filtering with XPATH (non-greedy)
+### Filtering with XPATH (non-greedy)
 
 I ran into a case where I wanted to capture all the pictures that were directly
 under media, but not the ones contained within a gallery.
@@ -536,7 +539,7 @@ has_many :pictures, Picture, tag: 'picture', xpath: '.'
 under the current node. So when we parse again we will have only our one element.
 
 
-## Namespaces
+### Namespaces
 
 Obviously your XML and these trivial examples are easy to map and parse because
 they lack the treacherous namespaces that befall most XML files.
@@ -603,7 +606,7 @@ element :country, Country, tag: 'country', namespace: 'different'
 
 With that we should be able to parse as we once did.
 
-## Large Datasets (in_groups_of)
+### Large Datasets (in_groups_of)
 
 When dealing with large sets of XML that simply cannot or should not be placed
 into memory the objects can be handled in groups through the `:in_groups_of`
@@ -618,14 +621,14 @@ end
 This trivial block will parse the large set of XML data and in groups of 5
 addresses at a time display the streets.
 
-## Saving to XML
+### Saving to XML
 
 Saving a class to XML is as easy as calling `#to_xml`.  The end result will be
 the current state of your object represented as xml. Let's cover some details
 that are sometimes necessary and features present to make your life easier.
 
 
-### :on_save
+#### :on_save
 
 When you are saving data to xml it is often important to change or manipulate
 data to a particular format. For example, a time object:
@@ -637,7 +640,7 @@ has_one :published_time, Time, on_save: lambda {|time| time.strftime("%H:%M:%S")
 Here we add the options `:on_save` and specify a lambda which will be executed
 on the method call to `:published_time`.
 
-### :state_when_nil
+#### :state_when_nil
 
 When an element contains a nil value, or perhaps the result of the :on_save
 lambda correctly results in a nil value you will be happy that the element will
@@ -651,7 +654,7 @@ has_one :favorite_color, String, state_when_nil: true
 The resulting XML will include the 'favorite_color' element even if the
 favorite color has not been specified.
 
-### :read_only
+#### :read_only
 
 When an element, attribute, or text node is a value that you have no interest in
 saving to XML, you can ensure that takes place by stating that it is `read only`.
@@ -663,7 +666,7 @@ attribute :temporary, Boolean, read_only: true
 
 This is useful if perhaps the incoming XML is different than the out-going XML.
 
-### namespaces
+#### namespaces
 
 Parsing the XML to objects only required you to simply specify the prefix of
 the namespace you wanted to parse, when you persist to xml you will need to
