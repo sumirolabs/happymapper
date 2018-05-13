@@ -537,17 +537,9 @@ module HappyMapper
         value = nil if value == attribute.default
 
         #
-        # If the attribute defines an on_save lambda/proc or value that maps to
-        # a method that the class has defined, then call it with the value as a
-        # parameter.
+        # Apply any on_save lambda/proc or value defined on the attribute.
         #
-        if (on_save_action = attribute.options[:on_save])
-          if on_save_action.is_a?(Proc)
-            value = on_save_action.call(value)
-          elsif respond_to?(on_save_action)
-            value = send(on_save_action, value)
-          end
-        end
+        value = apply_on_save_action(attribute, value)
 
         #
         # Attributes that have a nil value should be ignored unless they explicitly
@@ -611,14 +603,7 @@ module HappyMapper
           unless content.options[:read_only]
             text_accessor = content.tag || content.name
             value = send(text_accessor)
-
-            if (on_save_action = content.options[:on_save])
-              if on_save_action.is_a?(Proc)
-                value = on_save_action.call(value)
-              elsif respond_to?(on_save_action)
-                value = send(on_save_action, value)
-              end
-            end
+            value = apply_on_save_action(content, value)
 
             builder.text(value)
           end
@@ -647,17 +632,9 @@ module HappyMapper
         value = send(element.name)
 
         #
-        # If the element defines an on_save lambda/proc then we will call that
-        # operation on the specified value. This allows for operations to be
-        # performed to convert the value to a specific value to be saved to the xml.
+        # Apply any on_save action defined on the element.
         #
-        if (on_save_action = element.options[:on_save])
-          if on_save_action.is_a?(Proc)
-            value = on_save_action.call(value)
-          elsif respond_to?(on_save_action)
-            value = send(on_save_action, value)
-          end
-        end
+        value = apply_on_save_action(element, value)
 
         #
         # Normally a nil value would be ignored, however if specified then
@@ -741,6 +718,25 @@ module HappyMapper
         instance_eval(&blk)
       end
     end
+  end
+
+  private
+
+  #
+  # If the item defines an on_save lambda/proc or value that maps to a method
+  # that the class has defined, then call it with the value as a parameter.
+  # This allows for operations to be performed to convert the value to a
+  # specific value to be saved to the xml.
+  #
+  def apply_on_save_action(item, value)
+    if (on_save_action = item.options[:on_save])
+      if on_save_action.is_a?(Proc)
+        value = on_save_action.call(value)
+      elsif respond_to?(on_save_action)
+        value = send(on_save_action, value)
+      end
+    end
+    value
   end
 end
 
