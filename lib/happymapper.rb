@@ -519,43 +519,7 @@ module HappyMapper
       builder = Nokogiri::XML::Builder.new
     end
 
-    #
-    # Find the attributes for the class and collect them into an array
-    # that will be placed into a Hash structure
-    #
-    attributes = self.class.attributes.collect do |attribute|
-      #
-      # If an attribute is marked as read_only then we want to ignore the attribute
-      # when it comes to saving the xml document; so we wiill not go into any of
-      # the below process
-      #
-      if attribute.options[:read_only]
-        []
-      else
-
-        value = send(attribute.method_name)
-        value = nil if value == attribute.default
-
-        #
-        # Apply any on_save lambda/proc or value defined on the attribute.
-        #
-        value = apply_on_save_action(attribute, value)
-
-        #
-        # Attributes that have a nil value should be ignored unless they explicitly
-        # state that they should be expressed in the output.
-        #
-        if not value.nil? || attribute.options[:state_when_nil]
-          attribute_namespace = attribute.options[:namespace]
-          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
-        else
-          []
-        end
-
-      end
-    end.flatten
-
-    attributes = Hash[*attributes]
+    attributes = collect_writable_attributes
 
     #
     # Create a tag in the builder that matches the class's tag name unless a tag was passed
@@ -737,6 +701,49 @@ module HappyMapper
       end
     end
     value
+  end
+
+  #
+  # Find the attributes for the class and collect them into a Hash structure
+  #
+  def collect_writable_attributes
+    #
+    # Find the attributes for the class and collect them into an array
+    # that will be placed into a Hash structure
+    #
+    attributes = self.class.attributes.collect do |attribute|
+      #
+      # If an attribute is marked as read_only then we want to ignore the attribute
+      # when it comes to saving the xml document; so we will not go into any of
+      # the below process
+      #
+      if attribute.options[:read_only]
+        []
+      else
+
+        value = send(attribute.method_name)
+        value = nil if value == attribute.default
+
+        #
+        # Apply any on_save lambda/proc or value defined on the attribute.
+        #
+        value = apply_on_save_action(attribute, value)
+
+        #
+        # Attributes that have a nil value should be ignored unless they explicitly
+        # state that they should be expressed in the output.
+        #
+        if not value.nil? || attribute.options[:state_when_nil]
+          attribute_namespace = attribute.options[:namespace]
+          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
+        else
+          []
+        end
+
+      end
+    end.flatten
+
+    Hash[*attributes]
   end
 end
 
