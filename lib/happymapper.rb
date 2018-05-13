@@ -511,6 +511,7 @@ module HappyMapper
     #
     # If to_xml has been called without a passed in builder instance that
     # means we are going to return xml output. When it has been called with
+
     # a builder instance that means we most likely being called recursively
     # and will return the end product as a builder instance.
     #
@@ -527,20 +528,7 @@ module HappyMapper
     # any attributes to the element that were defined above.
     #
     builder.send("#{tag_from_parent || self.class.tag_name}_", attributes) do |xml|
-      #
-      # Add all the registered namespaces to the root element.
-      # When this is called recurisvely by composed classes the namespaces
-      # are still added to the root element
-      #
-      # However, we do not want to add the namespace if the namespace is 'xmlns'
-      # which means that it is the default namesapce of the code.
-      #
-      if self.class.instance_variable_get('@registered_namespaces') && builder.doc.root
-        self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
-          name = nil if name == 'xmlns'
-          builder.doc.root.add_namespace(name, href)
-        end
-      end
+      register_namespaces_with_builder(builder)
 
       #
       # If the object we are serializing has a namespace declaration we will want
@@ -744,6 +732,22 @@ module HappyMapper
     end.flatten
 
     Hash[*attributes]
+  end
+
+  #
+  # Add all the registered namespaces to the builder's root element.
+  # When this is called recursively by composed classes the namespaces
+  # are still added to the root element
+  #
+  # However, we do not want to add the namespace if the namespace is 'xmlns'
+  # which means that it is the default namespace of the code.
+  #
+  def register_namespaces_with_builder(builder)
+    return unless self.class.instance_variable_get('@registered_namespaces')
+    self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
+      name = nil if name == 'xmlns'
+      builder.doc.root.add_namespace(name, href)
+    end
   end
 end
 
