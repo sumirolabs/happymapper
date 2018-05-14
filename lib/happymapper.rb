@@ -337,52 +337,7 @@ module HappyMapper
       # perform the following to find the nodes for the given class
 
       nodes = options.fetch(:nodes) do
-        # when at the root use the xpath '/' otherwise use a more gready './/'
-        # unless an xpath has been specified, which should overwrite default
-        # and finally attach the current namespace if one has been defined
-        #
-
-        xpath  = (root ? '/' : './/')
-        xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
-        xpath += "#{namespace}:" if namespace
-
-        nodes = []
-
-        # when finding nodes, do it in this order:
-        # 1. specified tag if one has been provided
-        # 2. name of element
-        # 3. tag_name (derived from class name by default)
-
-        # If a tag has been provided we need to search for it.
-
-        if options.key?(:tag)
-          begin
-            nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
-          rescue StandardError
-            nil
-            # This exception takes place when the namespace is often not found
-            # and we should continue on with the empty array of nodes.
-          end
-        else
-
-          # This is the default case when no tag value is provided.
-          # First we use the name of the element `items` in `has_many items`
-          # Second we use the tag name which is the name of the class cleaned up
-
-          [options[:name], tag_name].compact.each do |xpath_ext|
-            begin
-              nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-            rescue StandardError
-              break
-              # This exception takes place when the namespace is often not found
-              # and we should continue with the empty array of nodes or keep looking
-            end
-            break if nodes && !nodes.empty?
-          end
-
-        end
-
-        nodes
+        find_nodes_to_parse(options, namespace, tag_name, namespaces, node, root)
       end
 
       # Nothing matching found, we can go ahead and return
@@ -459,9 +414,6 @@ module HappyMapper
         end
       end
 
-      # per http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000354
-      nodes = nil
-
       # If the :single option has been specified or we are at the root element
       # then we are going to return the first item in the collection. Otherwise
       # the return response is going to be an entire array of items.
@@ -476,6 +428,57 @@ module HappyMapper
     # @private
     def defined_content
       @content if defined? @content
+    end
+
+    private
+
+    def find_nodes_to_parse(options, namespace, tag_name, namespaces, node, root)
+      # when at the root use the xpath '/' otherwise use a more gready './/'
+      # unless an xpath has been specified, which should overwrite default
+      # and finally attach the current namespace if one has been defined
+      #
+
+      xpath  = (root ? '/' : './/')
+      xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
+      xpath += "#{namespace}:" if namespace
+
+      nodes = []
+
+      # when finding nodes, do it in this order:
+      # 1. specified tag if one has been provided
+      # 2. name of element
+      # 3. tag_name (derived from class name by default)
+
+      # If a tag has been provided we need to search for it.
+
+      if options.key?(:tag)
+        begin
+          nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
+        rescue StandardError
+          nil
+          # This exception takes place when the namespace is often not found
+          # and we should continue on with the empty array of nodes.
+        end
+      else
+
+        # This is the default case when no tag value is provided.
+        # First we use the name of the element `items` in `has_many items`
+        # Second we use the tag name which is the name of the class cleaned up
+
+        [options[:name], tag_name].compact.each do |xpath_ext|
+          begin
+            nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
+          rescue StandardError
+            break
+            # This exception takes place when the namespace is often not found
+            # and we should continue with the empty array of nodes or keep looking
+          end
+          break if nodes && !nodes.empty?
+        end
+
+      end
+
+      nodes
     end
   end
 
