@@ -547,8 +547,7 @@ module HappyMapper
       if (content = self.class.defined_content)
 
         unless content.options[:read_only]
-          text_accessor = content.tag || content.name
-          value = send(text_accessor)
+          value = send(content.name)
           value = apply_on_save_action(content, value)
 
           builder.text(value)
