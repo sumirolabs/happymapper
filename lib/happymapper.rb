@@ -581,18 +581,10 @@ module HappyMapper
         value = apply_on_save_action(element, value)
 
         #
-        # Normally a nil value would be ignored, however if specified then
-        # an empty element will be written to the xml
-        #
-        xml.send("#{tag}_", '') if value.nil? && element.options[:single] && element.options[:state_when_nil]
-
-        #
         # To allow for us to treat both groups of items and singular items
         # equally we wrap the value and treat it as an array.
         #
-        values = if value.nil?
-                   []
-                 elsif value.respond_to?(:to_ary) && !element.options[:single]
+        values = if value.respond_to?(:to_ary) && !element.options[:single]
                    value.to_ary
                  else
                    [value]
