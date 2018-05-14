@@ -523,6 +523,14 @@ module HappyMapper
     attributes = collect_writable_attributes
 
     #
+    # If the object we are serializing has a namespace declaration we will want
+    # to use that namespace or we will use the default namespace.
+    # When neither are specifed we are simply using whatever is default to the
+    # builder
+    #
+    namespace_name = namespace_override || self.class.namespace || default_namespace
+
+    #
     # Create a tag in the builder that matches the class's tag name unless a tag was passed
     # in a recursive call from the parent doc.  Then append
     # any attributes to the element that were defined above.
@@ -530,20 +538,8 @@ module HappyMapper
     builder.send("#{tag_from_parent || self.class.tag_name}_", attributes) do |xml|
       register_namespaces_with_builder(builder)
 
-      #
-      # If the object we are serializing has a namespace declaration we will want
-      # to use that namespace or we will use the default namespace.
-      # When neither are specifed we are simply using whatever is default to the
-      # builder
-      #
-      namespace_for_parent = namespace_override
-      if self.class.respond_to?(:namespace) && self.class.namespace
-        namespace_for_parent ||= self.class.namespace
-      end
-      namespace_for_parent ||= default_namespace
-
       xml.parent.namespace =
-        builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_for_parent }
+        builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_name }
 
       #
       # When a content has been defined we add the resulting value
