@@ -418,8 +418,8 @@ module HappyMapper
             obj.send("#{elem.method_name}=", elem.from_xml_node(n, namespace, namespaces))
           end
 
-          if (defined? @content) && @content
-            obj.send("#{@content.method_name}=", @content.from_xml_node(n, namespace, namespaces))
+          if (content = defined_content)
+            obj.send("#{content.method_name}=", content.from_xml_node(n, namespace, namespaces))
           end
 
           # If the HappyMapper class has the method #xml_value=,
@@ -471,6 +471,11 @@ module HappyMapper
       else
         collection
       end
+    end
+
+    # @private
+    def defined_content
+      @content if defined? @content
     end
   end
 
@@ -545,18 +550,16 @@ module HappyMapper
       # When a content has been defined we add the resulting value
       # the output xml
       #
-      if self.class.instance_variable_defined?('@content')
-        if (content = self.class.instance_variable_get('@content'))
+      if (content = self.class.defined_content)
 
-          unless content.options[:read_only]
-            text_accessor = content.tag || content.name
-            value = send(text_accessor)
-            value = apply_on_save_action(content, value)
+        unless content.options[:read_only]
+          text_accessor = content.tag || content.name
+          value = send(text_accessor)
+          value = apply_on_save_action(content, value)
 
-            builder.text(value)
-          end
-
+          builder.text(value)
         end
+
       end
 
       #
