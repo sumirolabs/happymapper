@@ -358,49 +358,7 @@ module HappyMapper
 
       nodes.each_slice(limit) do |slice|
         part = slice.map do |n|
-          # If an existing HappyMapper object is provided, update it with the
-          # values from the xml being parsed.  Otherwise, create a new object
-
-          obj = options[:update] ? options[:update] : new
-
-          attributes.each do |attr|
-            value = attr.from_xml_node(n, namespace, namespaces)
-            value = attr.default if value.nil?
-            obj.send("#{attr.method_name}=", value)
-          end
-
-          elements.each do |elem|
-            obj.send("#{elem.method_name}=", elem.from_xml_node(n, namespace, namespaces))
-          end
-
-          if (content = defined_content)
-            obj.send("#{content.method_name}=", content.from_xml_node(n, namespace, namespaces))
-          end
-
-          # If the HappyMapper class has the method #xml_value=,
-          # attr_writer :xml_value, or attr_accessor :xml_value then we want to
-          # assign the current xml that we just parsed to the xml_value
-
-          if obj.respond_to?('xml_value=')
-            obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
-          end
-
-          # If the HappyMapper class has the method #xml_content=,
-          # attr_write :xml_content, or attr_accessor :xml_content then we want to
-          # assign the child xml that we just parsed to the xml_content
-
-          if obj.respond_to?('xml_content=')
-            n = n.children if n.respond_to?(:children)
-            obj.xml_content = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
-          end
-
-          # Call any registered after_parse callbacks for the object's class
-
-          obj.class.after_parse_callbacks.each { |callback| callback.call(obj) }
-
-          # collect the object that we have created
-
-          obj
+          parse_node(n, options, namespace, namespaces)
         end
 
         # If a block has been provided and the user has requested that the objects
@@ -470,6 +428,52 @@ module HappyMapper
       end
 
       nodes
+    end
+
+    def parse_node(node, options, namespace, namespaces)
+      # If an existing HappyMapper object is provided, update it with the
+      # values from the xml being parsed.  Otherwise, create a new object
+
+      obj = options[:update] ? options[:update] : new
+
+      attributes.each do |attr|
+        value = attr.from_xml_node(node, namespace, namespaces)
+        value = attr.default if value.nil?
+        obj.send("#{attr.method_name}=", value)
+      end
+
+      elements.each do |elem|
+        obj.send("#{elem.method_name}=", elem.from_xml_node(node, namespace, namespaces))
+      end
+
+      if (content = defined_content)
+        obj.send("#{content.method_name}=", content.from_xml_node(node, namespace, namespaces))
+      end
+
+      # If the HappyMapper class has the method #xml_value=,
+      # attr_writer :xml_value, or attr_accessor :xml_value then we want to
+      # assign the current xml that we just parsed to the xml_value
+
+      if obj.respond_to?('xml_value=')
+        obj.xml_value = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      end
+
+      # If the HappyMapper class has the method #xml_content=,
+      # attr_write :xml_content, or attr_accessor :xml_content then we want to
+      # assign the child xml that we just parsed to the xml_content
+
+      if obj.respond_to?('xml_content=')
+        node = node.children if node.respond_to?(:children)
+        obj.xml_content = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      end
+
+      # Call any registered after_parse callbacks for the object's class
+
+      obj.class.after_parse_callbacks.each { |callback| callback.call(obj) }
+
+      # collect the object that we have created
+
+      obj
     end
   end
 
