@@ -440,7 +440,10 @@ module HappyMapper
 
       xpath  = (root ? '/' : './/')
       xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
-      xpath += "#{namespace}:" if namespace
+      if namespace
+        return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
+        xpath += "#{namespace}:"
+      end
 
       nodes = []
 
@@ -452,13 +455,7 @@ module HappyMapper
       # If a tag has been provided we need to search for it.
 
       if options.key?(:tag)
-        begin
-          nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
-        rescue StandardError
-          nil
-          # This exception takes place when the namespace is often not found
-          # and we should continue on with the empty array of nodes.
-        end
+        nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
       else
 
         # This is the default case when no tag value is provided.
@@ -468,7 +465,7 @@ module HappyMapper
         [options[:name], tag_name].compact.each do |xpath_ext|
           begin
             nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-          rescue StandardError
+          rescue Nokogiri::XML::XPath::SyntaxError
             break
             # This exception takes place when the namespace is often not found
             # and we should continue with the empty array of nodes or keep looking
