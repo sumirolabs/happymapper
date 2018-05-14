@@ -226,7 +226,7 @@ module HappyMapper
     # @return [String] the name of the tag as a string, downcased
     #
     def tag_name
-      @tag_name ||= to_s.split('::')[-1].downcase
+      @tag_name ||= name && name.to_s.split('::')[-1].downcase
     end
 
     # There is an XML tag that needs to be known for parsing and should be generated
@@ -463,13 +463,7 @@ module HappyMapper
         # Second we use the tag name which is the name of the class cleaned up
 
         [options[:name], tag_name].compact.each do |xpath_ext|
-          begin
-            nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-          rescue Nokogiri::XML::XPath::SyntaxError
-            break
-            # This exception takes place when the namespace is often not found
-            # and we should continue with the empty array of nodes or keep looking
-          end
+          nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
           break if nodes && !nodes.empty?
         end
 

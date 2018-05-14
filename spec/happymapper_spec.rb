@@ -555,13 +555,11 @@ describe HappyMapper do
       @klass = Class.new do
         include HappyMapper
 
-        def self.to_s
+        def self.name
           'Boo'
         end
       end
     end
-
-    class Boo; include HappyMapper end
 
     it 'should set attributes to an array' do
       expect(@klass.attributes).to eq([])
@@ -623,6 +621,11 @@ describe HappyMapper do
 
     it 'should default tag name to lowercase class' do
       expect(@klass.tag_name).to eq('boo')
+    end
+
+    it 'generates no tag name for anonymous class' do
+      @anon = Class.new { include HappyMapper }
+      expect(@anon.tag_name).to be_nil
     end
 
     it 'should default tag name of class in modules to the last constant lowercase' do
