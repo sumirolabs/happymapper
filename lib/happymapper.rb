@@ -226,7 +226,7 @@ module HappyMapper
     # @return [String] the name of the tag as a string, downcased
     #
     def tag_name
-      @tag_name ||= to_s.split('::')[-1].downcase
+      @tag_name ||= name && name.to_s.split('::')[-1].downcase
     end
 
     # There is an XML tag that needs to be known for parsing and should be generated
@@ -291,6 +291,11 @@ module HappyMapper
       # create a local copy of the objects namespace value for this parse execution
       namespace = (@namespace if defined? @namespace)
 
+      # Capture any provided namespaces and merge in any namespaces that have
+      # been registered on the object.
+      namespaces = options[:namespaces] || {}
+      namespaces = namespaces.merge(@registered_namespaces)
+
       # If the XML specified is an Node then we have what we need.
       if xml.is_a?(Nokogiri::XML::Node) && !xml.is_a?(Nokogiri::XML::Document)
         node = xml
@@ -308,20 +313,15 @@ module HappyMapper
         # Now xml is certainly an XML document: Select the root node of the document
         node = xml.root
 
+        # merge any namespaces found on the xml node into the namespace hash
+        namespaces = namespaces.merge(xml.collect_namespaces)
+
         # if the node name is equal to the tag name then the we are parsing the
         # root element and that is important to record so that we can apply
         # the correct xpath on the elements of this document.
 
         root = node.name == tag_name
       end
-
-      # if any namespaces have been provied then we should capture those and then
-      # merge them with any namespaces found on the xml node and merge all that
-      # with any namespaces that have been registered on the object
-
-      namespaces = options[:namespaces] || {}
-      namespaces = namespaces.merge(xml.collect_namespaces) if xml.respond_to?(:collect_namespaces)
-      namespaces = namespaces.merge(@registered_namespaces)
 
       # if a namespace has been provided then set the current namespace to it
       # or set the default namespace to the one defined under 'xmlns'
@@ -337,52 +337,7 @@ module HappyMapper
       # perform the following to find the nodes for the given class
 
       nodes = options.fetch(:nodes) do
-        # when at the root use the xpath '/' otherwise use a more gready './/'
-        # unless an xpath has been specified, which should overwrite default
-        # and finally attach the current namespace if one has been defined
-        #
-
-        xpath  = (root ? '/' : './/')
-        xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
-        xpath += "#{namespace}:" if namespace
-
-        nodes = []
-
-        # when finding nodes, do it in this order:
-        # 1. specified tag if one has been provided
-        # 2. name of element
-        # 3. tag_name (derived from class name by default)
-
-        # If a tag has been provided we need to search for it.
-
-        if options.key?(:tag)
-          begin
-            nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
-          rescue StandardError
-            nil
-            # This exception takes place when the namespace is often not found
-            # and we should continue on with the empty array of nodes.
-          end
-        else
-
-          # This is the default case when no tag value is provided.
-          # First we use the name of the element `items` in `has_many items`
-          # Second we use the tag name which is the name of the class cleaned up
-
-          [options[:name], tag_name].compact.each do |xpath_ext|
-            begin
-              nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
-            rescue StandardError
-              break
-              # This exception takes place when the namespace is often not found
-              # and we should continue with the empty array of nodes or keep looking
-            end
-            break if nodes && !nodes.empty?
-          end
-
-        end
-
-        nodes
+        find_nodes_to_parse(options, namespace, tag_name, namespaces, node, root)
       end
 
       # Nothing matching found, we can go ahead and return
@@ -403,49 +358,7 @@ module HappyMapper
 
       nodes.each_slice(limit) do |slice|
         part = slice.map do |n|
-          # If an existing HappyMapper object is provided, update it with the
-          # values from the xml being parsed.  Otherwise, create a new object
-
-          obj = options[:update] ? options[:update] : new
-
-          attributes.each do |attr|
-            value = attr.from_xml_node(n, namespace, namespaces)
-            value = attr.default if value.nil?
-            obj.send("#{attr.method_name}=", value)
-          end
-
-          elements.each do |elem|
-            obj.send("#{elem.method_name}=", elem.from_xml_node(n, namespace, namespaces))
-          end
-
-          if (defined? @content) && @content
-            obj.send("#{@content.method_name}=", @content.from_xml_node(n, namespace, namespaces))
-          end
-
-          # If the HappyMapper class has the method #xml_value=,
-          # attr_writer :xml_value, or attr_accessor :xml_value then we want to
-          # assign the current xml that we just parsed to the xml_value
-
-          if obj.respond_to?('xml_value=')
-            obj.xml_value = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
-          end
-
-          # If the HappyMapper class has the method #xml_content=,
-          # attr_write :xml_content, or attr_accessor :xml_content then we want to
-          # assign the child xml that we just parsed to the xml_content
-
-          if obj.respond_to?('xml_content=')
-            n = n.children if n.respond_to?(:children)
-            obj.xml_content = n.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
-          end
-
-          # Call any registered after_parse callbacks for the object's class
-
-          obj.class.after_parse_callbacks.each { |callback| callback.call(obj) }
-
-          # collect the object that we have created
-
-          obj
+          parse_node(n, options, namespace, namespaces)
         end
 
         # If a block has been provided and the user has requested that the objects
@@ -459,9 +372,6 @@ module HappyMapper
         end
       end
 
-      # per http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000354
-      nodes = nil
-
       # If the :single option has been specified or we are at the root element
       # then we are going to return the first item in the collection. Otherwise
       # the return response is going to be an entire array of items.
@@ -471,6 +381,99 @@ module HappyMapper
       else
         collection
       end
+    end
+
+    # @private
+    def defined_content
+      @content if defined? @content
+    end
+
+    private
+
+    def find_nodes_to_parse(options, namespace, tag_name, namespaces, node, root)
+      # when at the root use the xpath '/' otherwise use a more gready './/'
+      # unless an xpath has been specified, which should overwrite default
+      # and finally attach the current namespace if one has been defined
+      #
+
+      xpath  = (root ? '/' : './/')
+      xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
+      if namespace
+        return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
+        xpath += "#{namespace}:"
+      end
+
+      nodes = []
+
+      # when finding nodes, do it in this order:
+      # 1. specified tag if one has been provided
+      # 2. name of element
+      # 3. tag_name (derived from class name by default)
+
+      # If a tag has been provided we need to search for it.
+
+      if options.key?(:tag)
+        nodes = node.xpath(xpath + options[:tag].to_s, namespaces)
+      else
+
+        # This is the default case when no tag value is provided.
+        # First we use the name of the element `items` in `has_many items`
+        # Second we use the tag name which is the name of the class cleaned up
+
+        [options[:name], tag_name].compact.each do |xpath_ext|
+          nodes = node.xpath(xpath + xpath_ext.to_s, namespaces)
+          break if nodes && !nodes.empty?
+        end
+
+      end
+
+      nodes
+    end
+
+    def parse_node(node, options, namespace, namespaces)
+      # If an existing HappyMapper object is provided, update it with the
+      # values from the xml being parsed.  Otherwise, create a new object
+
+      obj = options[:update] ? options[:update] : new
+
+      attributes.each do |attr|
+        value = attr.from_xml_node(node, namespace, namespaces)
+        value = attr.default if value.nil?
+        obj.send("#{attr.method_name}=", value)
+      end
+
+      elements.each do |elem|
+        obj.send("#{elem.method_name}=", elem.from_xml_node(node, namespace, namespaces))
+      end
+
+      if (content = defined_content)
+        obj.send("#{content.method_name}=", content.from_xml_node(node, namespace, namespaces))
+      end
+
+      # If the HappyMapper class has the method #xml_value=,
+      # attr_writer :xml_value, or attr_accessor :xml_value then we want to
+      # assign the current xml that we just parsed to the xml_value
+
+      if obj.respond_to?('xml_value=')
+        obj.xml_value = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      end
+
+      # If the HappyMapper class has the method #xml_content=,
+      # attr_write :xml_content, or attr_accessor :xml_content then we want to
+      # assign the child xml that we just parsed to the xml_content
+
+      if obj.respond_to?('xml_content=')
+        node = node.children if node.respond_to?(:children)
+        obj.xml_content = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      end
+
+      # Call any registered after_parse callbacks for the object's class
+
+      obj.class.after_parse_callbacks.each { |callback| callback.call(obj) }
+
+      # collect the object that we have created
+
+      obj
     end
   end
 
@@ -511,6 +514,7 @@ module HappyMapper
     #
     # If to_xml has been called without a passed in builder instance that
     # means we are going to return xml output. When it has been called with
+
     # a builder instance that means we most likely being called recursively
     # and will return the end product as a builder instance.
     #
@@ -519,51 +523,15 @@ module HappyMapper
       builder = Nokogiri::XML::Builder.new
     end
 
+    attributes = collect_writable_attributes
+
     #
-    # Find the attributes for the class and collect them into an array
-    # that will be placed into a Hash structure
+    # If the object we are serializing has a namespace declaration we will want
+    # to use that namespace or we will use the default namespace.
+    # When neither are specifed we are simply using whatever is default to the
+    # builder
     #
-    attributes = self.class.attributes.collect do |attribute|
-      #
-      # If an attribute is marked as read_only then we want to ignore the attribute
-      # when it comes to saving the xml document; so we wiill not go into any of
-      # the below process
-      #
-      if attribute.options[:read_only]
-        []
-      else
-
-        value = send(attribute.method_name)
-        value = nil if value == attribute.default
-
-        #
-        # If the attribute defines an on_save lambda/proc or value that maps to
-        # a method that the class has defined, then call it with the value as a
-        # parameter.
-        #
-        if (on_save_action = attribute.options[:on_save])
-          if on_save_action.is_a?(Proc)
-            value = on_save_action.call(value)
-          elsif respond_to?(on_save_action)
-            value = send(on_save_action, value)
-          end
-        end
-
-        #
-        # Attributes that have a nil value should be ignored unless they explicitly
-        # state that they should be expressed in the output.
-        #
-        if not value.nil? || attribute.options[:state_when_nil]
-          attribute_namespace = attribute.options[:namespace]
-          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
-        else
-          []
-        end
-
-      end
-    end.flatten
-
-    attributes = Hash[*attributes]
+    namespace_name = namespace_override || self.class.namespace || default_namespace
 
     #
     # Create a tag in the builder that matches the class's tag name unless a tag was passed
@@ -571,59 +539,24 @@ module HappyMapper
     # any attributes to the element that were defined above.
     #
     builder.send("#{tag_from_parent || self.class.tag_name}_", attributes) do |xml|
-      #
-      # Add all the registered namespaces to the root element.
-      # When this is called recurisvely by composed classes the namespaces
-      # are still added to the root element
-      #
-      # However, we do not want to add the namespace if the namespace is 'xmlns'
-      # which means that it is the default namesapce of the code.
-      #
-      if self.class.instance_variable_get('@registered_namespaces') && builder.doc.root
-        self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
-          name = nil if name == 'xmlns'
-          builder.doc.root.add_namespace(name, href)
-        end
-      end
-
-      #
-      # If the object we are serializing has a namespace declaration we will want
-      # to use that namespace or we will use the default namespace.
-      # When neither are specifed we are simply using whatever is default to the
-      # builder
-      #
-      namespace_for_parent = namespace_override
-      if self.class.respond_to?(:namespace) && self.class.namespace
-        namespace_for_parent ||= self.class.namespace
-      end
-      namespace_for_parent ||= default_namespace
+      register_namespaces_with_builder(builder)
 
       xml.parent.namespace =
-        builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_for_parent }
+        builder.doc.root.namespace_definitions.find { |x| x.prefix == namespace_name }
 
       #
       # When a content has been defined we add the resulting value
       # the output xml
       #
-      if self.class.instance_variable_defined?('@content')
-        if (content = self.class.instance_variable_get('@content'))
+      if (content = self.class.defined_content)
 
-          unless content.options[:read_only]
-            text_accessor = content.tag || content.name
-            value = send(text_accessor)
+        unless content.options[:read_only]
+          value = send(content.name)
+          value = apply_on_save_action(content, value)
 
-            if (on_save_action = content.options[:on_save])
-              if on_save_action.is_a?(Proc)
-                value = on_save_action.call(value)
-              elsif respond_to?(on_save_action)
-                value = send(on_save_action, value)
-              end
-            end
-
-            builder.text(value)
-          end
-
+          builder.text(value)
         end
+
       end
 
       #
@@ -631,86 +564,7 @@ module HappyMapper
       # going to persist each one
       #
       self.class.elements.each do |element|
-        #
-        # If an element is marked as read only do not consider at all when
-        # saving to XML.
-        #
-        next if element.options[:read_only]
-
-        tag = element.tag || element.name
-
-        #
-        # The value to store is the result of the method call to the element,
-        # by default this is simply utilizing the attr_accessor defined. However,
-        # this allows for this method to be overridden
-        #
-        value = send(element.name)
-
-        #
-        # If the element defines an on_save lambda/proc then we will call that
-        # operation on the specified value. This allows for operations to be
-        # performed to convert the value to a specific value to be saved to the xml.
-        #
-        if (on_save_action = element.options[:on_save])
-          if on_save_action.is_a?(Proc)
-            value = on_save_action.call(value)
-          elsif respond_to?(on_save_action)
-            value = send(on_save_action, value)
-          end
-        end
-
-        #
-        # Normally a nil value would be ignored, however if specified then
-        # an empty element will be written to the xml
-        #
-        xml.send("#{tag}_", '') if value.nil? && element.options[:single] && element.options[:state_when_nil]
-
-        #
-        # To allow for us to treat both groups of items and singular items
-        # equally we wrap the value and treat it as an array.
-        #
-        values = if value.nil?
-                   []
-                 elsif value.respond_to?(:to_ary) && !element.options[:single]
-                   value.to_ary
-                 else
-                   [value]
-                 end
-
-        values.each do |item|
-          if item.is_a?(HappyMapper)
-
-            #
-            # Other items are convertable to xml through the xml builder
-            # process should have their contents retrieved and attached
-            # to the builder structure
-            #
-            item.to_xml(xml, self.class.namespace || default_namespace,
-                        element.options[:namespace],
-                        element.options[:tag] || nil)
-
-          elsif !item.nil?
-
-            item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
-
-            #
-            # When a value exists we should append the value for the tag
-            #
-            if item_namespace
-              xml[item_namespace].send("#{tag}_", item.to_s)
-            else
-              xml.send("#{tag}_", item.to_s)
-            end
-
-          elsif element.options[:state_when_nil]
-
-            #
-            # Normally a nil value would be ignored, however if specified then
-            # an empty element will be written to the xml
-            #
-            xml.send("#{tag}_", '')
-          end
-        end
+        element_to_xml(element, xml, default_namespace)
       end
     end
 
@@ -739,6 +593,152 @@ module HappyMapper
         include HappyMapper
         tag name
         instance_eval(&blk)
+      end
+    end
+  end
+
+  private
+
+  #
+  # If the item defines an on_save lambda/proc or value that maps to a method
+  # that the class has defined, then call it with the value as a parameter.
+  # This allows for operations to be performed to convert the value to a
+  # specific value to be saved to the xml.
+  #
+  def apply_on_save_action(item, value)
+    if (on_save_action = item.options[:on_save])
+      if on_save_action.is_a?(Proc)
+        value = on_save_action.call(value)
+      elsif respond_to?(on_save_action)
+        value = send(on_save_action, value)
+      end
+    end
+    value
+  end
+
+  #
+  # Find the attributes for the class and collect them into a Hash structure
+  #
+  def collect_writable_attributes
+    #
+    # Find the attributes for the class and collect them into an array
+    # that will be placed into a Hash structure
+    #
+    attributes = self.class.attributes.collect do |attribute|
+      #
+      # If an attribute is marked as read_only then we want to ignore the attribute
+      # when it comes to saving the xml document; so we will not go into any of
+      # the below process
+      #
+      if attribute.options[:read_only]
+        []
+      else
+
+        value = send(attribute.method_name)
+        value = nil if value == attribute.default
+
+        #
+        # Apply any on_save lambda/proc or value defined on the attribute.
+        #
+        value = apply_on_save_action(attribute, value)
+
+        #
+        # Attributes that have a nil value should be ignored unless they explicitly
+        # state that they should be expressed in the output.
+        #
+        if not value.nil? || attribute.options[:state_when_nil]
+          attribute_namespace = attribute.options[:namespace]
+          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
+        else
+          []
+        end
+
+      end
+    end.flatten
+
+    Hash[*attributes]
+  end
+
+  #
+  # Add all the registered namespaces to the builder's root element.
+  # When this is called recursively by composed classes the namespaces
+  # are still added to the root element
+  #
+  # However, we do not want to add the namespace if the namespace is 'xmlns'
+  # which means that it is the default namespace of the code.
+  #
+  def register_namespaces_with_builder(builder)
+    return unless self.class.instance_variable_get('@registered_namespaces')
+    self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
+      name = nil if name == 'xmlns'
+      builder.doc.root.add_namespace(name, href)
+    end
+  end
+
+  # Persist a single nested element as xml
+  def element_to_xml(element, xml, default_namespace)
+    #
+    # If an element is marked as read only do not consider at all when
+    # saving to XML.
+    #
+    return if element.options[:read_only]
+
+    tag = element.tag || element.name
+
+    #
+    # The value to store is the result of the method call to the element,
+    # by default this is simply utilizing the attr_accessor defined. However,
+    # this allows for this method to be overridden
+    #
+    value = send(element.name)
+
+    #
+    # Apply any on_save action defined on the element.
+    #
+    value = apply_on_save_action(element, value)
+
+    #
+    # To allow for us to treat both groups of items and singular items
+    # equally we wrap the value and treat it as an array.
+    #
+    values = if value.respond_to?(:to_ary) && !element.options[:single]
+               value.to_ary
+             else
+               [value]
+             end
+
+    values.each do |item|
+      if item.is_a?(HappyMapper)
+
+        #
+        # Other items are convertable to xml through the xml builder
+        # process should have their contents retrieved and attached
+        # to the builder structure
+        #
+        item.to_xml(xml, self.class.namespace || default_namespace,
+                    element.options[:namespace],
+                    element.options[:tag] || nil)
+
+      elsif !item.nil?
+
+        item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
+
+        #
+        # When a value exists we should append the value for the tag
+        #
+        if item_namespace
+          xml[item_namespace].send("#{tag}_", item.to_s)
+        else
+          xml.send("#{tag}_", item.to_s)
+        end
+
+      elsif element.options[:state_when_nil]
+
+        #
+        # Normally a nil value would be ignored, however if specified then
+        # an empty element will be written to the xml
+        #
+        xml.send("#{tag}_", '')
       end
     end
   end

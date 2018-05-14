@@ -125,6 +125,10 @@ describe 'Saving #to_xml', 'with xml namespaces' do
       Nokogiri::XML(address.to_xml).root
     end
 
+    it 'sets the namespace specified in the class' do
+      expect(subject.xpath('/').children.first.namespace.prefix).to eq 'address'
+    end
+
     it 'saves elements' do
       elements = { 'street' => 'Mockingbird Lane', 'postcode' => '98103', 'city' => 'Seattle' }
 
