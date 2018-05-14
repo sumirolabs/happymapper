@@ -291,6 +291,11 @@ module HappyMapper
       # create a local copy of the objects namespace value for this parse execution
       namespace = (@namespace if defined? @namespace)
 
+      # Capture any provided namespaces and merge in any namespaces that have
+      # been registered on the object.
+      namespaces = options[:namespaces] || {}
+      namespaces = namespaces.merge(@registered_namespaces)
+
       # If the XML specified is an Node then we have what we need.
       if xml.is_a?(Nokogiri::XML::Node) && !xml.is_a?(Nokogiri::XML::Document)
         node = xml
@@ -308,20 +313,15 @@ module HappyMapper
         # Now xml is certainly an XML document: Select the root node of the document
         node = xml.root
 
+        # merge any namespaces found on the xml node into the namespace hash
+        namespaces = namespaces.merge(xml.collect_namespaces)
+
         # if the node name is equal to the tag name then the we are parsing the
         # root element and that is important to record so that we can apply
         # the correct xpath on the elements of this document.
 
         root = node.name == tag_name
       end
-
-      # if any namespaces have been provied then we should capture those and then
-      # merge them with any namespaces found on the xml node and merge all that
-      # with any namespaces that have been registered on the object
-
-      namespaces = options[:namespaces] || {}
-      namespaces = namespaces.merge(xml.collect_namespaces) if xml.respond_to?(:collect_namespaces)
-      namespaces = namespaces.merge(@registered_namespaces)
 
       # if a namespace has been provided then set the current namespace to it
       # or set the default namespace to the one defined under 'xmlns'
