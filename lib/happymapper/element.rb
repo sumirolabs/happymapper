@@ -23,7 +23,7 @@ module HappyMapper
           value
         end
       else
-        target_path = options[:xpath] ? options[:xpath] : xpath(namespace)
+        target_path = options[:xpath] || xpath(namespace)
         node.xpath(target_path, xpath_options).collect do |item|
           value = yield(item)
           handle_attributes_option(item, value, xpath_options)

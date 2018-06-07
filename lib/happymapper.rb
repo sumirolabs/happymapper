@@ -434,7 +434,7 @@ module HappyMapper
       # If an existing HappyMapper object is provided, update it with the
       # values from the xml being parsed.  Otherwise, create a new object
 
-      obj = options[:update] ? options[:update] : new
+      obj = options[:update] || new
 
       attributes.each do |attr|
         value = attr.from_xml_node(node, namespace, namespaces)
