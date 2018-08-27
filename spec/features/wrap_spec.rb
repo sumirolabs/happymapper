@@ -42,7 +42,7 @@ describe 'wrap which allows you to specify a wrapper element' do
     context 'when initialized without XML' do
       let(:subject) { Wrap::Root.new }
 
-      it 'anonymous classes are created so nil class values does not occur' do
+      it 'creates anonymous classes so nil class values do not occur' do
         expect { subject.description = 'anything' }.not_to raise_error
       end
     end
