@@ -12,59 +12,59 @@ describe HappyMapper::Item do
       @item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
     end
 
-    it 'should accept a name' do
+    it 'accepts a name' do
       expect(@item.name).to eq('foo')
     end
 
-    it 'should accept a type' do
+    it 'accepts a type' do
       expect(@item.type).to eq(String)
     end
 
-    it 'should accept :tag as an option' do
+    it 'accepts :tag as an option' do
       expect(@item.tag).to eq('foobar')
     end
 
-    it 'should have a method_name' do
+    it 'has a method_name' do
       expect(@item.method_name).to eq('foo')
     end
   end
 
   describe '#constant' do
-    it 'should just use type if constant' do
+    it 'justs use type if constant' do
       item = HappyMapper::Item.new(:foo, String)
       expect(item.constant).to eq(String)
     end
 
-    it 'should convert string type to constant' do
+    it 'converts string type to constant' do
       item = HappyMapper::Item.new(:foo, 'String')
       expect(item.constant).to eq(String)
     end
 
-    it 'should convert string with :: to constant' do
+    it 'converts string with :: to constant' do
       item = HappyMapper::Item.new(:foo, 'Foo::Bar')
       expect(item.constant).to eq(Foo::Bar)
     end
   end
 
   describe '#method_name' do
-    it 'should convert dashes to underscores' do
+    it 'converts dashes to underscores' do
       item = HappyMapper::Item.new(:'foo-bar', String, tag: 'foobar')
       expect(item.method_name).to eq('foo_bar')
     end
   end
 
   describe '#xpath' do
-    it 'should default to tag' do
+    it 'defaults to tag' do
       item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
       expect(item.xpath).to eq('foobar')
     end
 
-    it 'should prepend with .// if options[:deep] true' do
+    it 'prepends with .// if options[:deep] true' do
       item = HappyMapper::Item.new(:foo, String, tag: 'foobar', deep: true)
       expect(item.xpath).to eq('.//foobar')
     end
 
-    it 'should prepend namespace if namespace exists' do
+    it 'prepends namespace if namespace exists' do
       item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
       item.namespace = 'v2'
       expect(item.xpath).to eq('v2:foobar')
@@ -72,43 +72,43 @@ describe HappyMapper::Item do
   end
 
   describe 'typecasting' do
-    it 'should work with Strings' do
+    it 'works with Strings' do
       item = HappyMapper::Item.new(:foo, String)
       [21, '21'].each do |a|
         expect(item.typecast(a)).to eq('21')
       end
     end
 
-    it 'should work with Integers' do
+    it 'works with Integers' do
       item = HappyMapper::Item.new(:foo, Integer)
       [21, 21.0, '21'].each do |a|
         expect(item.typecast(a)).to eq(21)
       end
     end
 
-    it 'should work with Floats' do
+    it 'works with Floats' do
       item = HappyMapper::Item.new(:foo, Float)
       [21, 21.0, '21'].each do |a|
         expect(item.typecast(a)).to eq(21.0)
       end
     end
 
-    it 'should work with Times' do
+    it 'works with Times' do
       item = HappyMapper::Item.new(:foo, Time)
       expect(item.typecast('2000-01-01 01:01:01.123456')).to eq(Time.local(2000, 1, 1, 1, 1, 1, 123456))
     end
 
-    it 'should work with Dates' do
+    it 'works with Dates' do
       item = HappyMapper::Item.new(:foo, Date)
       expect(item.typecast('2000-01-01')).to eq(Date.new(2000, 1, 1))
     end
 
-    it 'should handle nil Dates' do
+    it 'handles nil Dates' do
       item = HappyMapper::Item.new(:foo, Date)
       expect(item.typecast(nil)).to eq(nil)
     end
 
-    it 'should handle empty string Dates' do
+    it 'handles empty string Dates' do
       item = HappyMapper::Item.new(:foo, Date)
       expect(item.typecast('')).to eq(nil)
     end
@@ -136,7 +136,7 @@ describe HappyMapper::Item do
       end
     end
 
-    it 'should work with Boolean' do
+    it 'works with Boolean' do
       item = HappyMapper::Item.new(:foo, HappyMapper::Boolean)
       expect(item.typecast('false')).to eq(false)
     end

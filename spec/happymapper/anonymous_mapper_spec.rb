@@ -7,23 +7,23 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'on a single root node' do
       subject { anonymous_mapper.parse fixture_file('address.xml') }
 
-      it 'should parse child elements' do
+      it 'parses child elements' do
         expect(subject.street).to eq('Milchstrasse')
         expect(subject.housenumber).to eq('23')
         expect(subject.postcode).to eq('26131')
         expect(subject.city).to eq('Oldenburg')
       end
 
-      it 'should not create a content entry when the xml contents no text content' do
+      it 'does not create a content entry when the xml contents no text content' do
         expect(subject).not_to respond_to :content
       end
 
       context 'child elements with attributes' do
-        it 'should parse the attributes' do
+        it 'parses the attributes' do
           expect(subject.country.code).to eq('de')
         end
 
-        it 'should parse the content' do
+        it 'parses the content' do
           expect(subject.country.content).to eq('Germany')
         end
       end
@@ -32,7 +32,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'element names with special characters' do
       subject { anonymous_mapper.parse fixture_file('ambigous_items.xml') }
 
-      it 'should create accessor methods with similar names' do
+      it 'creates accessor methods with similar names' do
         expect(subject.my_items.item).to be_kind_of Array
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'several elements nested deep' do
       subject { anonymous_mapper.parse fixture_file('ambigous_items.xml') }
 
-      it 'should parse the entire relationship' do
+      it 'parses the entire relationship' do
         expect(subject.my_items.item.first.item.name).to eq('My first internal item')
       end
     end
@@ -69,7 +69,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'xml that contains multiple entries' do
       subject { anonymous_mapper.parse fixture_file('multiple_primitives.xml') }
 
-      it "should parse the elements as it would a 'has_many'" do
+      it "parses the elements as it would a 'has_many'" do
         expect(subject.name).to eq('value')
         expect(subject.image).to eq(%w(image1 image2))
       end
@@ -78,7 +78,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'xml with multiple namespaces' do
       subject { anonymous_mapper.parse fixture_file('subclass_namespace.xml') }
 
-      it 'should parse the elements an values correctly' do
+      it 'parses the elements an values correctly' do
         expect(subject.title).to eq('article title')
       end
 

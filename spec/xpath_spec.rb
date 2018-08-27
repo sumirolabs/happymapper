@@ -50,41 +50,41 @@ describe 'Specifying elements and attributes with an xpath' do
     )
   end
 
-  it 'should have a title' do
+  it 'has a title' do
     expect(subject.title).to eq 'Test XML'
   end
 
-  it 'should find the link href value' do
+  it 'finds the link href value' do
     expect(subject.link).to eq 'link_to_resources'
   end
 
-  it 'should find the link href value' do
+  it 'finds the link href value' do
     expect(subject.different_link).to eq 'different_link'
   end
 
-  it 'should find this subitem based on the xpath' do
+  it 'finds this subitem based on the xpath' do
     expect(subject.detail).to eq 'I want to parse this'
   end
 
-  it 'should find the subitems based on the xpath' do
+  it 'finds the subitems based on the xpath' do
     expect(subject.more_details_text.size).to eq(2)
     expect(subject.more_details_text.first).to eq 'more 1'
     expect(subject.more_details_text.last).to eq 'more 2'
   end
 
-  it 'should find the subitems based on the xpath' do
+  it 'finds the subitems based on the xpath' do
     expect(subject.more_details.size).to eq(2)
     expect(subject.more_details.first).to eq 'this one'
     expect(subject.more_details.last).to eq 'another one'
   end
 
-  it 'should find the subitems based on the xpath' do
+  it 'finds the subitems based on the xpath' do
     expect(subject.more_details_alternative.size).to eq(2)
     expect(subject.more_details_alternative.first).to eq 'this one'
     expect(subject.more_details_alternative.last).to eq 'another one'
   end
 
-  it 'should have a baby name' do
+  it 'has a baby name' do
     expect(subject.baby.name).to eq 'Jumbo'
   end
 end

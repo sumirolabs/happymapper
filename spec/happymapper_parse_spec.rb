@@ -16,7 +16,7 @@ describe HappyMapper do
         AfterParseSpec::Address.after_parse_callbacks.clear
       end
 
-      it 'should callback with the newly created object' do
+      it 'callbacks with the newly created object' do
         from_cb = nil
         called = false
         cb1 = proc { |object| from_cb = object }
