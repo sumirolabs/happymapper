@@ -111,5 +111,28 @@ RSpec.describe HappyMapper::AnonymousMapper do
         expect(result.bar).to eq 'Hello'
       end
     end
+
+    context 'when parsing xml that uses the same tag for string and other elements' do
+      let(:xml) do
+        <<~XML
+          <foo>
+            <bar>
+              <baz>Hello</baz>
+            </bar>
+            <baz>
+              <qux>Hi</qux>
+            </baz>
+          </foo>
+        XML
+      end
+      let(:result) { anonymous_mapper.parse xml }
+
+      it 'parses both occurences of the tag correctly' do
+        aggregate_failures do
+          expect(result.bar.baz).to eq 'Hello'
+          expect(result.baz.qux).to eq 'Hi'
+        end
+      end
+    end
   end
 end
