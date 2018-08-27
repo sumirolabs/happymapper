@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'rake'
+require 'rake/clean'
+require 'bundler/gem_tasks'
+
 require 'rspec/core/rake_task'
 
 task default: :spec
