@@ -774,7 +774,7 @@ describe HappyMapper do
   end
 
   it 'parses xml with optional elements with embedded attributes' do
-    expect { CurrentWeather.parse(fixture_file('current_weather_missing_elements.xml')) }.to_not raise_error
+    expect { CurrentWeather.parse(fixture_file('current_weather_missing_elements.xml')) }.not_to raise_error
   end
 
   it 'returns nil rather than empty array for absent values when :single => true' do
@@ -1095,7 +1095,7 @@ describe HappyMapper do
     end
 
     it 'parses according to @nokogiri_config_callback' do
-      expect { custom.parse(fixture_file('set_config_options.xml')) }.to_not raise_error
+      expect { custom.parse(fixture_file('set_config_options.xml')) }.not_to raise_error
     end
 
     it 'can clear @nokogiri_config_callback' do

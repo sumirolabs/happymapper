@@ -43,7 +43,7 @@ describe 'wrap which allows you to specify a wrapper element' do
       let(:subject) { Wrap::Root.new }
 
       it 'anonymous classes are created so nil class values does not occur' do
-        expect { subject.description = 'anything' }.to_not raise_error
+        expect { subject.description = 'anything' }.not_to raise_error
       end
     end
   end

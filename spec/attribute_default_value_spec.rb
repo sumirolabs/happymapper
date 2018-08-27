@@ -34,7 +34,7 @@ describe 'Attribute Default Value' do
         meal = subject.parse('<meal />')
         meal.type = 'vegan'
 
-        expect(meal.type).to_not eq default_meal_type
+        expect(meal.type).not_to eq default_meal_type
       end
 
       let(:expected_xml) { %(<?xml version="1.0"?>\n<meal type="kosher"/>\n) }
