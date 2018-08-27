@@ -39,6 +39,8 @@ class CatalogNode
 end
 
 describe HappyMapper do
+  let(:catalog_tree) { CatalogTree.parse(fixture_file('inagy.xml'), single: true) }
+
   it 'is not nil' do
     expect(catalog_tree).not_to be_nil
   end
@@ -78,14 +80,5 @@ describe HappyMapper do
     def first_node
       @first_node = catalog_tree.nodes.first
     end
-  end
-
-  def catalog_tree
-    @catalog_tree
-  end
-
-  before(:all) do
-    xml_reference = "#{File.dirname(__FILE__)}/fixtures/inagy.xml"
-    @catalog_tree = CatalogTree.parse(File.read(xml_reference), single: true)
   end
 end
