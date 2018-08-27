@@ -551,8 +551,8 @@ end
 
 describe HappyMapper do
   describe 'being included into another class' do
-    before do
-      @klass = Class.new do
+    let(:klass) do
+      Class.new do
         include HappyMapper
 
         def self.name
@@ -562,65 +562,65 @@ describe HappyMapper do
     end
 
     it 'sets attributes to an array' do
-      expect(@klass.attributes).to eq([])
+      expect(klass.attributes).to eq([])
     end
 
     it 'sets @elements to a hash' do
-      expect(@klass.elements).to eq([])
+      expect(klass.elements).to eq([])
     end
 
     it 'allows adding an attribute' do
       expect do
-        @klass.attribute :name, String
-      end.to change(@klass, :attributes)
+        klass.attribute :name, String
+      end.to change(klass, :attributes)
     end
 
     it 'allows adding an attribute containing a dash' do
       expect do
-        @klass.attribute :'bar-baz', String
-      end.to change(@klass, :attributes)
+        klass.attribute :'bar-baz', String
+      end.to change(klass, :attributes)
     end
 
     it 'is able to get all attributes in array' do
-      @klass.attribute :name, String
-      expect(@klass.attributes.size).to eq(1)
+      klass.attribute :name, String
+      expect(klass.attributes.size).to eq(1)
     end
 
     it 'allows adding an element' do
       expect do
-        @klass.element :name, String
-      end.to change(@klass, :elements)
+        klass.element :name, String
+      end.to change(klass, :elements)
     end
 
     it 'allows adding an element containing a dash' do
       expect do
-        @klass.element :'bar-baz', String
-      end.to change(@klass, :elements)
+        klass.element :'bar-baz', String
+      end.to change(klass, :elements)
     end
 
     it 'is able to get all elements in array' do
-      @klass.element(:name, String)
-      expect(@klass.elements.size).to eq(1)
+      klass.element(:name, String)
+      expect(klass.elements.size).to eq(1)
     end
 
     it 'allows has one association' do
-      @klass.has_one(:user, User)
-      element = @klass.elements.first
+      klass.has_one(:user, User)
+      element = klass.elements.first
       expect(element.name).to eq('user')
       expect(element.type).to eq(User)
       expect(element.options[:single]).to eq(true)
     end
 
     it 'allows has many association' do
-      @klass.has_many(:users, User)
-      element = @klass.elements.first
+      klass.has_many(:users, User)
+      element = klass.elements.first
       expect(element.name).to eq('users')
       expect(element.type).to eq(User)
       expect(element.options[:single]).to eq(false)
     end
 
     it 'defaults tag name to lowercase class' do
-      expect(@klass.tag_name).to eq('boo')
+      expect(klass.tag_name).to eq('boo')
     end
 
     it 'generates no tag name for anonymous class' do
@@ -634,17 +634,17 @@ describe HappyMapper do
     end
 
     it 'allows setting tag name' do
-      @klass.tag('FooBar')
-      expect(@klass.tag_name).to eq('FooBar')
+      klass.tag('FooBar')
+      expect(klass.tag_name).to eq('FooBar')
     end
 
     it 'allows setting a namespace' do
-      @klass.namespace(namespace = 'boo')
-      expect(@klass.namespace).to eq(namespace)
+      klass.namespace(namespace = 'boo')
+      expect(klass.namespace).to eq(namespace)
     end
 
     it 'provides #parse' do
-      expect(@klass).to respond_to(:parse)
+      expect(klass).to respond_to(:parse)
     end
   end
 
@@ -948,49 +948,43 @@ describe HappyMapper do
   end
 
   describe 'Parse optional attributes' do
+    let(:parsed_result) { OptionalAttribute.parse(fixture_file('optional_attributes.xml')) }
+
     it 'parses an empty String as empty' do
-      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
-      expect(a[0].street).to eq('')
+      expect(parsed_result[0].street).to eq('')
     end
 
     it 'parses a String with value' do
-      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
-      expect(a[1].street).to eq('Milchstrasse')
+      expect(parsed_result[1].street).to eq('Milchstrasse')
     end
 
-    it 'parses a String with value' do
-      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
-      expect(a[2].street).to be_nil
+    it 'parses an element with no value for the attribute' do
+      expect(parsed_result[2].street).to be_nil
     end
   end
 
   describe 'Default namespace combi' do
-    before do
-      file_contents = fixture_file('default_namespace_combi.xml')
-      @book = DefaultNamespaceCombi.parse(file_contents, single: true)
-    end
+    let(:file_contents) { fixture_file('default_namespace_combi.xml') }
+    let(:book) { DefaultNamespaceCombi.parse(file_contents, single: true) }
 
     it 'parses author' do
-      expect(@book.author).to eq('Frank Gilbreth')
+      expect(book.author).to eq('Frank Gilbreth')
     end
 
     it 'parses title' do
-      expect(@book.title).to eq('Cheaper by the Dozen')
+      expect(book.title).to eq('Cheaper by the Dozen')
     end
 
     it 'parses number' do
-      expect(@book.number).to eq('1568491379')
+      expect(book.number).to eq('1568491379')
     end
   end
 
   describe 'Xml Content' do
-    before do
-      file_contents = fixture_file('dictionary.xml')
-      @records = Dictionary::Record.parse(file_contents)
-    end
+    let(:records) { Dictionary::Record.parse fixture_file('dictionary.xml') }
 
     it 'parses XmlContent' do
-      expect(@records.first.definitions.first.text).
+      expect(records.first.definitions.first.text).
         to eq('a large common parrot, <bn>Cacatua galerita</bn>, predominantly' \
               ' white, with yellow on the undersides of wings and tail and a' \
               ' forward curving yellow crest, found in Australia, New Guinea' \
@@ -998,10 +992,10 @@ describe HappyMapper do
     end
 
     it "saves object's xml content" do
-      expect(@records.first.variants.first.xml_content).to eq(
+      expect(records.first.variants.first.xml_content).to eq(
         'white <tag>cockatoo</tag>'
       )
-      expect(@records.first.variants.last.to_html).to eq(
+      expect(records.first.variants.last.to_html).to eq(
         '<em>white</em> cockatoo'
       )
     end
@@ -1013,38 +1007,39 @@ describe HappyMapper do
   end
 
   context Article do
+    let(:article) { Article.parse(fixture_file('subclass_namespace.xml')) }
+
     it 'parses the publish options for Article and Photo' do
-      expect(@article.title).not_to be_nil
-      expect(@article.text).not_to be_nil
-      expect(@article.photos).not_to be_nil
-      expect(@article.photos.first.title).not_to be_nil
+      expect(article.title).not_to be_nil
+      expect(article.text).not_to be_nil
+      expect(article.photos).not_to be_nil
+      expect(article.photos.first.title).not_to be_nil
     end
 
     it 'parses the publish options for Article' do
-      expect(@article.publish_options).not_to be_nil
+      expect(article.publish_options).not_to be_nil
     end
 
     it 'parses the publish options for Photo' do
-      expect(@article.photos.first.publish_options).not_to be_nil
+      expect(article.photos.first.publish_options).not_to be_nil
     end
 
     it 'onlies find only items at the parent level' do
-      expect(@article.photos.length).to eq(1)
-    end
-
-    before(:all) do
-      @article = Article.parse(fixture_file('subclass_namespace.xml'))
+      expect(article.photos.length).to eq(1)
     end
   end
 
-  context 'Namespace is missing because an optional element that uses it is not present' do
+  describe 'Namespace is missing because an optional element that uses it is not present' do
     it 'parses successfully' do
-      @article = PartiallyBadArticle.parse(fixture_file('subclass_namespace.xml'))
-      expect(@article).not_to be_nil
-      expect(@article.title).not_to be_nil
-      expect(@article.text).not_to be_nil
-      expect(@article.photos).not_to be_nil
-      expect(@article.photos.first.title).not_to be_nil
+      article = PartiallyBadArticle.parse(fixture_file('subclass_namespace.xml'))
+
+      aggregate_failures do
+        expect(article).not_to be_nil
+        expect(article.title).not_to be_nil
+        expect(article.text).not_to be_nil
+        expect(article.photos).not_to be_nil
+        expect(article.photos.first.title).not_to be_nil
+      end
     end
   end
 
@@ -1105,7 +1100,7 @@ describe HappyMapper do
     end
   end
 
-  context 'xml_value' do
+  describe '#xml_value' do
     it 'does not reformat the xml' do
       xml = fixture_file('unformatted_address.xml')
       address = Address.parse(xml, single: true)
@@ -1115,7 +1110,7 @@ describe HappyMapper do
     end
   end
 
-  context 'xml_content' do
+  describe '#xml_content' do
     it 'does not reformat the xml' do
       xml = fixture_file('unformatted_address.xml')
       address = Address.parse(xml)
