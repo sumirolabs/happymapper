@@ -965,7 +965,7 @@ describe HappyMapper do
   end
 
   describe 'Default namespace combi' do
-    before(:each) do
+    before do
       file_contents = fixture_file('default_namespace_combi.xml')
       @book = DefaultNamespaceCombi.parse(file_contents, single: true)
     end
@@ -984,7 +984,7 @@ describe HappyMapper do
   end
 
   describe 'Xml Content' do
-    before(:each) do
+    before do
       file_contents = fixture_file('dictionary.xml')
       @records = Dictionary::Record.parse(file_contents)
     end
