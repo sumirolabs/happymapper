@@ -25,6 +25,10 @@ Naming/PredicateName:
     - 'has_many'
     - 'has_xml_content'
 
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/features/**/*_spec.rb'
+
 # Use older RuboCop default
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

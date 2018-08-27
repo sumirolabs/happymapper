@@ -27,7 +27,7 @@ describe 'Specifying elements and attributes with an xpath' do
     has_one :name, String
   end
 
-  let(:subject) { Item.parse(xml_string, single: true) }
+  let(:parsed_result) { Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
     %(
@@ -51,40 +51,34 @@ describe 'Specifying elements and attributes with an xpath' do
   end
 
   it 'has a title' do
-    expect(subject.title).to eq 'Test XML'
+    expect(parsed_result.title).to eq 'Test XML'
   end
 
   it 'finds the link href value' do
-    expect(subject.link).to eq 'link_to_resources'
+    expect(parsed_result.link).to eq 'link_to_resources'
   end
 
-  it 'finds the link href value' do
-    expect(subject.different_link).to eq 'different_link'
+  it 'finds the other link href value' do
+    expect(parsed_result.different_link).to eq 'different_link'
   end
 
   it 'finds this subitem based on the xpath' do
-    expect(subject.detail).to eq 'I want to parse this'
+    expect(parsed_result.detail).to eq 'I want to parse this'
   end
 
-  it 'finds the subitems based on the xpath' do
-    expect(subject.more_details_text.size).to eq(2)
-    expect(subject.more_details_text.first).to eq 'more 1'
-    expect(subject.more_details_text.last).to eq 'more 2'
+  it 'finds the subitem texts based on the xpath' do
+    expect(parsed_result.more_details_text).to eq ['more 1', 'more 2']
   end
 
-  it 'finds the subitems based on the xpath' do
-    expect(subject.more_details.size).to eq(2)
-    expect(subject.more_details.first).to eq 'this one'
-    expect(subject.more_details.last).to eq 'another one'
+  it 'finds the subitem attributes based on the xpath' do
+    expect(parsed_result.more_details).to eq ['this one', 'another one']
   end
 
-  it 'finds the subitems based on the xpath' do
-    expect(subject.more_details_alternative.size).to eq(2)
-    expect(subject.more_details_alternative.first).to eq 'this one'
-    expect(subject.more_details_alternative.last).to eq 'another one'
+  it 'finds the subitem attributes based on the xpath with a wildcard' do
+    expect(parsed_result.more_details_alternative).to eq ['this one', 'another one']
   end
 
   it 'has a baby name' do
-    expect(subject.baby.name).to eq 'Jumbo'
+    expect(parsed_result.baby.name).to eq 'Jumbo'
   end
 end
