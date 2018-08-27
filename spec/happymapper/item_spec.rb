@@ -9,112 +9,112 @@ end
 describe HappyMapper::Item do
   describe 'new instance' do
     before do
-      @item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
+      @item = described_class.new(:foo, String, tag: 'foobar')
     end
 
-    it 'should accept a name' do
+    it 'accepts a name' do
       expect(@item.name).to eq('foo')
     end
 
-    it 'should accept a type' do
+    it 'accepts a type' do
       expect(@item.type).to eq(String)
     end
 
-    it 'should accept :tag as an option' do
+    it 'accepts :tag as an option' do
       expect(@item.tag).to eq('foobar')
     end
 
-    it 'should have a method_name' do
+    it 'has a method_name' do
       expect(@item.method_name).to eq('foo')
     end
   end
 
   describe '#constant' do
-    it 'should just use type if constant' do
-      item = HappyMapper::Item.new(:foo, String)
+    it 'justs use type if constant' do
+      item = described_class.new(:foo, String)
       expect(item.constant).to eq(String)
     end
 
-    it 'should convert string type to constant' do
-      item = HappyMapper::Item.new(:foo, 'String')
+    it 'converts string type to constant' do
+      item = described_class.new(:foo, 'String')
       expect(item.constant).to eq(String)
     end
 
-    it 'should convert string with :: to constant' do
-      item = HappyMapper::Item.new(:foo, 'Foo::Bar')
+    it 'converts string with :: to constant' do
+      item = described_class.new(:foo, 'Foo::Bar')
       expect(item.constant).to eq(Foo::Bar)
     end
   end
 
   describe '#method_name' do
-    it 'should convert dashes to underscores' do
-      item = HappyMapper::Item.new(:'foo-bar', String, tag: 'foobar')
+    it 'converts dashes to underscores' do
+      item = described_class.new(:'foo-bar', String, tag: 'foobar')
       expect(item.method_name).to eq('foo_bar')
     end
   end
 
   describe '#xpath' do
-    it 'should default to tag' do
-      item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
+    it 'defaults to tag' do
+      item = described_class.new(:foo, String, tag: 'foobar')
       expect(item.xpath).to eq('foobar')
     end
 
-    it 'should prepend with .// if options[:deep] true' do
-      item = HappyMapper::Item.new(:foo, String, tag: 'foobar', deep: true)
+    it 'prepends with .// if options[:deep] true' do
+      item = described_class.new(:foo, String, tag: 'foobar', deep: true)
       expect(item.xpath).to eq('.//foobar')
     end
 
-    it 'should prepend namespace if namespace exists' do
-      item = HappyMapper::Item.new(:foo, String, tag: 'foobar')
+    it 'prepends namespace if namespace exists' do
+      item = described_class.new(:foo, String, tag: 'foobar')
       item.namespace = 'v2'
       expect(item.xpath).to eq('v2:foobar')
     end
   end
 
   describe 'typecasting' do
-    it 'should work with Strings' do
-      item = HappyMapper::Item.new(:foo, String)
+    it 'works with Strings' do
+      item = described_class.new(:foo, String)
       [21, '21'].each do |a|
         expect(item.typecast(a)).to eq('21')
       end
     end
 
-    it 'should work with Integers' do
-      item = HappyMapper::Item.new(:foo, Integer)
+    it 'works with Integers' do
+      item = described_class.new(:foo, Integer)
       [21, 21.0, '21'].each do |a|
         expect(item.typecast(a)).to eq(21)
       end
     end
 
-    it 'should work with Floats' do
-      item = HappyMapper::Item.new(:foo, Float)
+    it 'works with Floats' do
+      item = described_class.new(:foo, Float)
       [21, 21.0, '21'].each do |a|
         expect(item.typecast(a)).to eq(21.0)
       end
     end
 
-    it 'should work with Times' do
-      item = HappyMapper::Item.new(:foo, Time)
+    it 'works with Times' do
+      item = described_class.new(:foo, Time)
       expect(item.typecast('2000-01-01 01:01:01.123456')).to eq(Time.local(2000, 1, 1, 1, 1, 1, 123456))
     end
 
-    it 'should work with Dates' do
-      item = HappyMapper::Item.new(:foo, Date)
+    it 'works with Dates' do
+      item = described_class.new(:foo, Date)
       expect(item.typecast('2000-01-01')).to eq(Date.new(2000, 1, 1))
     end
 
-    it 'should handle nil Dates' do
-      item = HappyMapper::Item.new(:foo, Date)
+    it 'handles nil Dates' do
+      item = described_class.new(:foo, Date)
       expect(item.typecast(nil)).to eq(nil)
     end
 
-    it 'should handle empty string Dates' do
-      item = HappyMapper::Item.new(:foo, Date)
+    it 'handles empty string Dates' do
+      item = described_class.new(:foo, Date)
       expect(item.typecast('')).to eq(nil)
     end
 
     context 'with DateTime' do
-      let(:item) { HappyMapper::Item.new(:foo, DateTime) }
+      let(:item) { described_class.new(:foo, DateTime) }
 
       it 'works with a string' do
         result = item.typecast('2000-01-01 13:42:37')
@@ -136,8 +136,8 @@ describe HappyMapper::Item do
       end
     end
 
-    it 'should work with Boolean' do
-      item = HappyMapper::Item.new(:foo, HappyMapper::Boolean)
+    it 'works with Boolean' do
+      item = described_class.new(:foo, HappyMapper::Boolean)
       expect(item.typecast('false')).to eq(false)
     end
   end

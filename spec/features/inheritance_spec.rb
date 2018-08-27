@@ -79,7 +79,7 @@ describe 'Using inheritance to share elements and attributes' do
     end
 
     context 'when parsing xml' do
-      it 'should be possible to deserialize XML into a Child class instance' do
+      it 'is possible to deserialize XML into a Child class instance' do
         expect(subject.love).to eq 99
         expect(subject.genetics.dna).to eq 'ABBA'
         expect(subject.naivety).to eq 'trusting'

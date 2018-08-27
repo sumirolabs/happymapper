@@ -10,7 +10,9 @@ module HappyMapper
   class Boolean; end
   class XmlContent; end
 
-  extend AnonymousMapper
+  def self.parse(xml_content)
+    AnonymousMapper.new.parse(xml_content)
+  end
 
   def self.included(base)
     if base.superclass <= HappyMapper
