@@ -1,3 +1,8 @@
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.3
 
@@ -24,5 +29,3 @@ Naming/PredicateName:
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     '%w': ()
-
-inherit_from: .rubocop_todo.yml
