@@ -7,6 +7,11 @@ RSpec.describe HappyMapper::AnonymousMapper do
     context 'when parsing a single root node' do
       let(:parsed_result) { anonymous_mapper.parse fixture_file('address.xml') }
 
+      it 'creates the correct set of child elements on the element class' do
+        elements = parsed_result.class.elements
+        expect(elements.map(&:tag)).to eq %w(street housenumber postcode city country state)
+      end
+
       it 'parses child elements' do
         aggregate_failures do
           expect(parsed_result.street).to eq('Milchstrasse')

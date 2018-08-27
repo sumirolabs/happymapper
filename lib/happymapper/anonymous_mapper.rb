@@ -79,7 +79,10 @@ module HappyMapper
       # HappyMapper content attribute if the text happens to contain
       # some content.
 
-      class_instance.content :content, String if element.text? && (element.content.strip != '')
+      if element.text?
+        class_instance.content :content, String if element.content.strip != ''
+        return
+      end
 
       # When the element has children elements, that are not text
       # elements, then we want to recursively define a new HappyMapper
