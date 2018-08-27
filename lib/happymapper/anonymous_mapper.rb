@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module HappyMapper
-  module AnonymousMapper
+  class AnonymousMapper
     def parse(xml_content)
       # TODO: this should be able to handle all the types of functionality that parse is able
       #   to handle which includes the text, xml document, node, fragment, etc.
