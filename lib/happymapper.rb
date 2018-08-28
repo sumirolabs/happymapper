@@ -284,9 +284,10 @@ module HappyMapper
     #
     # @param [Nokogiri::XML::Node,Nokogiri:XML::Document,String] xml the XML
     #     contents to convert into Object.
-    # @param [Hash] options additional information for parsing. :single => true
-    #     if requesting a single object, otherwise it defaults to retuning an
-    #     array of multiple items. :xpath information where to start the parsing
+    # @param [Hash] options additional information for parsing.
+    #     :single => true if requesting a single object, otherwise it defaults
+    #     to retuning an array of multiple items.
+    #     :xpath information where to start the parsing
     #     :namespace is the namespace to use for additional information.
     #
     def parse(xml, options = {})
