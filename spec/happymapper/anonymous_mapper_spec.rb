@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
+
 RSpec.describe HappyMapper::AnonymousMapper do
   let(:anonymous_mapper) { described_class.new }
 
@@ -72,7 +74,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
       end
     end
 
-    context 'when parsing xml that contains multiple entries' do
+    context 'when parsing an that contains multiple elements with the same tag' do
       let(:parsed_result) { anonymous_mapper.parse fixture_file('multiple_primitives.xml') }
 
       it "parses the elements as it would a 'has_many'" do
@@ -95,7 +97,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
       end
     end
 
-    context 'with value elements with different namespace' do
+    context 'when parsing an element with a nested value element with a different namespace' do
       let(:xml) do
         <<~XML
           <a:foo xmlns:a="http://foo.org/a" xmlns:b="http://foo.org/b">
