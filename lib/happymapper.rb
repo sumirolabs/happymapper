@@ -400,7 +400,7 @@ module HappyMapper
       #
 
       xpath = if options[:xpath]
-                options[:xpath].to_s.sub(/([^\/])$/, '\1/')
+                options[:xpath].to_s.sub(%r{([^/])$}, '\1/')
               elsif root
                 '/'
               else
