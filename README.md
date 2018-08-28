@@ -41,13 +41,15 @@ Run Bundler to install the gem:
 Let's start with a simple example to get our feet wet. Here we have a simple
 example of XML that defines some address information:
 
-    <address>
-      <street>Milchstrasse</street>
-      <housenumber>23</housenumber>
-      <postcode>26131</postcode>
-      <city>Oldenburg</city>
-      <country code="de">Germany</country>
-    </address>
+```xml
+<address>
+  <street>Milchstrasse</street>
+  <housenumber>23</housenumber>
+  <postcode>26131</postcode>
+  <city>Oldenburg</city>
+  <country code="de">Germany</country>
+</address>
+```
 
 Happymapper provides support for simple, zero configuration parsing as well as
 the ability to model the XML content in classes.
@@ -168,14 +170,16 @@ will do that work for us inside of parse.
 What if our address XML was a little different, perhaps we allowed multiple
 streets:
 
-    <address>
-      <street>Milchstrasse</street>
-      <street>Another Street</street>
-      <housenumber>23</housenumber>
-      <postcode>26131</postcode>
-      <city>Oldenburg</city>
-      <country code="de">Germany</country>
-    </address>
+```xml
+<address>
+  <street>Milchstrasse</street>
+  <street>Another Street</street>
+  <housenumber>23</housenumber>
+  <postcode>26131</postcode>
+  <city>Oldenburg</city>
+  <country code="de">Germany</country>
+</address>
+```
 
 Similar to `element` or `has_one`, the declaration for when you have multiple
 elements you simply use:
@@ -222,14 +226,16 @@ the instance variable `@streets` if we ever need to the values as an array.
 
 ### Attribute Mapping
 
-    <address location='home'>
-      <street>Milchstrasse</street>
-      <street>Another Street</street>
-      <housenumber>23</housenumber>
-      <postcode>26131</postcode>
-      <city>Oldenburg</city>
-      <country code="de">Germany</country>
-    </address>
+```xml
+<address location='home'>
+  <street>Milchstrasse</street>
+  <street>Another Street</street>
+  <housenumber>23</housenumber>
+  <postcode>26131</postcode>
+  <city>Oldenburg</city>
+  <country code="de">Germany</country>
+</address>
+```
 
 Attributes are absolutely the same as `element` or `has_many`
 
@@ -242,13 +248,16 @@ of the attribute.
 
 #### Attributes On Empty Child Elements
 
-    <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
-      <id>tag:all-the-episodes.heroku.com,2005:/tv_shows</id>
-      <link rel="alternate" type="text/html" href="http://all-the-episodes.heroku.com"/>
-      <link rel="self" type="application/atom+xml" href="http://all-the-episodes.heroku.com/tv_shows.atom"/>
-      <title>TV Shows</title>
-      <updated>2011-07-10T06:52:27Z</updated>
-    </feed>
+```xml
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:all-the-episodes.heroku.com,2005:/tv_shows</id>
+  <link rel="alternate" type="text/html" href="http://all-the-episodes.heroku.com"/>
+  <link rel="self" type="application/atom+xml"
+        href="http://all-the-episodes.heroku.com/tv_shows.atom"/>
+  <title>TV Shows</title>
+  <updated>2011-07-10T06:52:27Z</updated>
+</feed>
+```
 
 In this case you would need to map an element to a new `Link` class just to
 access `<link>`s attributes, except that there is an alternate syntax. Instead
@@ -301,7 +310,8 @@ point we neglected it as we declared a `country` as being a `String`.
       <country code="de">Germany</country>
     </address>
 
-Well if we only going to parse country, on it's own, we would likely create a class mapping for it.
+Well if we only going to parse country, on it's own, we would likely create a
+class mapping for it.
 
 ```ruby
 class Country
@@ -318,7 +328,8 @@ We are utilizing an `attribute` declaration and a new declaration called `conten
 
 * `content` is used when you want the text contained within the element
 
-Awesome, now if we were to redeclare our `Address` class we would use our new `Country` class.
+Awesome, now if we were to redeclare our `Address` class we would use our new
+`Country` class.
 
 ```ruby
 class Address
@@ -361,19 +372,21 @@ are available when it comes time to parse you are golden.
 Getting to elements deep down within your XML can be a little more work if you
 did not have xpath support. Consider the following example:
 
-    <media>
-      <gallery>
-        <title href="htttp://fishlovers.org/friends">Friends Who Like Fish</title>
-        <picture>
-          <name>Burtie Sanchez</name>
-          <img>burtie01.png</img>
-        </picture>
-      </gallery>
-      <picture>
-        <name>Unsorted Photo</name>
-        <img>bestfriends.png</img>
-      </picture>
-    </media>
+```xml
+<media>
+  <gallery>
+    <title href="htttp://fishlovers.org/friends">Friends Who Like Fish</title>
+    <picture>
+      <name>Burtie Sanchez</name>
+      <img>burtie01.png</img>
+    </picture>
+  </gallery>
+  <picture>
+    <name>Unsorted Photo</name>
+    <img>bestfriends.png</img>
+  </picture>
+</media>
+```
 
 You may want to map the sub-elements contained buried in the 'gallery' as top
 level items in the media. Traditionally you could use class composition to
@@ -484,24 +497,25 @@ opportunity to do some surgery and define our happymapper elements as well as
 any other methods that may rely on those instance variables that come along in
 the package.
 
-
 ### Filtering with XPATH (non-greedy)
 
 I ran into a case where I wanted to capture all the pictures that were directly
 under media, but not the ones contained within a gallery.
 
-    <media>
-      <gallery>
-        <picture>
-          <name>Burtie Sanchez</name>
-          <img>burtie01.png</img>
-        </picture>
-      </gallery>
-      <picture>
-        <name>Unsorted Photo</name>
-        <img>bestfriends.png</img>
-      </picture>
-    </media>
+```xml
+<media>
+  <gallery>
+    <picture>
+      <name>Burtie Sanchez</name>
+      <img>burtie01.png</img>
+    </picture>
+  </gallery>
+  <picture>
+    <name>Unsorted Photo</name>
+    <img>bestfriends.png</img>
+  </picture>
+</media>
+```
 
 The following `Media` class is where I started:
 
@@ -537,7 +551,6 @@ has_many :pictures, Picture, tag: 'picture', xpath: '.'
 
 `.` states that we are only interested in pictures that can be found directly
 under the current node. So when we parse again we will have only our one element.
-
 
 ### Namespaces
 
@@ -588,15 +601,18 @@ declaration is important and that is when it has a different namespace than
 
 Imagine that our `country` actually belonged to a completely different namespace.
 
-    <prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
-    xmlns:different="http://www.trollcountry.com/different">
-      <prefix:street>Milchstrasse</prefix:street>
-      <prefix:street>Another Street</prefix:street>
-      <prefix:housenumber>23</prefix:housenumber>
-      <prefix:postcode>26131</prefix:postcode>
-      <prefix:city>Oldenburg</prefix:city>
-      <different:country code="de">Germany</different:country>
-    </prefix:address>
+```xml
+<prefix:address location='home'
+                xmlns:prefix="http://www.unicornland.com/prefix"
+                xmlns:different="http://www.trollcountry.com/different">
+  <prefix:street>Milchstrasse</prefix:street>
+  <prefix:street>Another Street</prefix:street>
+  <prefix:housenumber>23</prefix:housenumber>
+  <prefix:postcode>26131</prefix:postcode>
+  <prefix:city>Oldenburg</prefix:city>
+  <different:country code="de">Germany</different:country>
+</prefix:address>
+```
 
 Well we would need to specify that namespace:
 
@@ -606,7 +622,7 @@ element :country, Country, tag: 'country', namespace: 'different'
 
 With that we should be able to parse as we once did.
 
-### Large Datasets (in_groups_of)
+### Large Datasets (`:in_groups_of`)
 
 When dealing with large sets of XML that simply cannot or should not be placed
 into memory the objects can be handled in groups through the `:in_groups_of`
