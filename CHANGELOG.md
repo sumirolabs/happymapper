@@ -1,13 +1,21 @@
 # Changelog
 
-## UNRELEASED
+## 0.8.0 / 2018-08-28
+
+### Breaking Changes
+
+* Ensure child elements only parse direct child nodes when parsing anonymously
+  ([#100](https://github.com/mvz/happymapper/pull/100))
+
+### Improvements
+
+* Improve documentation
+  ([#99](https://github.com/mvz/happymapper/pull/99))
+
+### Bug fixes
 
 * Handle repeated camel-cased elements as `has_many` when parsing anonymously
   ([#101](https://github.com/mvz/happymapper/pull/101))
-* Ensure child elements only parse direct child nodes when parsing anonymously
-  ([#100](https://github.com/mvz/happymapper/pull/100))
-* Improve documentation
-  ([#99](https://github.com/mvz/happymapper/pull/99))
 * Avoid creating extra elements named `text` when parsing anonymously
   ([#98](https://github.com/mvz/happymapper/pull/98))
 
