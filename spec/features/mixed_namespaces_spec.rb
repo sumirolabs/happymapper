@@ -3,23 +3,6 @@
 require 'spec_helper'
 
 describe 'A document with mixed namespaces' do
-  #
-  # Note that the parent element of the xml has the namespacing. The elements
-  # contained within the xml do not share the parent element namespace so a
-  # user of the library would likely need to clear the namespace on each of
-  # these child elements.
-  #
-  let(:xml_document) do
-    %(<prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
-        xmlns:different="http://www.trollcountry.com/different">
-        <street>Milchstrasse</street>
-        <street>Another Street</street>
-        <housenumber>23</housenumber>
-        <different:postcode>26131</different:postcode>
-        <city>Oldenburg</city>
-      </prefix:address>)
-  end
-
   module MixedNamespaces
     class Address
       include HappyMapper
@@ -36,6 +19,23 @@ describe 'A document with mixed namespaces' do
       has_one :postcode, String, namespace: 'different'
       has_one :city, String, namespace: nil
     end
+  end
+
+  #
+  # Note that the parent element of the xml has the namespacing. The elements
+  # contained within the xml do not share the parent element namespace so a
+  # user of the library would likely need to clear the namespace on each of
+  # these child elements.
+  #
+  let(:xml_document) do
+    %(<prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
+        xmlns:different="http://www.trollcountry.com/different">
+        <street>Milchstrasse</street>
+        <street>Another Street</street>
+        <housenumber>23</housenumber>
+        <different:postcode>26131</different:postcode>
+        <city>Oldenburg</city>
+      </prefix:address>)
   end
 
   let(:address) do

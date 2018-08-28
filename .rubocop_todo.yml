@@ -107,12 +107,6 @@ RSpec/RepeatedDescription:
     - 'spec/features/has_many_empty_array_spec.rb'
     - 'spec/features/to_xml_spec.rb'
 
-# Offense count: 2
-RSpec/ScatteredLet:
-  Exclude:
-    - 'spec/features/attributes_spec.rb'
-    - 'spec/features/mixed_namespaces_spec.rb'
-
 # Offense count: 8
 Style/Documentation:
   Exclude:
