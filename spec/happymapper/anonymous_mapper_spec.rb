@@ -58,6 +58,26 @@ RSpec.describe HappyMapper::AnonymousMapper do
       end
     end
 
+    context 'with repeated elements with camel-cased names' do
+      let(:xml) do
+        <<~XML
+          <foo>
+            <fooBar>
+              <baz>Hello</baz>
+            </fooBar>
+            <fooBar>
+              <baz>Hi</baz>
+            </fooBar>
+          </foo>
+        XML
+      end
+      let(:parsed_result) { anonymous_mapper.parse xml }
+
+      it 'parses the repeated elements correctly' do
+        expect(parsed_result.foo_bar.map(&:baz)).to eq %w(Hello Hi)
+      end
+    end
+
     context 'with elements with camelCased attribute names' do
       let(:parsed_result) { anonymous_mapper.parse '<foo barBaz="quuz"/>' }
 

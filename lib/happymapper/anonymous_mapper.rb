@@ -94,7 +94,8 @@ module HappyMapper
                        String
                      end
 
-      method = class_instance.elements.find { |e| e.name == element.name } ? :has_many : :has_one
+      element_name = underscore(element.name)
+      method = class_instance.elements.find { |e| e.name == element_name } ? :has_many : :has_one
 
       options = {}
       options[:tag] = element.name
@@ -102,7 +103,7 @@ module HappyMapper
       options[:namespace] = namespace.prefix if namespace
       options[:xpath] = './' unless element_type == String
 
-      class_instance.send(method, underscore(element.name), element_type, options)
+      class_instance.send(method, element_name, element_type, options)
     end
 
     #
