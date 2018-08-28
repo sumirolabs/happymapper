@@ -28,7 +28,7 @@ module HappyMapper
     end
 
     #
-    # @param [XMLNode] node the xml node that is being parsed
+    # @param [Nokogiri::XML::Element] node the xml node that is being parsed
     # @param [String] namespace the name of the namespace
     # @param [Hash] xpath_options additional xpath options
     #
