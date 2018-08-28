@@ -100,6 +100,7 @@ module HappyMapper
       options[:tag] = element.name
       namespace = element.namespace
       options[:namespace] = namespace.prefix if namespace
+      options[:xpath] = './' unless element_type == String
 
       class_instance.send(method, underscore(element.name), element_type, options)
     end
