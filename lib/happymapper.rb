@@ -291,9 +291,6 @@ module HappyMapper
     #     :namespace is the namespace to use for additional information.
     #
     def parse(xml, options = {})
-      # create a local copy of the objects namespace value for this parse execution
-      namespace = (@namespace if defined? @namespace)
-
       # Capture any provided namespaces and merge in any namespaces that have
       # been registered on the object.
       namespaces = options[:namespaces] || {}
@@ -327,14 +324,10 @@ module HappyMapper
       end
 
       # if a namespace has been provided then set the current namespace to it
-      # or set the default namespace to the one defined under 'xmlns'
-      # or set the default namespace to the namespace that matches 'happymapper's
+      # or use the namespace provided by the class
+      # or use the 'xmlns' namespace if defined
 
-      if options[:namespace]
-        namespace = options[:namespace]
-      elsif namespaces.key?('xmlns')
-        namespace ||= 'xmlns'
-      end
+      namespace = options[:namespace] || self.namespace || namespaces.key?('xmlns') && 'xmlns'
 
       # from the options grab any nodes present and if none are present then
       # perform the following to find the nodes for the given class
