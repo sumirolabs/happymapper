@@ -126,12 +126,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: Strict.
-Style/NumericLiterals:
-  MinDigits: 10
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, EnforcedStyle.
