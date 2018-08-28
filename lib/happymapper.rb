@@ -323,6 +323,10 @@ module HappyMapper
         root = node.name == tag_name
       end
 
+      # If the :single option has been specified or we are at the root element
+      # then we are going to return a single element or nil if no nodes are found
+      single = root || options[:single]
+
       # if a namespace has been provided then set the current namespace to it
       # or use the namespace provided by the class
       # or use the 'xmlns' namespace if defined
@@ -337,7 +341,7 @@ module HappyMapper
       end
 
       # Nothing matching found, we can go ahead and return
-      return (options[:single] || root ? nil : []) if nodes.empty?
+      return (single ? nil : []) if nodes.empty?
 
       # If the :limit option has been specified then we are going to slice
       # our node results by that amount to allow us the ability to deal with
@@ -368,11 +372,11 @@ module HappyMapper
         end
       end
 
-      # If the :single option has been specified or we are at the root element
-      # then we are going to return the first item in the collection. Otherwise
-      # the return response is going to be an entire array of items.
+      # If we're parsing a single element then we are going to return the first
+      # item in the collection. Otherwise the return response is going to be an
+      # entire array of items.
 
-      if options[:single] || root
+      if single
         collection.first
       else
         collection
