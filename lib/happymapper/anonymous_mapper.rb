@@ -7,13 +7,13 @@ module HappyMapper
       #   to handle which includes the text, xml document, node, fragment, etc.
       xml = Nokogiri::XML(xml_content)
 
-      happymapper_class = create_happymapper_class_with_element(xml.root)
+      klass = create_happymapper_class_from_node(xml.root)
 
       # With all the elements and attributes defined on the class it is time
       # for the class to actually use the normal HappyMapper powers to parse
       # the content. At this point this code is utilizing all of the existing
       # code implemented for parsing.
-      happymapper_class.parse(xml_content, single: true)
+      klass.parse(xml_content, single: true)
     end
 
     private
@@ -38,79 +38,80 @@ module HappyMapper
     # value is set to the one provided.
     #
     def create_happymapper_class_with_tag(tag_name)
-      happymapper_class = Class.new
-      happymapper_class.class_eval do
+      klass = Class.new
+      klass.class_eval do
         include HappyMapper
         tag tag_name
       end
-      happymapper_class
+      klass
     end
 
     #
     # Used internally to create and define the necessary happymapper
     # elements.
     #
-    def create_happymapper_class_with_element(element)
-      happymapper_class = create_happymapper_class_with_tag(element.name)
+    def create_happymapper_class_from_node(node)
+      klass = create_happymapper_class_with_tag(node.name)
 
-      happymapper_class.namespace element.namespace.prefix if element.namespace
+      klass.namespace node.namespace.prefix if node.namespace
 
-      element.namespaces.each do |prefix, namespace|
-        happymapper_class.register_namespace prefix, namespace
+      node.namespaces.each do |prefix, namespace|
+        klass.register_namespace prefix, namespace
       end
 
-      element.attributes.each_value do |attribute|
-        define_attribute_on_class(happymapper_class, attribute)
+      node.attributes.each_value do |attribute|
+        define_attribute_on_class(klass, attribute)
       end
 
-      element.children.each do |child|
-        define_element_on_class(happymapper_class, child)
+      node.children.each do |child|
+        define_element_on_class(klass, child)
       end
 
-      happymapper_class
+      klass
     end
 
     #
     # Define a HappyMapper element on the provided class based on
-    # the element provided.
+    # the node provided.
     #
-    def define_element_on_class(class_instance, element)
-      # When a text element has been provided create the necessary
+    def define_element_on_class(klass, node)
+      # When a text node has been provided create the necessary
       # HappyMapper content attribute if the text happens to contain
       # some content.
 
-      if element.text?
-        class_instance.content :content, String if element.content.strip != ''
+      if node.text?
+        klass.content :content, String if node.content.strip != ''
         return
       end
 
-      # When the element has children elements, that are not text
-      # elements, then we want to recursively define a new HappyMapper
+      # When the node has child elements, that are not text
+      # nodes, then we want to recursively define a new HappyMapper
       # class that will have elements and attributes.
 
-      element_type = if !element.elements.reject(&:text?).empty? || !element.attributes.empty?
-                       create_happymapper_class_with_element(element)
+      element_type = if node.elements.any? || node.attributes.any?
+                       create_happymapper_class_from_node(node)
                      else
                        String
                      end
 
-      method = class_instance.elements.find { |e| e.name == element.name } ? :has_many : :has_one
+      element_name = underscore(node.name)
+      method = klass.elements.find { |e| e.name == element_name } ? :has_many : :has_one
 
       options = {}
-      options[:tag] = element.name
-      namespace = element.namespace
+      options[:tag] = node.name
+      namespace = node.namespace
       options[:namespace] = namespace.prefix if namespace
       options[:xpath] = './' unless element_type == String
 
-      class_instance.send(method, underscore(element.name), element_type, options)
+      klass.send(method, element_name, element_type, options)
     end
 
     #
     # Define a HappyMapper attribute on the provided class based on
     # the attribute provided.
     #
-    def define_attribute_on_class(class_instance, attribute)
-      class_instance.attribute underscore(attribute.name), String, tag: attribute.name
+    def define_attribute_on_class(klass, attribute)
+      klass.attribute underscore(attribute.name), String, tag: attribute.name
     end
   end
 end
