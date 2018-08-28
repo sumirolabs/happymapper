@@ -88,7 +88,7 @@ module HappyMapper
       # nodes, then we want to recursively define a new HappyMapper
       # class that will have elements and attributes.
 
-      element_type = if !node.elements.reject(&:text?).empty? || !node.attributes.empty?
+      element_type = if node.elements.any? || node.attributes.any?
                        create_happymapper_class_from_node(node)
                      else
                        String
