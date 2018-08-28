@@ -332,7 +332,7 @@ module HappyMapper
 
       if options[:namespace]
         namespace = options[:namespace]
-      elsif namespaces.has_key?('xmlns')
+      elsif namespaces.key?('xmlns')
         namespace ||= 'xmlns'
       end
 
