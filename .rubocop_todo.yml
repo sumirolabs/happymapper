@@ -126,16 +126,6 @@ Style/Documentation:
     - 'lib/happymapper/supported_types.rb'
     - 'lib/happymapper/text_node.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: AutoCorrect, EnforcedStyle.
-# SupportedStyles: predicate, comparison
-Style/NumericPredicate:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/happymapper.rb'
-    - 'lib/happymapper/supported_types.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/PerlBackrefs:
