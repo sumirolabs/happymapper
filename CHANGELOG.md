@@ -2,7 +2,13 @@
 
 ## UNRELEASED
 
-* Avoid creating extra elements named `text` when doing anonymous parsing
+* Handle repeated camel-cased elements as `has_many` when parsing anonymously
+  ([#101](https://github.com/mvz/happymapper/pull/101))
+* Ensure child elements only parse direct child nodes when parsing anonymously
+  ([#100](https://github.com/mvz/happymapper/pull/100))
+* Improve documentation
+  ([#99](https://github.com/mvz/happymapper/pull/99))
+* Avoid creating extra elements named `text` when parsing anonymously
   ([#98](https://github.com/mvz/happymapper/pull/98))
 
 ## 0.7.0 / 2018-08-27
@@ -10,12 +16,15 @@
 ### Breaking Changes
 
 * Remove constant `HappyMapper::DEFAULT_NS`
+  ([#78](https://github.com/mvz/happymapper/pull/78))
 * Drop support for Ruby 2.2 and below
+  ([#80](https://github.com/mvz/happymapper/pull/80))
 
 ### Improvements
 
 * Support Ruby 2.5
 * Always sort namespaces. This adds support for JRuby.
+  ([#84](https://github.com/mvz/happymapper/pull/84))
 
 ### Bug fixes
 
