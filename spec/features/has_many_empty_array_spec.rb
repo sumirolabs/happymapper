@@ -38,7 +38,7 @@ describe 'emptyness' do
     expect(navigator.items_with_a_different_name).to be_empty
   end
 
-  it 'returns an empty array' do
+  it 'looks for items based on the element tag, not the element name' do
     expect(navigator.items).to be_empty
   end
 end

@@ -101,12 +101,6 @@ RSpec/NamedSubject:
 RSpec/NestedGroups:
   Max: 4
 
-# Offense count: 4
-RSpec/RepeatedDescription:
-  Exclude:
-    - 'spec/features/has_many_empty_array_spec.rb'
-    - 'spec/features/to_xml_spec.rb'
-
 # Offense count: 8
 Style/Documentation:
   Exclude:

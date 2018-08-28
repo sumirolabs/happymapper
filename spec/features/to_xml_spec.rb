@@ -191,11 +191,11 @@ describe 'Saving #to_xml' do
       expect(subject.xpath('country/@countryCode').text).to eq 'us'
     end
 
-    it 'saves elements' do
+    it 'saves elements with a specified tag' do
       expect(subject.xpath('country/countryName').text).to eq 'USA'
     end
 
-    it 'saves elements' do
+    it 'saves elements with content' do
       expect(subject.xpath('country/description').text).to eq 'A lovely country'
     end
   end
