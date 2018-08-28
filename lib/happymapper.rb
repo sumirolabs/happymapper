@@ -399,8 +399,13 @@ module HappyMapper
       # and finally attach the current namespace if one has been defined
       #
 
-      xpath  = (root ? '/' : './/')
-      xpath  = options[:xpath].to_s.sub(/([^\/])$/, '\1/') if options[:xpath]
+      xpath = if options[:xpath]
+                options[:xpath].to_s.sub(/([^\/])$/, '\1/')
+              elsif root
+                '/'
+              else
+                './/'
+              end
       if namespace
         return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
         xpath += "#{namespace}:"
