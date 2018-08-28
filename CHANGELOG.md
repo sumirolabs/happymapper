@@ -1,10 +1,15 @@
 # Changelog
 
+## UNRELEASED
+
+* Avoid creating extra elements named `text` when doing anonymous parsing
+  ([#98](https://github.com/mvz/happymapper/pull/98))
+
 ## 0.7.0 / 2018-08-27
 
 ### Breaking Changes
 
-* Remove constant HappyMapper::DEFAULT_NS
+* Remove constant `HappyMapper::DEFAULT_NS`
 * Drop support for Ruby 2.2 and below
 
 ### Improvements
@@ -28,7 +33,7 @@
 * Prevent parsing of empty string for Date, DateTime (wushugene)
 * Rescue nil dates (sarsena)
 * Preserve XML value (benoist)
-* Restore after_parse callback support (codekitchen)
+* Restore `after_parse` callback support (codekitchen)
 * Parse specific types before general types (Ivo Wever)
 * Higher priority for namespace on element declarations (Ivo Wever)
 
@@ -39,7 +44,7 @@
 ## 0.5.8 / 2013-10-12
 
 * Allow child elements to remove their parent's namespacing (dcarneiro)
-* has_many elements were returning nil because the tag name was being ignored (haarts)
+* `has_many` elements were returning nil because the tag name was being ignored (haarts)
 * Subclassed happymapper classes are allowed to override elements (benoist)
 * Attributes on elements with dashes will properly created methods (alex-klepa)
 * 'Embedded' attributes break parsing when parent element is not present (geoffwa)
@@ -56,8 +61,8 @@
 
 ## 0.5.4/ 2012-09-25
 
-* the #wrap method allows you to better model xml content that is buried deep
-  within the xml. This implementation addresses issues with calling #to_xml
+* the `#wrap` method allows you to better model xml content that is buried deep
+  within the xml. This implementation addresses issues with calling `#to_xml`
   with content that was parsed from an xpath. (zrob)
 
 * Parent HappyMapper classes may dictate the name of the tag for the child
