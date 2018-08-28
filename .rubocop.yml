@@ -33,3 +33,8 @@ RSpec/DescribeClass:
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     '%w': ()
+
+# Configuration parameters: AutoCorrect, EnforcedStyle.
+# SupportedStyles: predicate, comparison
+Style/NumericPredicate:
+  EnforcedStyle: comparison

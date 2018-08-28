@@ -701,12 +701,12 @@ describe HappyMapper do
     statuses = Status.parse(fixture_file('statuses.xml'))
     expect(statuses.size).to eq(20)
     first = statuses.first
-    expect(first.id).to eq(882281424)
+    expect(first.id).to eq(882_281_424)
     expect(first.created_at).to eq(Time.utc(2008, 8, 9, 5, 38, 12))
     expect(first.source).to eq('web')
     expect(first.truncated).to be_falsey
     expect(first.in_reply_to_status_id).to eq(1234)
-    expect(first.in_reply_to_user_id).to eq(12345)
+    expect(first.in_reply_to_user_id).to eq(12_345)
     expect(first.favorited).to be_falsey
     expect(first.user.id).to eq(4243)
     expect(first.user.name).to eq('John Nunemaker')

@@ -291,9 +291,6 @@ module HappyMapper
     #     :namespace is the namespace to use for additional information.
     #
     def parse(xml, options = {})
-      # create a local copy of the objects namespace value for this parse execution
-      namespace = (@namespace if defined? @namespace)
-
       # Capture any provided namespaces and merge in any namespaces that have
       # been registered on the object.
       namespaces = options[:namespaces] || {}
@@ -326,15 +323,15 @@ module HappyMapper
         root = node.name == tag_name
       end
 
-      # if a namespace has been provided then set the current namespace to it
-      # or set the default namespace to the one defined under 'xmlns'
-      # or set the default namespace to the namespace that matches 'happymapper's
+      # If the :single option has been specified or we are at the root element
+      # then we are going to return a single element or nil if no nodes are found
+      single = root || options[:single]
 
-      if options[:namespace]
-        namespace = options[:namespace]
-      elsif namespaces.has_key?('xmlns')
-        namespace ||= 'xmlns'
-      end
+      # if a namespace has been provided then set the current namespace to it
+      # or use the namespace provided by the class
+      # or use the 'xmlns' namespace if defined
+
+      namespace = options[:namespace] || self.namespace || namespaces.key?('xmlns') && 'xmlns'
 
       # from the options grab any nodes present and if none are present then
       # perform the following to find the nodes for the given class
@@ -344,7 +341,7 @@ module HappyMapper
       end
 
       # Nothing matching found, we can go ahead and return
-      return (options[:single] || root ? nil : []) if nodes.size == 0
+      return (single ? nil : []) if nodes.empty?
 
       # If the :limit option has been specified then we are going to slice
       # our node results by that amount to allow us the ability to deal with
@@ -375,11 +372,11 @@ module HappyMapper
         end
       end
 
-      # If the :single option has been specified or we are at the root element
-      # then we are going to return the first item in the collection. Otherwise
-      # the return response is going to be an entire array of items.
+      # If we're parsing a single element then we are going to return the first
+      # item in the collection. Otherwise the return response is going to be an
+      # entire array of items.
 
-      if options[:single] || root
+      if single
         collection.first
       else
         collection
@@ -400,7 +397,7 @@ module HappyMapper
       #
 
       xpath = if options[:xpath]
-                options[:xpath].to_s.sub(/([^\/])$/, '\1/')
+                options[:xpath].to_s.sub(%r{([^/])$}, '\1/')
               elsif root
                 '/'
               else
@@ -654,7 +651,7 @@ module HappyMapper
         # Attributes that have a nil value should be ignored unless they explicitly
         # state that they should be expressed in the output.
         #
-        if not value.nil? || attribute.options[:state_when_nil]
+        if !(value.nil? || attribute.options[:state_when_nil])
           attribute_namespace = attribute.options[:namespace]
           ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
         else

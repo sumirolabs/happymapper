@@ -55,6 +55,8 @@ describe HappyMapper do
   end
 
   context 'first node' do
+    let(:first_node) { catalog_tree.nodes.first }
+
     it 'has a name' do
       expect(first_node.name).to eq('Parent 1')
     end
@@ -75,10 +77,6 @@ describe HappyMapper do
 
     it 'first node - first node name' do
       expect(first_node.nodes.first.name).to eq('First')
-    end
-
-    def first_node
-      @first_node = catalog_tree.nodes.first
     end
   end
 end

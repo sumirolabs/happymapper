@@ -30,14 +30,14 @@ describe 'Attribute Default Value' do
     end
 
     context 'when a new, non-nil value has been set' do
+      let(:expected_xml) { %(<?xml version="1.0"?>\n<meal type="kosher"/>\n) }
+
       it 'returns the new value' do
         meal = subject.parse('<meal />')
         meal.type = 'vegan'
 
         expect(meal.type).not_to eq default_meal_type
       end
-
-      let(:expected_xml) { %(<?xml version="1.0"?>\n<meal type="kosher"/>\n) }
 
       it 'saves the new value to the xml' do
         meal = subject.new

@@ -3,18 +3,18 @@
 require 'spec_helper'
 
 describe 'Attribute Method Conversion' do
-  let(:xml_document) do
-    %(<document>
-        <link data-src='http://cooking.com/roastbeef' type='recipe'>Roast Beef</link>
-      </document>)
-  end
-
   module AttributeMethodConversion
     class Document
       include HappyMapper
 
       has_many :link, String, attributes: { 'data-src': String, type: String, href: String }
     end
+  end
+
+  let(:xml_document) do
+    %(<document>
+        <link data-src='http://cooking.com/roastbeef' type='recipe'>Roast Beef</link>
+      </document>)
   end
 
   let(:document) do

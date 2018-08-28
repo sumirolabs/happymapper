@@ -35,7 +35,7 @@ describe 'wrap which allows you to specify a wrapper element' do
         expect(subject.subclass.items.size).to eq(2)
         expect(subject.subclass.items[0]).to eq 'item1'
         expect(subject.subclass.items[1]).to eq 'item2'
-        expect(subject.number).to eq 12345
+        expect(subject.number).to eq 12_345
       end
     end
 
@@ -54,7 +54,7 @@ describe 'wrap which allows you to specify a wrapper element' do
       root.attr1 = 'somevalue'
       root.name = 'myname'
       root.description = 'some description'
-      root.number = 12345
+      root.number = 12_345
 
       subclass = Wrap::SubClass.new
       subclass.myattr = 'attrvalue'
