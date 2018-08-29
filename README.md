@@ -32,6 +32,10 @@ Or add the `nokogiri-happymapper` gem to your project's `Gemfile`.
 
     gem 'nokogiri-happymapper', require: 'happymapper'
 
+You can now also require `nokogiri-happymapper` directly.
+
+    gem 'nokogiri-happymapper'
+
 Run Bundler to install the gem:
 
     $ bundle install

@@ -18,7 +18,7 @@ end
 
 require 'rspec'
 
-require 'happymapper'
+require 'nokogiri-happymapper'
 
 def fixture_file(filename)
   File.read(File.dirname(__FILE__) + "/fixtures/#{filename}")
