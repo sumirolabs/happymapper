@@ -405,6 +405,7 @@ module HappyMapper
               end
       if namespace
         return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
+
         xpath += "#{namespace}:"
       end
 
@@ -674,6 +675,7 @@ module HappyMapper
   #
   def register_namespaces_with_builder(builder)
     return unless self.class.instance_variable_get('@registered_namespaces')
+
     self.class.instance_variable_get('@registered_namespaces').sort.each do |name, href|
       name = nil if name == 'xmlns'
       builder.doc.root.add_namespace(name, href)
