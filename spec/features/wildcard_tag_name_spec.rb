@@ -33,8 +33,10 @@ describe 'Wildcard Root Tag' do
       def <=>(other)
         result = name <=> other.name
         return result unless result == 0
+
         result = href <=> other.href
         return result unless result == 0
+
         self.other <=> other.other
       end
     end
