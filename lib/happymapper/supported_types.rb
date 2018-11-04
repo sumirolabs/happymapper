@@ -111,11 +111,11 @@ module HappyMapper
     end
 
     register_type DateTime do |value|
-      DateTime.parse(value.to_s) if value && !value.empty?
+      DateTime.parse(value.to_s, true, Date::ITALY) if value && !value.empty?
     end
 
     register_type Date do |value|
-      Date.parse(value.to_s) if value && !value.empty?
+      Date.parse(value.to_s, true, Date::ITALY) if value && !value.empty?
     end
 
     register_type Boolean do |value|
