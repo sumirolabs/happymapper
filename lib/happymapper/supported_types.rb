@@ -110,9 +110,11 @@ module HappyMapper
       end
     end
 
+    # rubocop:disable Style/DateTime
     register_type DateTime do |value|
       DateTime.parse(value.to_s, true, Date::ITALY) if value && !value.empty?
     end
+    # rubocop:enable Style/DateTime
 
     register_type Date do |value|
       Date.parse(value.to_s, true, Date::ITALY) if value && !value.empty?
