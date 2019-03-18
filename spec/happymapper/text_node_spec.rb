@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe HappyMapper::Attribute do
+RSpec.describe HappyMapper::TextNode do
   describe 'initialization' do
     before do
-      @attr = HappyMapper::TextNode.new(:foo, String)
+      @attr = described_class.new(:foo, String)
     end
   end
 end

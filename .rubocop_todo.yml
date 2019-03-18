@@ -56,17 +56,6 @@ RSpec/ExampleLength:
     - 'spec/happymapper/anonymous_mapper_spec.rb'
     - 'spec/happymapper_spec.rb'
 
-# Offense count: 7
-# Configuration parameters: CustomTransform, IgnoreMethods.
-RSpec/FilePath:
-  Exclude:
-    - 'spec/happymapper/anonymous_mapper_spec.rb'
-    - 'spec/happymapper/attribute_spec.rb'
-    - 'spec/happymapper/element_spec.rb'
-    - 'spec/happymapper/item_spec.rb'
-    - 'spec/happymapper/text_node_spec.rb'
-    - 'spec/happymapper_spec.rb'
-
 # Offense count: 6
 # Configuration parameters: AssignmentOnly.
 RSpec/InstanceVariable:
