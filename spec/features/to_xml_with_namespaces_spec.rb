@@ -108,8 +108,8 @@ module ToXMLWithNamespaces
   end
 end
 
-describe 'Saving #to_xml', 'with xml namespaces' do
-  context '#to_xml', 'with namespaces' do
+RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
+  context 'with namespaces' do
     let(:subject) do
       country = ToXMLWithNamespaces::Country.new(name: 'USA', code: 'us')
       address = ToXMLWithNamespaces::Address.new('street' => 'Mockingbird Lane',
