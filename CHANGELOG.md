@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1 / 2019-03-18
+
+* Allow requiring `nokogiri-happymapper`
+  ([#103](https://github.com/mvz/happymapper/pull/103))
+
 ## 0.8.0 / 2018-08-28
 
 ### Breaking Changes
