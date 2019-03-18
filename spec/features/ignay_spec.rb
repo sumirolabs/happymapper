@@ -38,7 +38,7 @@ class CatalogNode
   has_many :nodes, CatalogNode, tag: 'Node', xpath: 'child::*'
 end
 
-describe HappyMapper do
+RSpec.describe 'parsing a VOD catalog', type: :feature do
   let(:catalog_tree) { CatalogTree.parse(fixture_file('inagy.xml'), single: true) }
 
   it 'is not nil' do

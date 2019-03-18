@@ -60,7 +60,6 @@ RSpec/ExampleLength:
 # Configuration parameters: CustomTransform, IgnoreMethods.
 RSpec/FilePath:
   Exclude:
-    - 'spec/features/ignay_spec.rb'
     - 'spec/happymapper/anonymous_mapper_spec.rb'
     - 'spec/happymapper/attribute_spec.rb'
     - 'spec/happymapper/element_spec.rb'
