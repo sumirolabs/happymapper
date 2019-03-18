@@ -54,7 +54,7 @@ describe HappyMapper do
     expect(catalog_tree.nodes.length).to eq(2)
   end
 
-  context 'first node' do
+  describe 'first node' do
     let(:first_node) { catalog_tree.nodes.first }
 
     it 'has a name' do

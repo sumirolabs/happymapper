@@ -41,13 +41,6 @@ Naming/FileName:
     - 'lib/nokogiri-happymapper.rb'
 
 # Offense count: 1
-# Configuration parameters: Prefixes.
-# Prefixes: when, with, without
-RSpec/ContextWording:
-  Exclude:
-    - 'spec/features/ignay_spec.rb'
-
-# Offense count: 1
 RSpec/DescribeMethod:
   Exclude:
     - 'spec/features/to_xml_with_namespaces_spec.rb'
