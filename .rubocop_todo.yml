@@ -40,13 +40,6 @@ Naming/FileName:
   Exclude:
     - 'lib/nokogiri-happymapper.rb'
 
-# Offense count: 4
-# Configuration parameters: CustomIncludeMethods.
-RSpec/EmptyExampleGroup:
-  Exclude:
-    - 'spec/happymapper/element_spec.rb'
-    - 'spec/happymapper/text_node_spec.rb'
-
 # Offense count: 21
 # Configuration parameters: Max.
 RSpec/ExampleLength:
