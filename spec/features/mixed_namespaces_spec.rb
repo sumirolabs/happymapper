@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'A document with mixed namespaces' do
+RSpec.describe 'A document with mixed namespaces', type: :feature do
   module MixedNamespaces
     class Address
       include HappyMapper

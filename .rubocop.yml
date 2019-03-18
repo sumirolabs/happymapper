@@ -1,3 +1,4 @@
+---
 inherit_from: .rubocop_todo.yml
 
 require:
@@ -25,9 +26,9 @@ Naming/PredicateName:
     - 'has_many'
     - 'has_xml_content'
 
-RSpec/DescribeClass:
-  Exclude:
-    - 'spec/features/**/*_spec.rb'
+RSpec/FilePath:
+  CustomTransform:
+    HappyMapper: 'happymapper'
 
 # Use older RuboCop default
 Style/PercentLiteralDelimiters:

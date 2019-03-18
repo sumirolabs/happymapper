@@ -21,7 +21,7 @@ module Sheep
   end
 end
 
-describe 'emptyness' do
+RSpec.describe 'empty arrays of items based on tags', type: :feature do
   let(:xml) do
     <<-XML
     <navigator>

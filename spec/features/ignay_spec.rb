@@ -38,7 +38,7 @@ class CatalogNode
   has_many :nodes, CatalogNode, tag: 'Node', xpath: 'child::*'
 end
 
-describe HappyMapper do
+RSpec.describe 'parsing a VOD catalog', type: :feature do
   let(:catalog_tree) { CatalogTree.parse(fixture_file('inagy.xml'), single: true) }
 
   it 'is not nil' do
@@ -50,11 +50,15 @@ describe HappyMapper do
   end
 
   it 'has many nodes' do
-    expect(catalog_tree.nodes).not_to be_empty
-    expect(catalog_tree.nodes.length).to eq(2)
+    nodes = catalog_tree.nodes
+
+    aggregate_failures do
+      expect(nodes).not_to be_empty
+      expect(nodes.length).to eq(2)
+    end
   end
 
-  context 'first node' do
+  describe 'first node' do
     let(:first_node) { catalog_tree.nodes.first }
 
     it 'has a name' do
@@ -62,17 +66,23 @@ describe HappyMapper do
     end
 
     it 'has translations' do
-      expect(first_node.translations.length).to eq(2)
+      translations = first_node.translations
 
-      expect(first_node.translations.first.language).to eq('en-GB')
-
-      expect(first_node.translations.last.name).to eq('Parent 1 de')
+      aggregate_failures do
+        expect(translations.length).to eq(2)
+        expect(translations.first.language).to eq('en-GB')
+        expect(translations.last.name).to eq('Parent 1 de')
+      end
     end
 
     it 'has subnodes' do
-      expect(first_node.nodes).to be_kind_of(Enumerable)
-      expect(first_node.nodes).not_to be_empty
-      expect(first_node.nodes.length).to eq(1)
+      nodes = first_node.nodes
+
+      aggregate_failures do
+        expect(nodes).to be_kind_of(Enumerable)
+        expect(nodes).not_to be_empty
+        expect(nodes.length).to eq(1)
+      end
     end
 
     it 'first node - first node name' do

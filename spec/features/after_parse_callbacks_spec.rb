@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'after_parse callbacks' do
+RSpec.describe 'after_parse callbacks', type: :feature do
   module AfterParseSpec
     class Address
       include HappyMapper
@@ -23,7 +23,10 @@ RSpec.describe 'after_parse callbacks' do
     AfterParseSpec::Address.after_parse(&cb2)
 
     object = AfterParseSpec::Address.parse fixture_file('address.xml')
-    expect(from_cb).to eq(object)
-    expect(called).to eq(true)
+
+    aggregate_failures do
+      expect(from_cb).to eq(object)
+      expect(called).to eq(true)
+    end
   end
 end

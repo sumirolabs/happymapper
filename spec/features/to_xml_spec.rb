@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Saving #to_xml' do
+RSpec.describe 'Saving #to_xml', type: :feature do
   module ToXML
     class Address
       include HappyMapper
@@ -102,7 +102,7 @@ describe 'Saving #to_xml' do
     end
   end
 
-  let(:subject) do
+  let(:xml) do
     country = ToXML::Country.new(name: 'USA', code: 'us', empty_code: nil,
                                  description: ToXML::Country::Description.new('A lovely country'))
 
@@ -123,46 +123,46 @@ describe 'Saving #to_xml' do
   it 'saves elements' do
     elements = { 'street' => 'Mockingbird Lane', 'postcode' => '98103', 'city' => 'Seattle' }
     elements.each_pair do |property, value|
-      expect(subject.xpath(property.to_s).text).to eq value
+      expect(xml.xpath(property.to_s).text).to eq value
     end
   end
 
   it 'saves attributes' do
-    expect(subject.xpath('@location').text).to eq 'Home-live'
+    expect(xml.xpath('@location').text).to eq 'Home-live'
   end
 
   it 'saves attributes that are Boolean and have a value of false' do
-    expect(subject.xpath('@occupied').text).to eq 'false'
+    expect(xml.xpath('@occupied').text).to eq 'false'
   end
 
   context "when an element has a 'read_only' parameter" do
     it 'does not save elements' do
-      expect(subject.xpath('temporary')).to be_empty
+      expect(xml.xpath('temporary')).to be_empty
     end
   end
 
   context "when an attribute has a 'read_only' parameter" do
     it 'does not save attributes' do
-      expect(subject.xpath('@modified')).to be_empty
+      expect(xml.xpath('@modified')).to be_empty
     end
   end
 
   context "when an element has a 'state_when_nil' parameter" do
     it 'saves an empty element' do
-      expect(subject.xpath('description').text).to eq ''
+      expect(xml.xpath('description').text).to eq ''
     end
   end
 
   context "when an element has a 'on_save' parameter" do
     context 'with a symbol which represents a function' do
       it 'saves the element with the result of the function' do
-        expect(subject.xpath('housenumber').text).to eq '[1313]'
+        expect(xml.xpath('housenumber').text).to eq '[1313]'
       end
     end
 
     context 'with a lambda' do
       it 'saves the result of the lambda' do
-        expect(subject.xpath('date_created').text).to eq '15:00:00 01/01/11'
+        expect(xml.xpath('date_created').text).to eq '15:00:00 01/01/11'
       end
     end
   end
@@ -170,10 +170,13 @@ describe 'Saving #to_xml' do
   context "when a has_many has a 'on_save' parameter" do
     context 'with a lambda' do
       it 'saves the results' do
-        dates_updated = subject.xpath('dates_updated')
-        expect(dates_updated.length).to eq 2
-        expect(dates_updated.first.text).to eq '16:01:00 01/01/11'
-        expect(dates_updated.last.text).to eq '11:30:01 01/02/11'
+        dates_updated = xml.xpath('dates_updated')
+
+        aggregate_failures do
+          expect(dates_updated.length).to eq 2
+          expect(dates_updated.first.text).to eq '16:01:00 01/01/11'
+          expect(dates_updated.last.text).to eq '11:30:01 01/02/11'
+        end
       end
     end
   end
@@ -181,22 +184,22 @@ describe 'Saving #to_xml' do
   context "when an attribute has a 'on_save' parameter" do
     context 'with a symbol which represents a function' do
       it 'saves the result' do
-        expect(subject.xpath('@location').text).to eq 'Home-live'
+        expect(xml.xpath('@location').text).to eq 'Home-live'
       end
     end
   end
 
   context 'when an element type is a HappyMapper subclass' do
     it 'saves attributes' do
-      expect(subject.xpath('country/@countryCode').text).to eq 'us'
+      expect(xml.xpath('country/@countryCode').text).to eq 'us'
     end
 
     it 'saves elements with a specified tag' do
-      expect(subject.xpath('country/countryName').text).to eq 'USA'
+      expect(xml.xpath('country/countryName').text).to eq 'USA'
     end
 
     it 'saves elements with content' do
-      expect(subject.xpath('country/description').text).to eq 'A lovely country'
+      expect(xml.xpath('country/description').text).to eq 'A lovely country'
     end
   end
 end

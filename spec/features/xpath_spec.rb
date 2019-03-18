@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Specifying elements and attributes with an xpath' do
+RSpec.describe 'Specifying elements and attributes with an xpath', type: :feature do
   class Item
     include HappyMapper
 
