@@ -37,8 +37,10 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
     end
 
     it 'overrides the parent elements and attributes' do
-      expect(Overwrite.attributes.count).to be == Parent.attributes.count
-      expect(Overwrite.elements.count).to be == Parent.elements.count
+      aggregate_failures do
+        expect(Overwrite.attributes.count).to eq Parent.attributes.count
+        expect(Overwrite.elements.count).to eq Parent.elements.count
+      end
     end
 
     context 'when parsing xml' do
@@ -80,10 +82,12 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
 
     context 'when parsing xml' do
       it 'is possible to deserialize XML into a Child class instance' do
-        expect(subject.love).to eq 99
-        expect(subject.genetics.dna).to eq 'ABBA'
-        expect(subject.naivety).to eq 'trusting'
-        expect(subject.immunities.size).to eq(1)
+        aggregate_failures do
+          expect(subject.love).to eq 99
+          expect(subject.genetics.dna).to eq 'ABBA'
+          expect(subject.naivety).to eq 'trusting'
+          expect(subject.immunities.size).to eq(1)
+        end
       end
     end
 
@@ -100,13 +104,17 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
       end
 
       it 'saves both the Child and Parent attributes' do
-        expect(subject.xpath('@naivety').text).to eq 'Bright Eyed'
-        expect(subject.xpath('@love').text).to eq '100'
+        aggregate_failures do
+          expect(subject.xpath('@naivety').text).to eq 'Bright Eyed'
+          expect(subject.xpath('@love').text).to eq '100'
+        end
       end
 
       it 'saves both the Child and Parent elements' do
-        expect(subject.xpath('genetics').text).to eq 'GATTACA'
-        expect(subject.xpath('immunities').size).to eq(3)
+        aggregate_failures do
+          expect(subject.xpath('genetics').text).to eq 'GATTACA'
+          expect(subject.xpath('immunities').size).to eq(3)
+        end
       end
     end
   end

@@ -28,14 +28,16 @@ RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feat
       let(:subject) { Wrap::Root.parse fixture_file('wrapper.xml') }
 
       it 'sets the values correctly' do
-        expect(subject.attr1).to eq 'somevalue'
-        expect(subject.name).to eq 'myname'
-        expect(subject.description).to eq 'some description'
-        expect(subject.subclass.myattr).to eq 'attrvalue'
-        expect(subject.subclass.items.size).to eq(2)
-        expect(subject.subclass.items[0]).to eq 'item1'
-        expect(subject.subclass.items[1]).to eq 'item2'
-        expect(subject.number).to eq 12_345
+        aggregate_failures do
+          expect(subject.attr1).to eq 'somevalue'
+          expect(subject.name).to eq 'myname'
+          expect(subject.description).to eq 'some description'
+          expect(subject.subclass.myattr).to eq 'attrvalue'
+          expect(subject.subclass.items.size).to eq(2)
+          expect(subject.subclass.items[0]).to eq 'item1'
+          expect(subject.subclass.items[1]).to eq 'item2'
+          expect(subject.number).to eq 12_345
+        end
       end
     end
 
@@ -69,14 +71,17 @@ RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feat
 
     it 'generates the correct xml' do
       xml = Nokogiri::XML(subject.to_xml)
-      expect(xml.xpath('/root/@attr1').text).to eq 'somevalue'
-      expect(xml.xpath('/root/name').text).to eq 'myname'
-      expect(xml.xpath('/root/mywraptag/description').text).to eq 'some description'
-      expect(xml.xpath('/root/mywraptag/subclass/@myattr').text).to eq 'attrvalue'
-      expect(xml.xpath('/root/mywraptag/subclass/item').size).to eq(2)
-      expect(xml.xpath('/root/mywraptag/subclass/item[1]').text).to eq 'item1'
-      expect(xml.xpath('/root/mywraptag/subclass/item[2]').text).to eq 'item2'
-      expect(xml.xpath('/root/number').text).to eq '12345'
+
+      aggregate_failures do
+        expect(xml.xpath('/root/@attr1').text).to eq 'somevalue'
+        expect(xml.xpath('/root/name').text).to eq 'myname'
+        expect(xml.xpath('/root/mywraptag/description').text).to eq 'some description'
+        expect(xml.xpath('/root/mywraptag/subclass/@myattr').text).to eq 'attrvalue'
+        expect(xml.xpath('/root/mywraptag/subclass/item').size).to eq(2)
+        expect(xml.xpath('/root/mywraptag/subclass/item[1]').text).to eq 'item1'
+        expect(xml.xpath('/root/mywraptag/subclass/item[2]').text).to eq 'item2'
+        expect(xml.xpath('/root/number').text).to eq '12345'
+      end
     end
   end
 end

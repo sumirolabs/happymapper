@@ -153,8 +153,11 @@ describe HappyMapper::Item do
 
       it 'works with a historical date in a string' do
         result = item.typecast('1616-04-23')
-        expect(result.to_time).to eq Time.new(1616, 4, 23, 0, 0, 0, '+00:00')
-        expect(result).to be_gregorian
+
+        aggregate_failures do
+          expect(result.to_time).to eq Time.new(1616, 4, 23, 0, 0, 0, '+00:00')
+          expect(result).to be_gregorian
+        end
       end
 
       it 'handles nil' do

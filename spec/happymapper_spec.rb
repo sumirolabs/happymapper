@@ -606,17 +606,23 @@ describe HappyMapper do
     it 'allows has one association' do
       klass.has_one(:user, User)
       element = klass.elements.first
-      expect(element.name).to eq('user')
-      expect(element.type).to eq(User)
-      expect(element.options[:single]).to eq(true)
+
+      aggregate_failures do
+        expect(element.name).to eq('user')
+        expect(element.type).to eq(User)
+        expect(element.options[:single]).to eq(true)
+      end
     end
 
     it 'allows has many association' do
       klass.has_many(:users, User)
       element = klass.elements.first
-      expect(element.name).to eq('users')
-      expect(element.type).to eq(User)
-      expect(element.options[:single]).to eq(false)
+
+      aggregate_failures do
+        expect(element.name).to eq('users')
+        expect(element.type).to eq(User)
+        expect(element.options[:single]).to eq(false)
+      end
     end
 
     it 'defaults tag name to lowercase class' do
@@ -649,16 +655,20 @@ describe HappyMapper do
   end
 
   describe '#attributes' do
-    it 'onlies return attributes for the current class' do
-      expect(Post.attributes.size).to eq(7)
-      expect(Status.attributes.size).to eq(0)
+    it 'returns only attributes for the current class' do
+      aggregate_failures do
+        expect(Post.attributes.size).to eq(7)
+        expect(Status.attributes.size).to eq(0)
+      end
     end
   end
 
   describe '#elements' do
-    it 'onlies return elements for the current class' do
-      expect(Post.elements.size).to eq(0)
-      expect(Status.elements.size).to eq(10)
+    it 'returns only elements for the current class' do
+      aggregate_failures do
+        expect(Post.elements.size).to eq(0)
+        expect(Status.elements.size).to eq(10)
+      end
     end
   end
 
@@ -666,73 +676,93 @@ describe HappyMapper do
     it 'takes String as default argument for type' do
       State.content :name
       address = Address.parse(fixture_file('address.xml'))
-      expect(address.state.name).to eq('Lower Saxony')
-      address.state.name.class == String
+      name = address.state.name
+
+      aggregate_failures do
+        expect(name).to eq 'Lower Saxony'
+        expect(name).to be_a String
+      end
     end
 
     it 'works when specific type is provided' do
       Rate.content :value, Float
       Product.has_one :rate, Rate
       product = Product.parse(fixture_file('product_default_namespace.xml'), single: true)
-      expect(product.rate.value).to eq(120.25)
-      product.rate.class == Float
+      value = product.rate.value
+
+      aggregate_failures do
+        expect(value).to eq(120.25)
+        expect(value).to be_a Float
+      end
     end
   end
 
   it 'parses xml attributes into ruby objects' do
     posts = Post.parse(fixture_file('posts.xml'))
-    expect(posts.size).to eq(20)
-    first = posts.first
-    expect(first.href).to eq('http://roxml.rubyforge.org/')
-    expect(first.hash).to eq('19bba2ab667be03a19f67fb67dc56917')
-    expect(first.description).to eq('ROXML - Ruby Object to XML Mapping Library')
-    expect(first.tag).to eq('ruby xml gems mapping')
-    expect(first.time).to eq(Time.utc(2008, 8, 9, 5, 24, 20))
-    expect(first.others).to eq(56)
-    expect(first.extended).
-      to eq('ROXML is a Ruby library designed to make it easier for Ruby' \
-            ' developers to work with XML. Using simple annotations, it enables' \
-            ' Ruby classes to be custom-mapped to XML. ROXML takes care of the' \
-            ' marshalling and unmarshalling of mapped attributes so that developers can' \
-            ' focus on building first-class Ruby classes.')
+
+    aggregate_failures do
+      expect(posts.size).to eq(20)
+      first = posts.first
+      expect(first.href).to eq('http://roxml.rubyforge.org/')
+      expect(first.hash).to eq('19bba2ab667be03a19f67fb67dc56917')
+      expect(first.description).to eq('ROXML - Ruby Object to XML Mapping Library')
+      expect(first.tag).to eq('ruby xml gems mapping')
+      expect(first.time).to eq(Time.utc(2008, 8, 9, 5, 24, 20))
+      expect(first.others).to eq(56)
+      expect(first.extended).
+        to eq('ROXML is a Ruby library designed to make it easier for Ruby' \
+              ' developers to work with XML. Using simple annotations, it enables' \
+              ' Ruby classes to be custom-mapped to XML. ROXML takes care of the' \
+              ' marshalling and unmarshalling of mapped attributes so that developers can' \
+              ' focus on building first-class Ruby classes.')
+    end
   end
 
   it 'parses xml elements to ruby objcts' do
     statuses = Status.parse(fixture_file('statuses.xml'))
-    expect(statuses.size).to eq(20)
-    first = statuses.first
-    expect(first.id).to eq(882_281_424)
-    expect(first.created_at).to eq(Time.utc(2008, 8, 9, 5, 38, 12))
-    expect(first.source).to eq('web')
-    expect(first.truncated).to be_falsey
-    expect(first.in_reply_to_status_id).to eq(1234)
-    expect(first.in_reply_to_user_id).to eq(12_345)
-    expect(first.favorited).to be_falsey
-    expect(first.user.id).to eq(4243)
-    expect(first.user.name).to eq('John Nunemaker')
-    expect(first.user.screen_name).to eq('jnunemaker')
-    expect(first.user.location).to eq('Mishawaka, IN, US')
-    expect(first.user.description).to eq('Loves his wife, ruby, notre dame football and iu basketball')
-    expect(first.user.profile_image_url).
-      to eq('http://s3.amazonaws.com/twitter_production/profile_images/53781608/Photo_75_normal.jpg')
-    expect(first.user.url).to eq('http://addictedtonew.com')
-    expect(first.user.protected).to be_falsey
-    expect(first.user.followers_count).to eq(486)
+
+    aggregate_failures do
+      expect(statuses.size).to eq(20)
+      first = statuses.first
+      expect(first.id).to eq(882_281_424)
+      expect(first.created_at).to eq(Time.utc(2008, 8, 9, 5, 38, 12))
+      expect(first.source).to eq('web')
+      expect(first.truncated).to be_falsey
+      expect(first.in_reply_to_status_id).to eq(1234)
+      expect(first.in_reply_to_user_id).to eq(12_345)
+      expect(first.favorited).to be_falsey
+      expect(first.user.id).to eq(4243)
+      expect(first.user.name).to eq('John Nunemaker')
+      expect(first.user.screen_name).to eq('jnunemaker')
+      expect(first.user.location).to eq('Mishawaka, IN, US')
+      expect(first.user.description).to eq('Loves his wife, ruby, notre dame football and iu basketball')
+      expect(first.user.profile_image_url).
+        to eq('http://s3.amazonaws.com/twitter_production/profile_images/53781608/Photo_75_normal.jpg')
+      expect(first.user.url).to eq('http://addictedtonew.com')
+      expect(first.user.protected).to be_falsey
+      expect(first.user.followers_count).to eq(486)
+    end
   end
 
   it 'parses xml containing the desired element as root node' do
     address = Address.parse(fixture_file('address.xml'), single: true)
-    expect(address.street).to eq('Milchstrasse')
-    expect(address.postcode).to eq('26131')
-    expect(address.housenumber).to eq('23')
-    expect(address.city).to eq('Oldenburg')
-    expect(address.country.class).to eq(Country)
+
+    aggregate_failures do
+      expect(address.street).to eq('Milchstrasse')
+      expect(address.postcode).to eq('26131')
+      expect(address.housenumber).to eq('23')
+      expect(address.city).to eq('Oldenburg')
+      expect(address.country.class).to eq(Country)
+    end
   end
 
   it 'parses text node correctly' do
     address = Address.parse(fixture_file('address.xml'), single: true)
-    expect(address.country.name).to eq('Germany')
-    expect(address.country.code).to eq('de')
+
+    aggregate_failures do
+      expect(address.country.name).to eq('Germany')
+      expect(address.country.code).to eq('de')
+    end
   end
 
   it 'treats Nokogiri::XML::Document as root' do
@@ -744,33 +774,46 @@ describe HappyMapper do
   it 'parses xml with default namespace (amazon)' do
     file_contents = fixture_file('pita.xml')
     items = PITA::Items.parse(file_contents, single: true)
-    expect(items.total_results).to eq(22)
-    expect(items.total_pages).to eq(3)
-    first  = items.items[0]
-    second = items.items[1]
-    expect(first.asin).to eq('0321480791')
-    expect(first.point).to eq('38.5351715088 -121.7948684692')
-    expect(first.detail_page_url).to be_a_kind_of(URI)
-    expect(first.detail_page_url.to_s).to eq('http://www.amazon.com/gp/redirect.html%3FASIN=0321480791%26tag=ws%26lcode=xm2%26cID=2025%26ccmID=165953%26location=/o/ASIN/0321480791%253FSubscriptionId=dontbeaswoosh')
-    expect(first.manufacturer).to eq('Addison-Wesley Professional')
-    expect(first.product_group).to eq('<ProductGroup>Book</ProductGroup>')
-    expect(second.asin).to eq('047022388X')
-    expect(second.manufacturer).to eq('Wrox')
+
+    aggregate_failures do
+      expect(items.total_results).to eq(22)
+      expect(items.total_pages).to eq(3)
+
+      first = items.items[0]
+
+      expect(first.asin).to eq('0321480791')
+      expect(first.point).to eq('38.5351715088 -121.7948684692')
+      expect(first.detail_page_url).to be_a_kind_of(URI)
+      expect(first.detail_page_url.to_s).to eq('http://www.amazon.com/gp/redirect.html%3FASIN=0321480791%26tag=ws%26lcode=xm2%26cID=2025%26ccmID=165953%26location=/o/ASIN/0321480791%253FSubscriptionId=dontbeaswoosh')
+      expect(first.manufacturer).to eq('Addison-Wesley Professional')
+      expect(first.product_group).to eq('<ProductGroup>Book</ProductGroup>')
+
+      second = items.items[1]
+
+      expect(second.asin).to eq('047022388X')
+      expect(second.manufacturer).to eq('Wrox')
+    end
   end
 
   it 'parses xml that has attributes of elements' do
     items = CurrentWeather.parse(fixture_file('current_weather.xml'))
     first = items[0]
-    expect(first.temperature).to eq(51)
-    expect(first.feels_like).to eq(51)
-    expect(first.current_condition).to eq('Sunny')
-    expect(first.current_condition.icon).to eq('http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif')
+
+    aggregate_failures do
+      expect(first.temperature).to eq(51)
+      expect(first.feels_like).to eq(51)
+      expect(first.current_condition).to eq('Sunny')
+      expect(first.current_condition.icon).to eq('http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif')
+    end
   end
 
   it "parses xml with attributes of elements that aren't :single => true" do
     feed = Atom::Feed.parse(fixture_file('atom.xml'))
-    expect(feed.link.first.href).to eq('http://www.example.com')
-    expect(feed.link.last.href).to eq('http://www.example.com/tv_shows.atom')
+
+    aggregate_failures do
+      expect(feed.link.first.href).to eq('http://www.example.com')
+      expect(feed.link.last.href).to eq('http://www.example.com/tv_shows.atom')
+    end
   end
 
   it 'parses xml with optional elements with embedded attributes' do
@@ -790,123 +833,149 @@ describe HappyMapper do
 
   it 'parses xml with nested elements' do
     radars = Radar.parse(fixture_file('radar.xml'))
-    first = radars[0]
-    expect(first.places.size).to eq(1)
-    expect(first.places[0].name).to eq('Store')
-    second = radars[1]
-    expect(second.places.size).to eq(0)
-    third = radars[2]
-    expect(third.places.size).to eq(2)
-    expect(third.places[0].name).to eq('Work')
-    expect(third.places[1].name).to eq('Home')
+
+    aggregate_failures do
+      first = radars[0]
+      expect(first.places.size).to eq(1)
+      expect(first.places[0].name).to eq('Store')
+      second = radars[1]
+      expect(second.places.size).to eq(0)
+      third = radars[2]
+      expect(third.places.size).to eq(2)
+      expect(third.places[0].name).to eq('Work')
+      expect(third.places[1].name).to eq('Home')
+    end
   end
 
   it 'parses xml with element name different to class name' do
     game = QuarterTest::Game.parse(fixture_file('quarters.xml'))
-    expect(game.q1.start).to eq('4:40:15 PM')
-    expect(game.q2.start).to eq('5:18:53 PM')
+
+    aggregate_failures do
+      expect(game.q1.start).to eq('4:40:15 PM')
+      expect(game.q2.start).to eq('5:18:53 PM')
+    end
   end
 
   it 'parses xml that has elements with dashes' do
     commit = GitHub::Commit.parse(fixture_file('commit.xml'))
-    expect(commit.message).to eq('move commands.rb and helpers.rb into commands/ dir')
-    expect(commit.url).to eq('http://github.com/defunkt/github-gem/commit/c26d4ce9807ecf57d3f9eefe19ae64e75bcaaa8b')
-    expect(commit.id).to eq('c26d4ce9807ecf57d3f9eefe19ae64e75bcaaa8b')
-    expect(commit.committed_date).to eq(Date.parse('2008-03-02T16:45:41-08:00'))
-    expect(commit.tree).to eq('28a1a1ca3e663d35ba8bf07d3f1781af71359b76')
+
+    aggregate_failures do
+      expect(commit.message).to eq('move commands.rb and helpers.rb into commands/ dir')
+      expect(commit.url).to eq('http://github.com/defunkt/github-gem/commit/c26d4ce9807ecf57d3f9eefe19ae64e75bcaaa8b')
+      expect(commit.id).to eq('c26d4ce9807ecf57d3f9eefe19ae64e75bcaaa8b')
+      expect(commit.committed_date).to eq(Date.parse('2008-03-02T16:45:41-08:00'))
+      expect(commit.tree).to eq('28a1a1ca3e663d35ba8bf07d3f1781af71359b76')
+    end
   end
 
   it 'parses xml with no namespace' do
     product = Product.parse(fixture_file('product_no_namespace.xml'), single: true)
-    expect(product.title).to eq('A Title')
-    expect(product.feature_bullets.bug).to eq('This is a bug')
-    expect(product.feature_bullets.features.size).to eq(2)
-    expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
-    expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+
+    aggregate_failures do
+      expect(product.title).to eq('A Title')
+      expect(product.feature_bullets.bug).to eq('This is a bug')
+      expect(product.feature_bullets.features.size).to eq(2)
+      expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
+      expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+    end
   end
 
   it 'parses xml with default namespace' do
     product = Product.parse(fixture_file('product_default_namespace.xml'), single: true)
-    expect(product.title).to eq('A Title')
-    expect(product.feature_bullets.bug).to eq('This is a bug')
-    expect(product.feature_bullets.features.size).to eq(2)
-    expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
-    expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+
+    aggregate_failures do
+      expect(product.title).to eq('A Title')
+      expect(product.feature_bullets.bug).to eq('This is a bug')
+      expect(product.feature_bullets.features.size).to eq(2)
+      expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
+      expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+    end
   end
 
   it 'parses xml with single namespace' do
     product = Product.parse(fixture_file('product_single_namespace.xml'), single: true)
-    expect(product.title).to eq('A Title')
-    expect(product.feature_bullets.bug).to eq('This is a bug')
-    expect(product.feature_bullets.features.size).to eq(2)
-    expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
-    expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+
+    aggregate_failures do
+      expect(product.title).to eq('A Title')
+      expect(product.feature_bullets.bug).to eq('This is a bug')
+      expect(product.feature_bullets.features.size).to eq(2)
+      expect(product.feature_bullets.features[0].name).to eq('This is feature text 1')
+      expect(product.feature_bullets.features[1].name).to eq('This is feature text 2')
+    end
   end
 
   it 'parses xml with multiple namespaces' do
     track = FedEx::TrackReply.parse(fixture_file('multiple_namespaces.xml'))
-    expect(track.highest_severity).to eq('SUCCESS')
-    expect(track.more_data).to be_falsey
-    notification = track.notifications.first
-    expect(notification.code).to eq(0)
-    expect(notification.localized_message).to eq('Request was successfully processed.')
-    expect(notification.message).to eq('Request was successfully processed.')
-    expect(notification.severity).to eq('SUCCESS')
-    expect(notification.source).to eq('trck')
-    detail = track.trackdetails.first
-    expect(detail.carrier_code).to eq('FDXG')
-    expect(detail.est_delivery).to eq('2009-01-02T00:00:00')
-    expect(detail.service_info).to eq('Ground-Package Returns Program-Domestic')
-    expect(detail.status_code).to eq('OD')
-    expect(detail.status_desc).to eq('On FedEx vehicle for delivery')
-    expect(detail.tracking_number).to eq('9611018034267800045212')
-    expect(detail.weight.units).to eq('LB')
-    expect(detail.weight.value).to eq(2)
-    events = detail.events
-    expect(events.size).to eq(10)
-    first_event = events[0]
-    expect(first_event.eventdescription).to eq('On FedEx vehicle for delivery')
-    expect(first_event.eventtype).to eq('OD')
-    expect(first_event.timestamp).to eq('2009-01-02T06:00:00')
-    expect(first_event.address.city).to eq('WICHITA')
-    expect(first_event.address.countrycode).to eq('US')
-    expect(first_event.address.residential).to be_falsey
-    expect(first_event.address.state).to eq('KS')
-    expect(first_event.address.zip).to eq('67226')
-    last_event = events[-1]
-    expect(last_event.eventdescription).to eq('In FedEx possession')
-    expect(last_event.eventtype).to eq('IP')
-    expect(last_event.timestamp).to eq('2008-12-27T09:40:00')
-    expect(last_event.address.city).to eq('LONGWOOD')
-    expect(last_event.address.countrycode).to eq('US')
-    expect(last_event.address.residential).to be_falsey
-    expect(last_event.address.state).to eq('FL')
-    expect(last_event.address.zip).to eq('327506398')
-    expect(track.tran_detail.cust_tran_id).to eq('20090102-111321')
+
+    aggregate_failures do
+      expect(track.highest_severity).to eq('SUCCESS')
+      expect(track.more_data).to be_falsey
+      notification = track.notifications.first
+      expect(notification.code).to eq(0)
+      expect(notification.localized_message).to eq('Request was successfully processed.')
+      expect(notification.message).to eq('Request was successfully processed.')
+      expect(notification.severity).to eq('SUCCESS')
+      expect(notification.source).to eq('trck')
+      detail = track.trackdetails.first
+      expect(detail.carrier_code).to eq('FDXG')
+      expect(detail.est_delivery).to eq('2009-01-02T00:00:00')
+      expect(detail.service_info).to eq('Ground-Package Returns Program-Domestic')
+      expect(detail.status_code).to eq('OD')
+      expect(detail.status_desc).to eq('On FedEx vehicle for delivery')
+      expect(detail.tracking_number).to eq('9611018034267800045212')
+      expect(detail.weight.units).to eq('LB')
+      expect(detail.weight.value).to eq(2)
+      events = detail.events
+      expect(events.size).to eq(10)
+      first_event = events[0]
+      expect(first_event.eventdescription).to eq('On FedEx vehicle for delivery')
+      expect(first_event.eventtype).to eq('OD')
+      expect(first_event.timestamp).to eq('2009-01-02T06:00:00')
+      expect(first_event.address.city).to eq('WICHITA')
+      expect(first_event.address.countrycode).to eq('US')
+      expect(first_event.address.residential).to be_falsey
+      expect(first_event.address.state).to eq('KS')
+      expect(first_event.address.zip).to eq('67226')
+      last_event = events[-1]
+      expect(last_event.eventdescription).to eq('In FedEx possession')
+      expect(last_event.eventtype).to eq('IP')
+      expect(last_event.timestamp).to eq('2008-12-27T09:40:00')
+      expect(last_event.address.city).to eq('LONGWOOD')
+      expect(last_event.address.countrycode).to eq('US')
+      expect(last_event.address.residential).to be_falsey
+      expect(last_event.address.state).to eq('FL')
+      expect(last_event.address.zip).to eq('327506398')
+      expect(track.tran_detail.cust_tran_id).to eq('20090102-111321')
+    end
   end
 
   it 'is able to parse google analytics api xml' do
     data = Analytics::Feed.parse(fixture_file('analytics.xml'))
-    expect(data.id).to eq('http://www.google.com/analytics/feeds/accounts/nunemaker@gmail.com')
-    expect(data.entries.size).to eq(4)
 
-    entry = data.entries[0]
-    expect(entry.title).to eq('addictedtonew.com')
-    expect(entry.properties.size).to eq(4)
+    aggregate_failures do
+      expect(data.id).to eq('http://www.google.com/analytics/feeds/accounts/nunemaker@gmail.com')
+      expect(data.entries.size).to eq(4)
 
-    property = entry.properties[0]
-    expect(property.name).to eq('ga:accountId')
-    expect(property.value).to eq('85301')
+      entry = data.entries[0]
+      expect(entry.title).to eq('addictedtonew.com')
+      expect(entry.properties.size).to eq(4)
+
+      property = entry.properties[0]
+      expect(property.name).to eq('ga:accountId')
+      expect(property.value).to eq('85301')
+    end
   end
 
   it 'is able to parse google analytics profile xml with manually declared namespace' do
     data = Analytics::Profile.parse(fixture_file('analytics_profile.xml'))
-    expect(data.entries.size).to eq(6)
 
-    entry = data.entries[0]
-    expect(entry.title).to eq('www.homedepot.com')
-    expect(entry.properties.size).to eq(6)
-    expect(entry.goals.size).to eq(0)
+    aggregate_failures do
+      expect(data.entries.size).to eq(6)
+      entry = data.entries[0]
+      expect(entry.title).to eq('www.homedepot.com')
+      expect(entry.properties.size).to eq(6)
+      expect(entry.goals.size).to eq(0)
+    end
   end
 
   it 'allows instantiating with a string' do
@@ -924,22 +993,28 @@ describe HappyMapper do
 
   it 'parses family search xml' do
     tree = FamilySearch::FamilyTree.parse(fixture_file('family_tree.xml'))
-    expect(tree.version).to eq('1.0.20071213.942')
-    expect(tree.status_message).to eq('OK')
-    expect(tree.status_code).to eq('200')
-    expect(tree.persons.person.size).to eq(1)
-    expect(tree.persons.person.first.version).to eq('1199378491000')
-    expect(tree.persons.person.first.modified).
-      to eq(Time.utc(2008, 1, 3, 16, 41, 31)) # 2008-01-03T09:41:31-07:00
-    expect(tree.persons.person.first.id).to eq('KWQS-BBQ')
-    expect(tree.persons.person.first.information.alternateIds.ids).not_to be_kind_of(String)
-    expect(tree.persons.person.first.information.alternateIds.ids.size).to eq(8)
+
+    aggregate_failures do
+      expect(tree.version).to eq('1.0.20071213.942')
+      expect(tree.status_message).to eq('OK')
+      expect(tree.status_code).to eq('200')
+      expect(tree.persons.person.size).to eq(1)
+      expect(tree.persons.person.first.version).to eq('1199378491000')
+      expect(tree.persons.person.first.modified).
+        to eq(Time.utc(2008, 1, 3, 16, 41, 31)) # 2008-01-03T09:41:31-07:00
+      expect(tree.persons.person.first.id).to eq('KWQS-BBQ')
+      expect(tree.persons.person.first.information.alternateIds.ids).not_to be_kind_of(String)
+      expect(tree.persons.person.first.information.alternateIds.ids.size).to eq(8)
+    end
   end
 
   it 'parses multiple images' do
     artist = Artist.parse(fixture_file('multiple_primitives.xml'))
-    expect(artist.name).to eq('value')
-    expect(artist.images.size).to eq(2)
+
+    aggregate_failures do
+      expect(artist.name).to eq('value')
+      expect(artist.images.size).to eq(2)
+    end
   end
 
   it 'parses lastfm namespaces' do
@@ -992,12 +1067,10 @@ describe HappyMapper do
     end
 
     it "saves object's xml content" do
-      expect(records.first.variants.first.xml_content).to eq(
-        'white <tag>cockatoo</tag>'
-      )
-      expect(records.first.variants.last.to_html).to eq(
-        '<em>white</em> cockatoo'
-      )
+      aggregate_failures do
+        expect(records.first.variants.first.xml_content).to eq 'white <tag>cockatoo</tag>'
+        expect(records.first.variants.last.to_html).to eq '<em>white</em> cockatoo'
+      end
     end
   end
 
@@ -1010,10 +1083,12 @@ describe HappyMapper do
     let(:article) { Article.parse(fixture_file('subclass_namespace.xml')) }
 
     it 'parses the publish options for Article and Photo' do
-      expect(article.title).not_to be_nil
-      expect(article.text).not_to be_nil
-      expect(article.photos).not_to be_nil
-      expect(article.photos.first.title).not_to be_nil
+      aggregate_failures do
+        expect(article.title).not_to be_nil
+        expect(article.text).not_to be_nil
+        expect(article.photos).not_to be_nil
+        expect(article.photos.first.title).not_to be_nil
+      end
     end
 
     it 'parses the publish options for Article' do
@@ -1124,8 +1199,10 @@ describe HappyMapper do
     let(:parsed) { described_class.parse original }
 
     it 'has UTF-8 encoding by default' do
-      expect(original.encoding).to eq Encoding::UTF_8
-      expect(parsed.to_xml.encoding).to eq Encoding::UTF_8
+      aggregate_failures do
+        expect(original.encoding).to eq Encoding::UTF_8
+        expect(parsed.to_xml.encoding).to eq Encoding::UTF_8
+      end
     end
   end
 end

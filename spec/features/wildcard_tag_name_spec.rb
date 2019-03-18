@@ -61,14 +61,18 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
     let(:xml) { Nokogiri::XML(subject.to_xml) }
 
     it 'maps different elements to same class' do
-      expect(subject.blargs).not_to be_nil
-      expect(subject.jellos).not_to be_nil
+      aggregate_failures do
+        expect(subject.blargs).not_to be_nil
+        expect(subject.jellos).not_to be_nil
+      end
     end
 
     it 'filters on xpath appropriately' do
-      expect(subject.blargs.size).to eq(2)
-      expect(subject.jellos.size).to eq(1)
-      expect(subject.subjellos.size).to eq(1)
+      aggregate_failures do
+        expect(subject.blargs.size).to eq(2)
+        expect(subject.jellos.size).to eq(1)
+        expect(subject.subjellos.size).to eq(1)
+      end
     end
 
     def base_with(name, href, other)
@@ -76,10 +80,12 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
     end
 
     it 'parses correct values onto generic class' do
-      expect(subject.blargs[0]).to eq base_with('blargname1', 'http://blarg.com', nil)
-      expect(subject.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
-      expect(subject.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
-      expect(subject.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
+      aggregate_failures do
+        expect(subject.blargs[0]).to eq base_with('blargname1', 'http://blarg.com', nil)
+        expect(subject.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
+        expect(subject.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
+        expect(subject.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
+      end
     end
 
     def validate_xpath(xpath, name, href, other)
@@ -89,10 +95,12 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
     end
 
     it '#to_xmls using parent element tag name' do
-      expect(xml.xpath('/root/description').text).to eq('some description')
-      validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
-      validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
-      validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+      aggregate_failures do
+        expect(xml.xpath('/root/description').text).to eq('some description')
+        validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
+        validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
+        validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+      end
     end
 
     it "properlies respect child HappyMapper tags if tag isn't provided on the element defintion" do
