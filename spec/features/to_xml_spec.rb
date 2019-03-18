@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Saving #to_xml' do
+RSpec.describe 'Saving #to_xml', type: :feature do
   module ToXML
     class Address
       include HappyMapper

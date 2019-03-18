@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Attribute Default Value' do
+RSpec.describe 'Attribute Default Value', type: :feature do
   context 'when given a default value' do
     class Meal
       include HappyMapper

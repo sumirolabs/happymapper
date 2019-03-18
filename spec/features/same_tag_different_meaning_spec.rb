@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'parsing the same tag differently in different contexts' do
+RSpec.describe 'parsing the same tag differently in different contexts', type: :feature do
   module SameTagSpec
     class Bar
       include HappyMapper

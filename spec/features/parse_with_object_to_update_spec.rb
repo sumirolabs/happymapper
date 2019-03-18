@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Updating existing objects with .parse and #parse' do
+RSpec.describe 'Updating existing objects with .parse and #parse', type: :feature do
   let(:subject) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
 
   let(:parse_instance_initial_xml) do

@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'after_parse callbacks' do
+RSpec.describe 'after_parse callbacks', type: :feature do
   module AfterParseSpec
     class Address
       include HappyMapper

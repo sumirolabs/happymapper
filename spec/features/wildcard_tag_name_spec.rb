@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Wildcard Root Tag' do
+RSpec.describe 'Wildcard Root Tag', type: :feature do
   generic_class_xml = %(
     <root>
         <description>some description</description>

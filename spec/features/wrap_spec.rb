@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'wrap which allows you to specify a wrapper element' do
+RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feature do
   module Wrap
     class SubClass
       include HappyMapper

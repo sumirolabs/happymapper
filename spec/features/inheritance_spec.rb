@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Using inheritance to share elements and attributes' do
+RSpec.describe 'Using inheritance to share elements and attributes', type: :feature do
   class Genetics
     include HappyMapper
     content :dna, String

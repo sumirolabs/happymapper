@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'Attribute Method Conversion' do
+RSpec.describe 'Attribute Method Conversion', type: :feature do
   module AttributeMethodConversion
     class Document
       include HappyMapper
