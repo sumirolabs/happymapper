@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'Updating existing objects with .parse and #parse', type: :feature do
-  let(:subject) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
+  let(:root) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
 
   let(:parse_instance_initial_xml) do
     %(<root attr1="initial">
@@ -84,32 +84,32 @@ RSpec.describe 'Updating existing objects with .parse and #parse', type: :featur
 
   it 'initial values are correct' do
     aggregate_failures do
-      expect(subject.attr1).to eq('initial')
-      item_is_correctly_defined(subject.items[0])
-      item_is_correctly_defined(subject.items[1])
+      expect(root.attr1).to eq('initial')
+      item_is_correctly_defined(root.items[0])
+      item_is_correctly_defined(root.items[1])
     end
   end
 
   describe '.parse', 'specifying an existing object to update' do
     it 'all fields are correct' do
-      ParseInstanceSpec::Root.parse(parse_instance_updated_xml, update: subject)
+      ParseInstanceSpec::Root.parse(parse_instance_updated_xml, update: root)
 
       aggregate_failures do
-        expect(subject.attr1).to eq 'updated'
-        item_is_correctly_defined(subject.items[0], 'updated')
-        item_is_correctly_defined(subject.items[1], 'updated')
+        expect(root.attr1).to eq 'updated'
+        item_is_correctly_defined(root.items[0], 'updated')
+        item_is_correctly_defined(root.items[1], 'updated')
       end
     end
   end
 
   describe '#parse' do
     it 'all fields are correct' do
-      subject.parse(parse_instance_updated_xml)
+      root.parse(parse_instance_updated_xml)
 
       aggregate_failures do
-        expect(subject.attr1).to eq 'updated'
-        item_is_correctly_defined(subject.items[0], 'updated')
-        item_is_correctly_defined(subject.items[1], 'updated')
+        expect(root.attr1).to eq 'updated'
+        item_is_correctly_defined(root.items[0], 'updated')
+        item_is_correctly_defined(root.items[1], 'updated')
       end
     end
   end

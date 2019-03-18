@@ -110,7 +110,7 @@ end
 
 RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
   context 'with namespaces' do
-    let(:subject) do
+    let(:xml) do
       country = ToXMLWithNamespaces::Country.new(name: 'USA', code: 'us')
       address = ToXMLWithNamespaces::Address.new('street' => 'Mockingbird Lane',
                                                  'location' => 'Home',
@@ -126,37 +126,37 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
     end
 
     it 'sets the namespace specified in the class' do
-      expect(subject.xpath('/').children.first.namespace.prefix).to eq 'address'
+      expect(xml.xpath('/').children.first.namespace.prefix).to eq 'address'
     end
 
     it 'saves elements' do
       elements = { 'street' => 'Mockingbird Lane', 'postcode' => '98103', 'city' => 'Seattle' }
 
       elements.each_pair do |property, value|
-        expect(subject.xpath("address:#{property}").text).to eq value
+        expect(xml.xpath("address:#{property}").text).to eq value
       end
     end
 
     it 'saves attributes' do
-      expect(subject.xpath('@location').text).to eq 'Home-live'
+      expect(xml.xpath('@location').text).to eq 'Home-live'
     end
 
     context "when an element has a 'state_when_nil' parameter" do
       it 'saves an empty element' do
-        expect(subject.xpath('address:description').text).to eq ''
+        expect(xml.xpath('address:description').text).to eq ''
       end
     end
 
     context "when an element has a 'on_save' parameter" do
       context 'with a symbol which represents a function' do
         it 'saves the element with the result of a function call and not the value of the ivar' do
-          expect(subject.xpath('address:housenumber').text).to eq '[1313]'
+          expect(xml.xpath('address:housenumber').text).to eq '[1313]'
         end
       end
 
       context 'with a lambda' do
         it 'saves the results' do
-          expect(subject.xpath('address:date_created').text).to eq '15:00:00 01/01/11'
+          expect(xml.xpath('address:date_created').text).to eq '15:00:00 01/01/11'
         end
       end
     end
@@ -164,7 +164,7 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
     context "when an attribute has a 'on_save' parameter" do
       context 'with a lambda' do
         it 'saves the result' do
-          expect(subject.xpath('@location').text).to eq 'Home-live'
+          expect(xml.xpath('@location').text).to eq 'Home-live'
         end
       end
     end
@@ -172,7 +172,7 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
     context "when a has_many has a 'on_save' parameter" do
       context 'with a lambda' do
         it 'saves the result' do
-          dates_updated = subject.xpath('address:dates_updated')
+          dates_updated = xml.xpath('address:dates_updated')
 
           aggregate_failures do
             expect(dates_updated.length).to eq 2
@@ -185,11 +185,11 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
 
     context 'when an element type is a HappyMapper subclass' do
       it 'saves attributes' do
-        expect(subject.xpath('country:country/@countryCode').text).to eq 'us'
+        expect(xml.xpath('country:country/@countryCode').text).to eq 'us'
       end
 
       it 'saves elements' do
-        expect(subject.xpath('country:country/countryName:countryName').text).to eq 'USA'
+        expect(xml.xpath('country:country/countryName:countryName').text).to eq 'USA'
       end
     end
   end

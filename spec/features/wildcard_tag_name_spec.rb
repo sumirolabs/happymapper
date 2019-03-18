@@ -57,21 +57,21 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
   end
 
   describe "can have generic classes using tag '*'" do
-    let(:subject) { GenericBase::Root.parse(generic_class_xml) }
-    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:root) { GenericBase::Root.parse(generic_class_xml) }
+    let(:xml) { Nokogiri::XML(root.to_xml) }
 
     it 'maps different elements to same class' do
       aggregate_failures do
-        expect(subject.blargs).not_to be_nil
-        expect(subject.jellos).not_to be_nil
+        expect(root.blargs).not_to be_nil
+        expect(root.jellos).not_to be_nil
       end
     end
 
     it 'filters on xpath appropriately' do
       aggregate_failures do
-        expect(subject.blargs.size).to eq(2)
-        expect(subject.jellos.size).to eq(1)
-        expect(subject.subjellos.size).to eq(1)
+        expect(root.blargs.size).to eq(2)
+        expect(root.jellos.size).to eq(1)
+        expect(root.subjellos.size).to eq(1)
       end
     end
 
@@ -81,10 +81,10 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
 
     it 'parses correct values onto generic class' do
       aggregate_failures do
-        expect(subject.blargs[0]).to eq base_with('blargname1', 'http://blarg.com', nil)
-        expect(subject.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
-        expect(subject.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
-        expect(subject.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
+        expect(root.blargs[0]).to eq base_with('blargname1', 'http://blarg.com', nil)
+        expect(root.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
+        expect(root.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
+        expect(root.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
       end
     end
 

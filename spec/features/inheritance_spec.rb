@@ -28,7 +28,7 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
   end
 
   describe 'Overwrite' do
-    let(:subject) do
+    let(:overwrite) do
       xml =
         '<overwrite love="love" naivety="trusting">' \
         '<genetics>1001</genetics><immunities>Chicken Pox</immunities>' \
@@ -45,16 +45,16 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
 
     context 'when parsing xml' do
       it 'parses the new overwritten attribut' do
-        expect(subject.love).to be == 'love'
+        expect(overwrite.love).to be == 'love'
       end
 
       it 'parses the new overwritten element' do
-        expect(subject.genetics).to be == 1001
+        expect(overwrite.genetics).to be == 1001
       end
     end
 
     context 'when saving to xml' do
-      subject do
+      let(:xml) do
         overwrite = Overwrite.new
         overwrite.genetics = 1
         overwrite.love = 'love'
@@ -62,17 +62,17 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
       end
 
       it 'has only 1 genetics element' do
-        expect(subject.xpath('//genetics').count).to be == 1
+        expect(xml.xpath('//genetics').count).to be == 1
       end
 
       it 'has only 1 love attribute' do
-        expect(subject.xpath('@love').text).to be == 'love'
+        expect(xml.xpath('@love').text).to be == 'love'
       end
     end
   end
 
   describe 'Child', 'a subclass of the Parent' do
-    let(:subject) do
+    let(:child) do
       xml =
         '<child love="99" naivety="trusting">' \
         '<genetics>ABBA</genetics><immunities>Chicken Pox</immunities>' \
@@ -83,16 +83,16 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
     context 'when parsing xml' do
       it 'is possible to deserialize XML into a Child class instance' do
         aggregate_failures do
-          expect(subject.love).to eq 99
-          expect(subject.genetics.dna).to eq 'ABBA'
-          expect(subject.naivety).to eq 'trusting'
-          expect(subject.immunities.size).to eq(1)
+          expect(child.love).to eq 99
+          expect(child.genetics.dna).to eq 'ABBA'
+          expect(child.naivety).to eq 'trusting'
+          expect(child.immunities.size).to eq(1)
         end
       end
     end
 
     context 'when saving to xml' do
-      let(:subject) do
+      let(:xml) do
         child = Child.new
         child.love = 100
         child.naivety = 'Bright Eyed'
@@ -105,15 +105,15 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
 
       it 'saves both the Child and Parent attributes' do
         aggregate_failures do
-          expect(subject.xpath('@naivety').text).to eq 'Bright Eyed'
-          expect(subject.xpath('@love').text).to eq '100'
+          expect(xml.xpath('@naivety').text).to eq 'Bright Eyed'
+          expect(xml.xpath('@love').text).to eq '100'
         end
       end
 
       it 'saves both the Child and Parent elements' do
         aggregate_failures do
-          expect(subject.xpath('genetics').text).to eq 'GATTACA'
-          expect(subject.xpath('immunities').size).to eq(3)
+          expect(xml.xpath('genetics').text).to eq 'GATTACA'
+          expect(xml.xpath('immunities').size).to eq(3)
         end
       end
     end

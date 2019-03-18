@@ -10,12 +10,11 @@ RSpec.describe 'Attribute Default Value', type: :feature do
       attribute :type, String, default: 'omnivore'
     end
 
-    let(:subject) { Meal }
     let(:default_meal_type) { 'omnivore' }
 
     context 'when no value has been specified' do
       it 'returns the default value' do
-        meal = subject.parse('<meal />')
+        meal = Meal.parse('<meal />')
         expect(meal.type).to eq default_meal_type
       end
     end
@@ -24,7 +23,7 @@ RSpec.describe 'Attribute Default Value', type: :feature do
       let(:expected_xml) { %(<?xml version="1.0"?>\n<meal/>\n) }
 
       it 'the default value is not included' do
-        meal = subject.new
+        meal = Meal.new
         expect(meal.to_xml).to eq expected_xml
       end
     end
@@ -33,14 +32,14 @@ RSpec.describe 'Attribute Default Value', type: :feature do
       let(:expected_xml) { %(<?xml version="1.0"?>\n<meal type="kosher"/>\n) }
 
       it 'returns the new value' do
-        meal = subject.parse('<meal />')
+        meal = Meal.parse('<meal />')
         meal.type = 'vegan'
 
         expect(meal.type).not_to eq default_meal_type
       end
 
       it 'saves the new value to the xml' do
-        meal = subject.new
+        meal = Meal.new
         meal.type = 'kosher'
         expect(meal.to_xml).to eq expected_xml
       end
