@@ -201,9 +201,7 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
     end
   end
 
-  context 'namespace supplied by element declaration trumps namespace ' \
-          'specified by element class' do
-
+  context 'with namespace supplied by element declaration and by element class' do
     let(:expected_xml) do
       <<-XML.gsub(/^\s*\|/, '')
         |<?xml version="1.0"?>
