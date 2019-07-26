@@ -46,7 +46,8 @@ module GenericBase
   end
 end
 
-RSpec.describe 'Wildcard Root Tag', type: :feature do
+RSpec.describe 'classes with a wildcard tag', type: :feature do
+  let(:root) { GenericBase::Root.parse(generic_class_xml) }
   let(:generic_class_xml) do
     <<~XML
       <root>
@@ -61,22 +62,16 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
     XML
   end
 
-  describe "can have generic classes using tag '*'" do
-    let(:root) { GenericBase::Root.parse(generic_class_xml) }
-
+  describe '.parse' do
     it 'maps different elements to same class' do
       aggregate_failures do
-        expect(root.blargs).not_to be_nil
-        expect(root.jellos).not_to be_nil
+        expect(root.blargs).to match_array [GenericBase::Base, GenericBase::Base]
+        expect(root.jellos).to match_array [GenericBase::Base]
       end
     end
 
     it 'filters on xpath appropriately' do
-      aggregate_failures do
-        expect(root.blargs.size).to eq(2)
-        expect(root.jellos.size).to eq(1)
-        expect(root.subjellos.size).to eq(1)
-      end
+      expect(root.subjellos.size).to eq 1
     end
 
     def base_with(name, href, other)
@@ -91,29 +86,28 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
         expect(root.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
       end
     end
+  end
 
-    context 'when converting to xml' do
-      let(:xml) { Nokogiri::XML(root.to_xml) }
+  describe '#to_xml' do
+    let(:xml) { Nokogiri::XML(root.to_xml) }
 
-      def validate_xpath(xpath, name, href, other)
-        expect(xml.xpath("#{xpath}/@name").text).to eq name
-        expect(xml.xpath("#{xpath}/@href").text).to eq href
-        expect(xml.xpath("#{xpath}/@other").text).to eq other
+    def validate_xpath(xpath, name, href, other)
+      expect(xml.xpath("#{xpath}/@name").text).to eq name
+      expect(xml.xpath("#{xpath}/@href").text).to eq href
+      expect(xml.xpath("#{xpath}/@other").text).to eq other
+    end
+
+    it 'uses the tag name specified by the parent element' do
+      aggregate_failures do
+        expect(xml.xpath('/root/description').text).to eq('some description')
+        validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
+        validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
+        validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
       end
+    end
 
-      it 'uses the tag name specified by the parent element' do
-        aggregate_failures do
-          expect(xml.xpath('/root/description').text).to eq('some description')
-          validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
-          validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
-          validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
-        end
-      end
-
-      # TODO: Move to different spec since this has nothing to do with element inheritance
-      it "properly respects child tags if tag isn't provided on the element defintion" do
-        expect(xml.xpath('root/subelement').size).to eq(1)
-      end
+    it 'uses the element tag name if the tag is not specified by the parent' do
+      expect(xml.xpath('root/subelement').size).to eq(1)
     end
   end
 end
