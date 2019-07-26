@@ -549,6 +549,17 @@ class DefaultNamespaceCombi
   element :author, String, namespace: 'p', tag: 'author'
 end
 
+module StringFoo
+  class Bar
+    include HappyMapper
+    has_many :things, 'StringFoo::Thing'
+  end
+
+  class Thing
+    include HappyMapper
+  end
+end
+
 describe HappyMapper do
   describe 'being included into another class' do
     let(:klass) do
@@ -634,8 +645,9 @@ describe HappyMapper do
     end
 
     it 'defaults tag name of class in modules to the last constant lowercase' do
-      module Bar; class Baz; include HappyMapper; end; end
-      expect(Bar::Baz.tag_name).to eq('baz')
+      nested_named = Class.new { include HappyMapper }
+      allow(nested_named).to receive(:name).and_return 'Bar::Baz'
+      expect(nested_named.tag_name).to eq('baz')
     end
 
     it 'allows setting tag name' do
@@ -977,17 +989,10 @@ describe HappyMapper do
     end
   end
 
-  it 'allows instantiating with a string' do
-    module StringFoo
-      class Bar
-        include HappyMapper
-        has_many :things, 'StringFoo::Thing'
-      end
+  it 'allows speficying child element class with a string' do
+    bar = StringFoo::Bar.parse '<bar><thing/></bar>'
 
-      class Thing
-        include HappyMapper
-      end
-    end
+    expect(bar.things).to match_array [StringFoo::Thing]
   end
 
   it 'parses family search xml' do
