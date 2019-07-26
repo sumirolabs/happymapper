@@ -2,9 +2,54 @@
 
 require 'spec_helper'
 
+module GenericBase
+  class Base
+    include Comparable
+    include HappyMapper
+
+    def initialize(params = {})
+      @name = params[:name]
+      @href = params[:href]
+      @other = params[:other]
+    end
+
+    tag '*'
+    attribute :name, String
+    attribute :href, String
+    attribute :other, String
+
+    def <=>(other)
+      result = name <=> other.name
+      return result unless result == 0
+
+      result = href <=> other.href
+      return result unless result == 0
+
+      self.other <=> other.other
+    end
+  end
+
+  class Sub
+    include HappyMapper
+    tag 'subelement'
+    has_one :jello, Base, tag: 'jello'
+  end
+
+  class Root
+    include HappyMapper
+    tag 'root'
+    element :description, String
+    has_many :blargs, Base, tag: 'blarg', xpath: '.'
+    has_many :jellos, Base, tag: 'jello', xpath: '.'
+    has_many :subjellos, Base, xpath: 'subelement/.', tag: 'jello', read_only: true
+    has_one :sub_element, Sub
+  end
+end
+
 RSpec.describe 'Wildcard Root Tag', type: :feature do
-  generic_class_xml = %(
-    <root>
+  let(:generic_class_xml) do
+    <<~XML
+      <root>
         <description>some description</description>
         <blarg name='blargname1' href='http://blarg.com'/>
         <blarg name='blargname2' href='http://blarg.com'/>
@@ -12,53 +57,12 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
         <subelement>
           <jello name='subjelloname' href='http://ohnojello.com' other='othertext'/>
         </subelement>
-      </root>)
-
-  module GenericBase
-    class Base
-      include Comparable
-      include HappyMapper
-
-      def initialize(params = {})
-        @name = params[:name]
-        @href = params[:href]
-        @other = params[:other]
-      end
-
-      tag '*'
-      attribute :name, String
-      attribute :href, String
-      attribute :other, String
-
-      def <=>(other)
-        result = name <=> other.name
-        return result unless result == 0
-
-        result = href <=> other.href
-        return result unless result == 0
-
-        self.other <=> other.other
-      end
-    end
-    class Sub
-      include HappyMapper
-      tag 'subelement'
-      has_one :jello, Base, tag: 'jello'
-    end
-    class Root
-      include HappyMapper
-      tag 'root'
-      element :description, String
-      has_many :blargs, Base, tag: 'blarg', xpath: '.'
-      has_many :jellos, Base, tag: 'jello', xpath: '.'
-      has_many :subjellos, Base, tag: 'jello', xpath: 'subelement/.', read_only: true
-      has_one :sub_element, Sub
-    end
+      </root>
+    XML
   end
 
   describe "can have generic classes using tag '*'" do
     let(:root) { GenericBase::Root.parse(generic_class_xml) }
-    let(:xml) { Nokogiri::XML(root.to_xml) }
 
     it 'maps different elements to same class' do
       aggregate_failures do
@@ -88,23 +92,27 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
       end
     end
 
-    def validate_xpath(xpath, name, href, other)
-      expect(xml.xpath("#{xpath}/@name").text).to eq name
-      expect(xml.xpath("#{xpath}/@href").text).to eq href
-      expect(xml.xpath("#{xpath}/@other").text).to eq other
-    end
+    context 'when converting to xml' do
+      let(:xml) { Nokogiri::XML(root.to_xml) }
 
-    it 'converts to xml with #to_xml using parent element tag name' do
-      aggregate_failures do
-        expect(xml.xpath('/root/description').text).to eq('some description')
-        validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
-        validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
-        validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+      def validate_xpath(xpath, name, href, other)
+        expect(xml.xpath("#{xpath}/@name").text).to eq name
+        expect(xml.xpath("#{xpath}/@href").text).to eq href
+        expect(xml.xpath("#{xpath}/@other").text).to eq other
       end
-    end
 
-    it "properly respects child HappyMapper tags if tag isn't provided on the element defintion" do
-      expect(xml.xpath('root/subelement').size).to eq(1)
+      it 'uses the tag name specified by the parent element' do
+        aggregate_failures do
+          expect(xml.xpath('/root/description').text).to eq('some description')
+          validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
+          validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
+          validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+        end
+      end
+
+      it "properly respects child tags if tag isn't provided on the element defintion" do
+        expect(xml.xpath('root/subelement').size).to eq(1)
+      end
     end
   end
 end
