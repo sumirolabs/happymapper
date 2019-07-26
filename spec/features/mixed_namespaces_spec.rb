@@ -2,25 +2,25 @@
 
 require 'spec_helper'
 
-RSpec.describe 'A document with mixed namespaces', type: :feature do
-  module MixedNamespaces
-    class Address
-      include HappyMapper
+module MixedNamespaces
+  class Address
+    include HappyMapper
 
-      namespace :prefix
-      tag :address
+    namespace :prefix
+    tag :address
 
-      # Here each of the elements have their namespace set to nil to reset their
-      # namespace so that it is not the same as the prefix namespace
+    # Here each of the elements have their namespace set to nil to reset their
+    # namespace so that it is not the same as the prefix namespace
 
-      has_many :streets, String, tag: 'street', namespace: nil
+    has_many :streets, String, tag: 'street', namespace: nil
 
-      has_one :house_number, String, tag: 'housenumber', namespace: nil
-      has_one :postcode, String, namespace: 'different'
-      has_one :city, String, namespace: nil
-    end
+    has_one :house_number, String, tag: 'housenumber', namespace: nil
+    has_one :postcode, String, namespace: 'different'
+    has_one :city, String, namespace: nil
   end
+end
 
+RSpec.describe 'A document with mixed namespaces', type: :feature do
   #
   # Note that the parent element of the xml has the namespacing. The elements
   # contained within the xml do not share the parent element namespace so a

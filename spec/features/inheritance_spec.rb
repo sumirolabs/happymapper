@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Using inheritance to share elements and attributes', type: :feature do
+module Inheritance
   class Genetics
     include HappyMapper
     content :dna, String
@@ -26,20 +26,22 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
     attribute :love, String
     element :genetics, Integer
   end
+end
 
+RSpec.describe 'Using inheritance to share elements and attributes', type: :feature do
   describe 'Overwrite' do
     let(:overwrite) do
       xml =
         '<overwrite love="love" naivety="trusting">' \
         '<genetics>1001</genetics><immunities>Chicken Pox</immunities>' \
         '</overwrite>'
-      Overwrite.parse(xml, single: true)
+      Inheritance::Overwrite.parse(xml, single: true)
     end
 
     it 'overrides the parent elements and attributes' do
       aggregate_failures do
-        expect(Overwrite.attributes.count).to eq Parent.attributes.count
-        expect(Overwrite.elements.count).to eq Parent.elements.count
+        expect(Inheritance::Overwrite.attributes.count).to eq Inheritance::Parent.attributes.count
+        expect(Inheritance::Overwrite.elements.count).to eq Inheritance::Parent.elements.count
       end
     end
 
@@ -55,7 +57,7 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
 
     context 'when saving to xml' do
       let(:xml) do
-        overwrite = Overwrite.new
+        overwrite = Inheritance::Overwrite.new
         overwrite.genetics = 1
         overwrite.love = 'love'
         Nokogiri::XML(overwrite.to_xml).root
@@ -77,7 +79,7 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
         '<child love="99" naivety="trusting">' \
         '<genetics>ABBA</genetics><immunities>Chicken Pox</immunities>' \
         '</child>'
-      Child.parse(xml)
+      Inheritance::Child.parse(xml)
     end
 
     context 'when parsing xml' do
@@ -93,11 +95,11 @@ RSpec.describe 'Using inheritance to share elements and attributes', type: :feat
 
     context 'when saving to xml' do
       let(:xml) do
-        child = Child.new
+        child = Inheritance::Child.new
         child.love = 100
         child.naivety = 'Bright Eyed'
         child.immunities = ['Small Pox', 'Chicken Pox', 'Mumps']
-        genetics = Genetics.new
+        genetics = Inheritance::Genetics.new
         genetics.dna = 'GATTACA'
         child.genetics = genetics
         Nokogiri::XML(child.to_xml).root

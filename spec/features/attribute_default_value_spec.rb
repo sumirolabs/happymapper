@@ -2,14 +2,14 @@
 
 require 'spec_helper'
 
+class Meal
+  include HappyMapper
+  tag 'meal'
+  attribute :type, String, default: 'omnivore'
+end
+
 RSpec.describe 'Attribute Default Value', type: :feature do
   context 'when given a default value' do
-    class Meal
-      include HappyMapper
-      tag 'meal'
-      attribute :type, String, default: 'omnivore'
-    end
-
     let(:default_meal_type) { 'omnivore' }
 
     context 'when no value has been specified' do
