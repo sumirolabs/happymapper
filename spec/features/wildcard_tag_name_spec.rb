@@ -94,7 +94,7 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
       expect(xml.xpath("#{xpath}/@other").text).to eq other
     end
 
-    it '#to_xmls using parent element tag name' do
+    it 'converts to xml with #to_xml using parent element tag name' do
       aggregate_failures do
         expect(xml.xpath('/root/description').text).to eq('some description')
         validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
@@ -103,7 +103,7 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
       end
     end
 
-    it "properlies respect child HappyMapper tags if tag isn't provided on the element defintion" do
+    it "properly respects child HappyMapper tags if tag isn't provided on the element defintion" do
       expect(xml.xpath('root/subelement').size).to eq(1)
     end
   end
