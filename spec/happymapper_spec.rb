@@ -554,10 +554,6 @@ describe HappyMapper do
     let(:klass) do
       Class.new do
         include HappyMapper
-
-        def self.name
-          'Boo'
-        end
       end
     end
 
@@ -625,13 +621,16 @@ describe HappyMapper do
       end
     end
 
-    it 'defaults tag name to lowercase class' do
-      expect(klass.tag_name).to eq('boo')
+    it 'defaults tag name to lowercase class name' do
+      named = Class.new { include HappyMapper }
+      allow(named).to receive(:name).and_return 'Boo'
+
+      expect(named.tag_name).to eq('boo')
     end
 
     it 'generates no tag name for anonymous class' do
-      @anon = Class.new { include HappyMapper }
-      expect(@anon.tag_name).to be_nil
+      anon = Class.new { include HappyMapper }
+      expect(anon.tag_name).to be_nil
     end
 
     it 'defaults tag name of class in modules to the last constant lowercase' do
