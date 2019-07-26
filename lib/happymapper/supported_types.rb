@@ -104,7 +104,7 @@ module HappyMapper
 
     register_type Time do |value|
       Time.parse(value.to_s)
-    rescue StandardError
+    rescue ArgumentError
       Time.at(value.to_i)
     end
 
