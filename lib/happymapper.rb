@@ -549,7 +549,9 @@ module HappyMapper
     # in a recursive call from the parent doc.  Then append
     # any attributes to the element that were defined above.
     #
-    builder.send("#{tag_from_parent || self.class.tag_name}_", attributes) do |xml|
+
+    tag_name = tag_from_parent || self.class.tag_name
+    builder.send("#{tag_name}_", attributes) do |xml|
       register_namespaces_with_builder(builder)
 
       xml.parent.namespace =
