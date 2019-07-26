@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 module GenericBase
-  class Base
+  class Wild
     include Comparable
     include HappyMapper
 
@@ -29,20 +29,42 @@ module GenericBase
     end
   end
 
-  class Sub
+  class SubList
     include HappyMapper
-    tag 'subelement'
-    has_one :jello, Base, tag: 'jello'
+    tag 'sublist'
+
+    has_many :jellos, Wild, tag: 'jello'
+    has_many :puddings, Wild, tag: 'pudding'
+  end
+
+  class Fixed
+    include HappyMapper
+    tag 'fixed_element'
+
+    attribute :name, String
+  end
+
+  class Auto
+    include HappyMapper
+
+    attribute :name, String
   end
 
   class Root
     include HappyMapper
     tag 'root'
     element :description, String
-    has_many :blargs, Base, tag: 'blarg', xpath: '.'
-    has_many :jellos, Base, tag: 'jello', xpath: '.'
-    has_many :subjellos, Base, xpath: 'subelement/.', tag: 'jello', read_only: true
-    has_one :sub_element, Sub
+    has_many :blargs, Wild, tag: 'blarg', xpath: '.'
+    has_many :jellos, Wild, tag: 'jello', xpath: '.'
+
+    has_one :sublist, SubList
+
+    has_many :subjellos, Wild, xpath: 'sublist/.', tag: 'jello', read_only: true
+    has_many :subwilds, Wild, xpath: 'sublist/.', read_only: true
+
+    has_one :renamed_fixed, Fixed, tag: 'myfixed'
+    has_one :fixed_element, Fixed
+    has_one :auto, Auto
   end
 end
 
@@ -55,9 +77,13 @@ RSpec.describe 'classes with a wildcard tag', type: :feature do
         <blarg name='blargname1' href='http://blarg.com'/>
         <blarg name='blargname2' href='http://blarg.com'/>
         <jello name='jelloname' href='http://jello.com'/>
-        <subelement>
+        <sublist>
           <jello name='subjelloname' href='http://ohnojello.com' other='othertext'/>
-        </subelement>
+          <pudding name='puddingname' href='http://pudding.com'/>
+        </sublist>
+        <myfixed name='renamedfixed'/>
+        <fixed_element name='foobar'/>
+        <auto name='i am auto'/>
       </root>
     XML
   end
@@ -65,17 +91,20 @@ RSpec.describe 'classes with a wildcard tag', type: :feature do
   describe '.parse' do
     it 'maps different elements to same class' do
       aggregate_failures do
-        expect(root.blargs).to match_array [GenericBase::Base, GenericBase::Base]
-        expect(root.jellos).to match_array [GenericBase::Base]
+        expect(root.blargs).to match_array [GenericBase::Wild, GenericBase::Wild]
+        expect(root.jellos).to match_array [GenericBase::Wild]
       end
     end
 
     it 'filters on xpath appropriately' do
-      expect(root.subjellos.size).to eq 1
+      aggregate_failures do
+        expect(root.jellos.size).to eq 1
+        expect(root.subjellos.size).to eq 1
+      end
     end
 
     def base_with(name, href, other)
-      GenericBase::Base.new(name: name, href: href, other: other)
+      GenericBase::Wild.new(name: name, href: href, other: other)
     end
 
     it 'parses correct values onto generic class' do
@@ -84,6 +113,12 @@ RSpec.describe 'classes with a wildcard tag', type: :feature do
         expect(root.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
         expect(root.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
         expect(root.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
+      end
+    end
+
+    it 'maps all elements matching xpath if tag is not specified' do
+      aggregate_failures do
+        expect(root.subwilds.size).to eq 2
       end
     end
   end
@@ -97,17 +132,27 @@ RSpec.describe 'classes with a wildcard tag', type: :feature do
       expect(xml.xpath("#{xpath}/@other").text).to eq other
     end
 
-    it 'uses the tag name specified by the parent element' do
+    it 'uses the tag name specified by the parent element for wildcard elements' do
       aggregate_failures do
         expect(xml.xpath('/root/description').text).to eq('some description')
         validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
         validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
         validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+        validate_xpath('/root/sublist/jello[1]', 'subjelloname', 'http://ohnojello.com', 'othertext')
+        validate_xpath('/root/sublist/pudding[1]', 'puddingname', 'http://pudding.com', '')
       end
     end
 
-    it 'uses the element tag name if the tag is not specified by the parent' do
-      expect(xml.xpath('root/subelement').size).to eq(1)
+    it 'uses the tag name specified by the parent element for fixed elements' do
+      expect(xml.xpath('/root/myfixed').size).to eq 1
+    end
+
+    it "uses the element's specified tag name if the tag is not specified by the parent" do
+      expect(xml.xpath('root/fixed_element').size).to eq(1)
+    end
+
+    it "uses the element's auto-generated tag name if the tag is not specified elsewhere" do
+      expect(xml.xpath('root/auto').size).to eq(1)
     end
   end
 end
