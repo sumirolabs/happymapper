@@ -110,6 +110,7 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
         end
       end
 
+      # TODO: Move to different spec since this has nothing to do with element inheritance
       it "properly respects child tags if tag isn't provided on the element defintion" do
         expect(xml.xpath('root/subelement').size).to eq(1)
       end
