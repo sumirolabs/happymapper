@@ -21,7 +21,7 @@ Metrics/LineLength:
   Max: 110
 
 Naming/PredicateName:
-  NameWhitelist:
+  AllowedMethods:
     - 'has_one'
     - 'has_many'
     - 'has_xml_content'
