@@ -2,19 +2,19 @@
 
 require 'spec_helper'
 
-RSpec.describe 'after_parse callbacks', type: :feature do
-  module AfterParseSpec
-    class Address
-      include HappyMapper
-      element :street, String
-    end
+module AfterParseSpec
+  class Address
+    include HappyMapper
+    element :street, String
   end
+end
 
+RSpec.describe 'after_parse callbacks', type: :feature do
   after do
     AfterParseSpec::Address.after_parse_callbacks.clear
   end
 
-  it 'callbacks with the newly created object' do
+  it 'calls back with the newly created object' do
     from_cb = nil
     called = false
     cb1 = proc { |object| from_cb = object }

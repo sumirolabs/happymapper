@@ -2,118 +2,118 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Saving #to_xml', type: :feature do
-  module ToXML
-    class Address
-      include HappyMapper
+module ToXML
+  class Address
+    include HappyMapper
 
-      tag 'address'
+    tag 'address'
 
-      attribute :location, String, on_save: :when_saving_location
+    attribute :location, String, on_save: :when_saving_location
 
-      element :street, String
-      element :postcode, String
-      element :city, String
+    element :street, String
+    element :postcode, String
+    element :city, String
 
-      element :housenumber, String
+    element :housenumber, String
 
-      attribute :modified, Boolean, read_only: true
-      element :temporary, Boolean, read_only: true
-      #
-      # to_xml will default to the attr_accessor method and not the attribute,
-      # allowing for that to be overwritten
-      #
-      undef :housenumber
-      def housenumber
-        "[#{@housenumber}]"
-      end
+    attribute :modified, Boolean, read_only: true
+    element :temporary, Boolean, read_only: true
+    #
+    # to_xml will default to the attr_accessor method and not the attribute,
+    # allowing for that to be overwritten
+    #
+    remove_method :housenumber
+    def housenumber
+      "[#{@housenumber}]"
+    end
 
-      def when_saving_location(loc)
-        loc + '-live'
-      end
-
-      #
-      # Write a empty element even if this is not specified
-      #
-      element :description, String, state_when_nil: true
-
-      #
-      # Perform the on_save operation when saving
-      #
-      has_one :date_created, Time, on_save: ->(time) { Time.parse(time).strftime('%T %D') if time }
-
-      #
-      # Execute the method with the same name
-
-      #
-      # Write multiple elements and call on_save when saving
-      #
-      has_many :dates_updated, Time, on_save: lambda { |times|
-        times.compact.map { |time| Time.parse(time).strftime('%T %D') } if times
-      }
-
-      #
-      # Class composition
-      #
-      element :country, 'Country', tag: 'country'
-
-      attribute :occupied, Boolean
-
-      def initialize(parameters)
-        parameters.each_pair do |property, value|
-          send("#{property}=", value) if respond_to?("#{property}=")
-        end
-        @modified = @temporary = true
-      end
+    def when_saving_location(loc)
+      loc + '-live'
     end
 
     #
-    # Country is composed above the in Address class. Here is a demonstration
-    # of how to_xml will handle class composition as well as utilizing the tag
-    # value.
+    # Write a empty element even if this is not specified
     #
-    class Country
-      include HappyMapper
+    element :description, String, state_when_nil: true
 
-      attribute :code, String, tag: 'countryCode'
-      has_one :name, String, tag: 'countryName'
-      has_one :description, 'Description', tag: 'description'
+    #
+    # Perform the on_save operation when saving
+    #
+    has_one :date_created, Time, on_save: ->(time) { Time.parse(time).strftime('%T %D') if time }
 
-      #
-      # This inner-class here is to demonstrate saving a text node
-      # and optional attributes
-      #
-      class Description
-        include HappyMapper
-        content :description, String
-        attribute :category, String, tag: 'category'
-        attribute :rating, String, tag: 'rating', state_when_nil: true
+    #
+    # Execute the method with the same name
 
-        def initialize(desc)
-          @description = desc
-        end
+    #
+    # Write multiple elements and call on_save when saving
+    #
+    has_many :dates_updated, Time, on_save: lambda { |times|
+      times.compact.map { |time| Time.parse(time).strftime('%T %D') } if times
+    }
+
+    #
+    # Class composition
+    #
+    element :country, 'Country', tag: 'country'
+
+    attribute :occupied, Boolean
+
+    def initialize(parameters)
+      parameters.each_pair do |property, value|
+        send("#{property}=", value) if respond_to?("#{property}=")
       end
-
-      def initialize(parameters)
-        parameters.each_pair do |property, value|
-          send("#{property}=", value) if respond_to?("#{property}=")
-        end
-      end
+      @modified = @temporary = true
     end
   end
 
+  #
+  # Country is composed above the in Address class. Here is a demonstration
+  # of how to_xml will handle class composition as well as utilizing the tag
+  # value.
+  #
+  class Country
+    include HappyMapper
+
+    attribute :code, String, tag: 'countryCode'
+    has_one :name, String, tag: 'countryName'
+    has_one :description, 'Description', tag: 'description'
+
+    #
+    # This inner-class here is to demonstrate saving a text node
+    # and optional attributes
+    #
+    class Description
+      include HappyMapper
+      content :description, String
+      attribute :category, String, tag: 'category'
+      attribute :rating, String, tag: 'rating', state_when_nil: true
+
+      def initialize(desc)
+        @description = desc
+      end
+    end
+
+    def initialize(parameters)
+      parameters.each_pair do |property, value|
+        send("#{property}=", value) if respond_to?("#{property}=")
+      end
+    end
+  end
+end
+
+RSpec.describe 'Saving #to_xml', type: :feature do
   let(:xml) do
     country = ToXML::Country.new(name: 'USA', code: 'us', empty_code: nil,
                                  description: ToXML::Country::Description.new('A lovely country'))
 
-    address = ToXML::Address.new 'street' => 'Mockingbird Lane',
-                                 'location' => 'Home',
-                                 'housenumber' => '1313',
-                                 'postcode' => '98103',
-                                 'city' => 'Seattle',
-                                 'country' => country,
-                                 'date_created' => '2011-01-01 15:00:00',
-                                 'occupied' => false
+    address = ToXML::Address.new(street: 'Mockingbird Lane',
+                                 location: 'Home',
+                                 housenumber: '1313',
+                                 postcode: '98103',
+                                 city: 'Seattle',
+                                 country: country,
+                                 date_created: '2011-01-01 15:00:00',
+                                 occupied: false)
 
     address.dates_updated = ['2011-01-01 16:01:00', '2011-01-02 11:30:01']
 

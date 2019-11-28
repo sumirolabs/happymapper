@@ -2,15 +2,15 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Attribute Method Conversion', type: :feature do
-  module AttributeMethodConversion
-    class Document
-      include HappyMapper
+module AttributeMethodConversion
+  class Document
+    include HappyMapper
 
-      has_many :link, String, attributes: { 'data-src': String, type: String, href: String }
-    end
+    has_many :link, String, attributes: { 'data-src': String, type: String, href: String }
   end
+end
 
+RSpec.describe 'Attribute Method Conversion', type: :feature do
   let(:xml_document) do
     %(<document>
         <link data-src='http://cooking.com/roastbeef' type='recipe'>Roast Beef</link>

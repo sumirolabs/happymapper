@@ -2,81 +2,109 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Wildcard Root Tag', type: :feature do
-  generic_class_xml = %(
-    <root>
+module GenericBase
+  class Wild
+    include Comparable
+    include HappyMapper
+
+    def initialize(params = {})
+      @name = params[:name]
+      @href = params[:href]
+      @other = params[:other]
+    end
+
+    tag '*'
+    attribute :name, String
+    attribute :href, String
+    attribute :other, String
+
+    def <=>(other)
+      result = name <=> other.name
+      return result unless result == 0
+
+      result = href <=> other.href
+      return result unless result == 0
+
+      self.other <=> other.other
+    end
+  end
+
+  class SubList
+    include HappyMapper
+    tag 'sublist'
+
+    has_many :jellos, Wild, tag: 'jello'
+    has_many :puddings, Wild, tag: 'pudding'
+  end
+
+  class Fixed
+    include HappyMapper
+    tag 'fixed_element'
+
+    attribute :name, String
+  end
+
+  class Auto
+    include HappyMapper
+
+    attribute :name, String
+  end
+
+  class Root
+    include HappyMapper
+    tag 'root'
+    element :description, String
+    has_many :blargs, Wild, tag: 'blarg', xpath: '.'
+    has_many :jellos, Wild, tag: 'jello', xpath: '.'
+
+    has_one :sublist, SubList
+
+    has_many :subjellos, Wild, xpath: 'sublist/.', tag: 'jello', read_only: true
+    has_many :subwilds, Wild, xpath: 'sublist/.', read_only: true
+
+    has_one :renamed_fixed, Fixed, tag: 'myfixed'
+    has_one :fixed_element, Fixed
+    has_one :auto, Auto
+  end
+end
+
+RSpec.describe 'classes with a wildcard tag', type: :feature do
+  let(:root) { GenericBase::Root.parse(generic_class_xml) }
+  let(:generic_class_xml) do
+    <<~XML
+      <root>
         <description>some description</description>
         <blarg name='blargname1' href='http://blarg.com'/>
         <blarg name='blargname2' href='http://blarg.com'/>
         <jello name='jelloname' href='http://jello.com'/>
-        <subelement>
+        <sublist>
           <jello name='subjelloname' href='http://ohnojello.com' other='othertext'/>
-        </subelement>
-      </root>)
-
-  module GenericBase
-    class Base
-      include Comparable
-      include HappyMapper
-
-      def initialize(params = {})
-        @name = params[:name]
-        @href = params[:href]
-        @other = params[:other]
-      end
-
-      tag '*'
-      attribute :name, String
-      attribute :href, String
-      attribute :other, String
-
-      def <=>(other)
-        result = name <=> other.name
-        return result unless result == 0
-
-        result = href <=> other.href
-        return result unless result == 0
-
-        self.other <=> other.other
-      end
-    end
-    class Sub
-      include HappyMapper
-      tag 'subelement'
-      has_one :jello, Base, tag: 'jello'
-    end
-    class Root
-      include HappyMapper
-      tag 'root'
-      element :description, String
-      has_many :blargs, Base, tag: 'blarg', xpath: '.'
-      has_many :jellos, Base, tag: 'jello', xpath: '.'
-      has_many :subjellos, Base, tag: 'jello', xpath: 'subelement/.', read_only: true
-      has_one :sub_element, Sub
-    end
+          <pudding name='puddingname' href='http://pudding.com'/>
+        </sublist>
+        <myfixed name='renamedfixed'/>
+        <fixed_element name='foobar'/>
+        <auto name='i am auto'/>
+      </root>
+    XML
   end
 
-  describe "can have generic classes using tag '*'" do
-    let(:root) { GenericBase::Root.parse(generic_class_xml) }
-    let(:xml) { Nokogiri::XML(root.to_xml) }
-
+  describe '.parse' do
     it 'maps different elements to same class' do
       aggregate_failures do
-        expect(root.blargs).not_to be_nil
-        expect(root.jellos).not_to be_nil
+        expect(root.blargs).to match_array [GenericBase::Wild, GenericBase::Wild]
+        expect(root.jellos).to match_array [GenericBase::Wild]
       end
     end
 
     it 'filters on xpath appropriately' do
       aggregate_failures do
-        expect(root.blargs.size).to eq(2)
-        expect(root.jellos.size).to eq(1)
-        expect(root.subjellos.size).to eq(1)
+        expect(root.jellos.size).to eq 1
+        expect(root.subjellos.size).to eq 1
       end
     end
 
     def base_with(name, href, other)
-      GenericBase::Base.new(name: name, href: href, other: other)
+      GenericBase::Wild.new(name: name, href: href, other: other)
     end
 
     it 'parses correct values onto generic class' do
@@ -88,23 +116,43 @@ RSpec.describe 'Wildcard Root Tag', type: :feature do
       end
     end
 
+    it 'maps all elements matching xpath if tag is not specified' do
+      aggregate_failures do
+        expect(root.subwilds.size).to eq 2
+      end
+    end
+  end
+
+  describe '#to_xml' do
+    let(:xml) { Nokogiri::XML(root.to_xml) }
+
     def validate_xpath(xpath, name, href, other)
       expect(xml.xpath("#{xpath}/@name").text).to eq name
       expect(xml.xpath("#{xpath}/@href").text).to eq href
       expect(xml.xpath("#{xpath}/@other").text).to eq other
     end
 
-    it '#to_xmls using parent element tag name' do
+    it 'uses the tag name specified by the parent element for wildcard elements' do
       aggregate_failures do
         expect(xml.xpath('/root/description').text).to eq('some description')
         validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
         validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
         validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
+        validate_xpath('/root/sublist/jello[1]', 'subjelloname', 'http://ohnojello.com', 'othertext')
+        validate_xpath('/root/sublist/pudding[1]', 'puddingname', 'http://pudding.com', '')
       end
     end
 
-    it "properlies respect child HappyMapper tags if tag isn't provided on the element defintion" do
-      expect(xml.xpath('root/subelement').size).to eq(1)
+    it 'uses the tag name specified by the parent element for fixed elements' do
+      expect(xml.xpath('/root/myfixed').size).to eq 1
+    end
+
+    it "uses the element's specified tag name if the tag is not specified by the parent" do
+      expect(xml.xpath('root/fixed_element').size).to eq(1)
+    end
+
+    it "uses the element's auto-generated tag name if the tag is not specified elsewhere" do
+      expect(xml.xpath('root/auto').size).to eq(1)
     end
   end
 end

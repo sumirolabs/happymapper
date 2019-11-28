@@ -2,6 +2,28 @@
 
 require 'spec_helper'
 
+module ParseInstanceSpec
+  class SubItem
+    include HappyMapper
+    tag 'subitem'
+    attribute :attr1, String
+    element :name, String
+  end
+  class Item
+    include HappyMapper
+    tag 'item'
+    attribute :attr1, String
+    element :description, String
+    has_many :sub_items, SubItem
+  end
+  class Root
+    include HappyMapper
+    tag 'root'
+    attribute :attr1, String
+    has_many :items, Item
+  end
+end
+
 RSpec.describe 'Updating existing objects with .parse and #parse', type: :feature do
   let(:root) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
 
@@ -49,28 +71,6 @@ RSpec.describe 'Updating existing objects with .parse and #parse', type: :featur
         </subitem>
       </item>
     </root>)
-  end
-
-  module ParseInstanceSpec
-    class SubItem
-      include HappyMapper
-      tag 'subitem'
-      attribute :attr1, String
-      element :name, String
-    end
-    class Item
-      include HappyMapper
-      tag 'item'
-      attribute :attr1, String
-      element :description, String
-      has_many :sub_items, SubItem
-    end
-    class Root
-      include HappyMapper
-      tag 'root'
-      attribute :attr1, String
-      has_many :items, Item
-    end
   end
 
   def item_is_correctly_defined(item, value = 'initial')

@@ -2,7 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe 'Specifying elements and attributes with an xpath', type: :feature do
+module Amazing
+  class Baby
+    include HappyMapper
+
+    has_one :name, String
+  end
+
   class Item
     include HappyMapper
 
@@ -18,16 +24,12 @@ RSpec.describe 'Specifying elements and attributes with an xpath', type: :featur
              xpath: 'amazing:subitem/amazing:more/@first|amazing:subitem/amazing:more/@alternative'
     has_many :more_details_alternative, String, xpath: 'amazing:subitem/amazing:more/@*'
 
-    has_one :baby, 'Baby', name: 'baby', namespace: 'amazing'
+    has_one :baby, Baby, namespace: 'amazing'
   end
+end
 
-  class Baby
-    include HappyMapper
-
-    has_one :name, String
-  end
-
-  let(:parsed_result) { Item.parse(xml_string, single: true) }
+RSpec.describe 'Specifying elements and attributes with an xpath', type: :feature do
+  let(:parsed_result) { Amazing::Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
     %(

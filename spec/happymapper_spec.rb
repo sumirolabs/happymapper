@@ -549,15 +549,22 @@ class DefaultNamespaceCombi
   element :author, String, namespace: 'p', tag: 'author'
 end
 
+module StringFoo
+  class Bar
+    include HappyMapper
+    has_many :things, 'StringFoo::Thing'
+  end
+
+  class Thing
+    include HappyMapper
+  end
+end
+
 describe HappyMapper do
   describe 'being included into another class' do
     let(:klass) do
       Class.new do
         include HappyMapper
-
-        def self.name
-          'Boo'
-        end
       end
     end
 
@@ -625,18 +632,22 @@ describe HappyMapper do
       end
     end
 
-    it 'defaults tag name to lowercase class' do
-      expect(klass.tag_name).to eq('boo')
+    it 'defaults tag name to lowercase class name' do
+      named = Class.new { include HappyMapper }
+      allow(named).to receive(:name).and_return 'Boo'
+
+      expect(named.tag_name).to eq('boo')
     end
 
     it 'generates no tag name for anonymous class' do
-      @anon = Class.new { include HappyMapper }
-      expect(@anon.tag_name).to be_nil
+      anon = Class.new { include HappyMapper }
+      expect(anon.tag_name).to be_nil
     end
 
     it 'defaults tag name of class in modules to the last constant lowercase' do
-      module Bar; class Baz; include HappyMapper; end; end
-      expect(Bar::Baz.tag_name).to eq('baz')
+      nested_named = Class.new { include HappyMapper }
+      allow(nested_named).to receive(:name).and_return 'Bar::Baz'
+      expect(nested_named.tag_name).to eq('baz')
     end
 
     it 'allows setting tag name' do
@@ -978,17 +989,10 @@ describe HappyMapper do
     end
   end
 
-  it 'allows instantiating with a string' do
-    module StringFoo
-      class Bar
-        include HappyMapper
-        has_many :things, 'StringFoo::Thing'
-      end
+  it 'allows speficying child element class with a string' do
+    bar = StringFoo::Bar.parse '<bar><thing/></bar>'
 
-      class Thing
-        include HappyMapper
-      end
-    end
+    expect(bar.things).to match_array [StringFoo::Thing]
   end
 
   it 'parses family search xml' do

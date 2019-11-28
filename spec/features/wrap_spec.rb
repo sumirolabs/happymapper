@@ -2,27 +2,27 @@
 
 require 'spec_helper'
 
-RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feature do
-  module Wrap
-    class SubClass
-      include HappyMapper
-      tag 'subclass'
-      attribute :myattr, String
-      has_many :items, String, tag: 'item'
-    end
-    class Root
-      include HappyMapper
-      tag 'root'
-      attribute :attr1, String
-      element :name, String
-      wrap 'mywraptag' do
-        element :description, String
-        has_one :subclass, SubClass
-      end
-      element :number, Integer
-    end
+module Wrap
+  class SubClass
+    include HappyMapper
+    tag 'subclass'
+    attribute :myattr, String
+    has_many :items, String, tag: 'item'
   end
+  class Root
+    include HappyMapper
+    tag 'root'
+    attribute :attr1, String
+    element :name, String
+    wrap 'mywraptag' do
+      element :description, String
+      has_one :subclass, SubClass
+    end
+    element :number, Integer
+  end
+end
 
+RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feature do
   describe '.parse' do
     context 'when given valid XML' do
       let(:root) { Wrap::Root.parse fixture_file('wrapper.xml') }

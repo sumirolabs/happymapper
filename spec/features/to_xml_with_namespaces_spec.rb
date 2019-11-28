@@ -29,7 +29,8 @@ module ToXMLWithNamespaces
     # to_xml will default to the attr_accessor method and not the attribute,
     # allowing for that to be overwritten
     #
-    undef :housenumber
+    remove_method :housenumber
+
     def housenumber
       "[#{@housenumber}]"
     end
@@ -105,6 +106,23 @@ module ToXMLWithNamespaces
     def initialize(parameters)
       parameters.each_pair { |property, value| send("#{property}=", value) if respond_to?("#{property}=") }
     end
+  end
+end
+
+module CoffeeMaking
+  class Beverage
+    include HappyMapper
+    namespace 'coffee'
+
+    attribute :name, String
+  end
+
+  class CoffeeMachine
+    include HappyMapper
+    register_namespace 'coffee', 'http://coffee.org/Coffee/0.1'
+    register_namespace 'beverage', 'http://beverages.org/Beverage/0.1'
+
+    element :beverage, 'beverage', namespace: 'beverage'
   end
 end
 
@@ -203,32 +221,17 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
 
   context 'with namespace supplied by element declaration and by element class' do
     let(:expected_xml) do
-      <<-XML.gsub(/^\s*\|/, '')
-        |<?xml version="1.0"?>
-        |<coffeemachine xmlns:beverage="http://beverages.org/Beverage/0.1" xmlns:coffee="http://coffee.org/Coffee/0.1">
-        |  <beverage:beverage name="coffee"/>
-        |</coffeemachine>
+      <<~XML
+        <?xml version="1.0"?>
+        <coffeemachine xmlns:beverage="http://beverages.org/Beverage/0.1" xmlns:coffee="http://coffee.org/Coffee/0.1">
+          <beverage:beverage name="coffee"/>
+        </coffeemachine>
       XML
     end
 
-    class Beverage
-      include HappyMapper
-      namespace 'coffee'
-
-      attribute :name, String
-    end
-
-    class CoffeeMachine
-      include HappyMapper
-      register_namespace 'coffee', 'http://coffee.org/Coffee/0.1'
-      register_namespace 'beverage', 'http://beverages.org/Beverage/0.1'
-
-      element :beverage, 'beverage', namespace: 'beverage'
-    end
-
     it 'uses the element declaration namespace on the element' do
-      machine = CoffeeMachine.new
-      machine.beverage = Beverage.new.tap { |obj| obj.name = 'coffee' }
+      machine = CoffeeMaking::CoffeeMachine.new
+      machine.beverage = CoffeeMaking::Beverage.new.tap { |obj| obj.name = 'coffee' }
       expect(machine.to_xml).to eq(expected_xml)
     end
   end
