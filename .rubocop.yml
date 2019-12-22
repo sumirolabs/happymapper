@@ -7,6 +7,10 @@ require:
 AllCops:
   TargetRubyVersion: 2.3
 
+# Be lenient with line length
+Layout/LineLength:
+  Max: 110
+
 # Trailing dots
 Layout/DotPosition:
   EnforcedStyle: trailing
@@ -15,10 +19,6 @@ Layout/DotPosition:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
-
-# Be lenient with line length
-Metrics/LineLength:
-  Max: 110
 
 Naming/PredicateName:
   AllowedMethods:
