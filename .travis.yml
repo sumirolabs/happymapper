@@ -6,11 +6,10 @@ cache:
   bundler: true
 
 rvm:
-  - 2.3
   - 2.4
   - 2.5
   - 2.6
-  - jruby-9.1
+  - 2.7
   - jruby-9.2
   - jruby-head
   - ruby-head
