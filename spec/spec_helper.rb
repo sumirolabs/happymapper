@@ -5,6 +5,7 @@ SimpleCov.start do
   track_files 'lib/**/*.rb'
   add_filter '/spec/'
   add_filter 'lib/happymapper/version.rb'
+  enable_coverage :branch
 end
 
 if ENV['CI']
