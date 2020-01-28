@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('nokogiri', '~> 1.5')
   s.add_development_dependency('rake', '~> 13.0')
   s.add_development_dependency('rspec', ['~> 3.0'])
-  s.add_development_dependency('simplecov', ['~> 0.17.0'])
+  s.add_development_dependency('simplecov', ['~> 0.18.0'])
 end
