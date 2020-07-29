@@ -101,8 +101,7 @@ end
 class Address
   include HappyMapper
 
-  attr_accessor :xml_value
-  attr_accessor :xml_content
+  attr_accessor :xml_value, :xml_content
 
   tag 'address'
   element :street, String
