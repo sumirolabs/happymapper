@@ -16,10 +16,10 @@ Layout/LineLength:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
-# Blocks can be any length in spec files
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*_spec.rb'
+    - 'spec/**/*_spec.rb' # Blocks can be any length in spec files
+    - '*.gemspec' # Gem spec blocks can be any size
 
 Naming/PredicateName:
   AllowedMethods:
