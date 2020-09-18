@@ -36,7 +36,7 @@ module ToXMLWithNamespaces
     end
 
     def when_saving_location(loc)
-      loc + '-live'
+      "#{loc}-live"
     end
 
     #

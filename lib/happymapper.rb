@@ -554,15 +554,11 @@ module HappyMapper
       # When a content has been defined we add the resulting value
       # the output xml
       #
-      if (content = self.class.defined_content)
+      if (content = self.class.defined_content) && !content.options[:read_only]
+        value = send(content.name)
+        value = apply_on_save_action(content, value)
 
-        unless content.options[:read_only]
-          value = send(content.name)
-          value = apply_on_save_action(content, value)
-
-          builder.text(value)
-        end
-
+        builder.text(value)
       end
 
       #
