@@ -5,16 +5,18 @@ dist: xenial
 cache:
   bundler: true
 
-rvm:
-  - 2.4
-  - 2.5
-  - 2.6
-  - 2.7
-  - jruby-9.2
-  - jruby-head
-  - ruby-head
-
-matrix:
+jobs:
+  include:
+    - rvm: 2.4
+    - rvm: 2.5
+    - rvm: 2.6
+    - rvm: 2.7
+    - rvm: jruby-9.2
+    - rvm: jruby-head
+    - rvm: ruby-head
+    - rvm: 2.7.1
+      name: "RuboCop"
+      script: bundle exec rubocop
   allow_failures:
     - rvm: jruby-head
     - rvm: ruby-head
