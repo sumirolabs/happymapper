@@ -7,7 +7,6 @@ This project is a fork of the great work done first by
 [jnunemaker](https://github.com/jnunemaker/happymapper).
 
 [![Gem Version](https://badge.fury.io/rb/nokogiri-happymapper.svg)](https://badge.fury.io/rb/nokogiri-happymapper)
-[![Build Status](https://travis-ci.org/mvz/happymapper.svg?branch=master)](https://travis-ci.org/mvz/happymapper)
 [![Depfu](https://badges.depfu.com/badges/1707c8c2322e2ed267cf88bd4fb12b66/overview.svg)](https://depfu.com/github/mvz/happymapper)
 [![Maintainability](https://api.codeclimate.com/v1/badges/491015f82bd2a45fd9d3/maintainability)](https://codeclimate.com/github/mvz/happymapper/maintainability)
 
