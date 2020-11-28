@@ -9,6 +9,7 @@ module ParseInstanceSpec
     attribute :attr1, String
     element :name, String
   end
+
   class Item
     include HappyMapper
     tag 'item'
@@ -16,6 +17,7 @@ module ParseInstanceSpec
     element :description, String
     has_many :sub_items, SubItem
   end
+
   class Root
     include HappyMapper
     tag 'root'

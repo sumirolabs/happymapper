@@ -9,6 +9,7 @@ module Wrap
     attribute :myattr, String
     has_many :items, String, tag: 'item'
   end
+
   class Root
     include HappyMapper
     tag 'root'
