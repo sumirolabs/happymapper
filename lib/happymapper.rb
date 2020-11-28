@@ -252,15 +252,17 @@ module HappyMapper
       passthrus.each do |item|
         method_name = item.method_name
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{method_name}
-            @#{name} ||= wrapper_anonymous_classes['#{wrapper_key}'].new
-            @#{name}.#{method_name}
-          end
+          def #{method_name}                                    # def property
+            @#{name} ||=                                        #   @wrapper ||=
+              wrapper_anonymous_classes['#{wrapper_key}'].new   #     wrapper_anonymous_classes['#<Class:0x0000555b7d0b9220>'].new
+            @#{name}.#{method_name}                             #   @wrapper.property
+          end                                                   # end
 
-          def #{method_name}=(value)
-            @#{name} ||= wrapper_anonymous_classes['#{wrapper_key}'].new
-            @#{name}.#{method_name} = value
-          end
+          def #{method_name}=(value)                            # def property=(value)
+            @#{name} ||=                                        #   @wrapper ||=
+              wrapper_anonymous_classes['#{wrapper_key}'].new   #     wrapper_anonymous_classes['#<Class:0x0000555b7d0b9220>'].new
+            @#{name}.#{method_name} = value                     #   @wrapper.property = value
+          end                                                   # end
         RUBY
       end
 
