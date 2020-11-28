@@ -1172,7 +1172,7 @@ describe HappyMapper do
     end
 
     it 'can clear @nokogiri_config_callback' do
-      custom.with_nokogiri_config {}
+      custom.with_nokogiri_config { nil }
       expect { custom.parse(fixture_file('set_config_options.xml')) }.
         to raise_error(Nokogiri::XML::SyntaxError)
     end

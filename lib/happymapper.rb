@@ -8,6 +8,7 @@ require 'happymapper/anonymous_mapper'
 
 module HappyMapper
   class Boolean; end
+
   class XmlContent; end
 
   def self.parse(xml_content)
@@ -249,15 +250,19 @@ module HappyMapper
       # onto this class. They get/set the value by passing thru to the anonymous class.
       passthrus = wrapper.attributes + wrapper.elements
       passthrus.each do |item|
+        method_name = item.method_name
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{item.method_name}
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
-            @#{name}.#{item.method_name}
-          end
-          def #{item.method_name}=(value)
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
-            @#{name}.#{item.method_name} = value
-          end
+          def #{method_name}                                    # def property
+            @#{name} ||=                                        #   @wrapper ||=
+              wrapper_anonymous_classes['#{wrapper_key}'].new   #     wrapper_anonymous_classes['#<Class:0x0000555b7d0b9220>'].new
+            @#{name}.#{method_name}                             #   @wrapper.property
+          end                                                   # end
+
+          def #{method_name}=(value)                            # def property=(value)
+            @#{name} ||=                                        #   @wrapper ||=
+              wrapper_anonymous_classes['#{wrapper_key}'].new   #     wrapper_anonymous_classes['#<Class:0x0000555b7d0b9220>'].new
+            @#{name}.#{method_name} = value                     #   @wrapper.property = value
+          end                                                   # end
         RUBY
       end
 
@@ -648,11 +653,11 @@ module HappyMapper
         # Attributes that have a nil value should be ignored unless they explicitly
         # state that they should be expressed in the output.
         #
-        if !(value.nil? || attribute.options[:state_when_nil])
+        if value.nil? || attribute.options[:state_when_nil]
+          []
+        else
           attribute_namespace = attribute.options[:namespace]
           ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
-        else
-          []
         end
 
       end
@@ -744,6 +749,10 @@ module HappyMapper
         xml.send("#{tag}_", '')
       end
     end
+  end
+
+  def wrapper_anonymous_classes
+    self.class.instance_variable_get(:@wrapper_anonymous_classes)
   end
 end
 
