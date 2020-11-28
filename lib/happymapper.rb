@@ -250,14 +250,16 @@ module HappyMapper
       # onto this class. They get/set the value by passing thru to the anonymous class.
       passthrus = wrapper.attributes + wrapper.elements
       passthrus.each do |item|
+        method_name = item.method_name
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{item.method_name}
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
-            @#{name}.#{item.method_name}
+          def #{method_name}
+            @#{name} ||= wrapper_anonymous_classes['#{wrapper_key}'].new
+            @#{name}.#{method_name}
           end
-          def #{item.method_name}=(value)
-            @#{name} ||= self.class.instance_variable_get('@wrapper_anonymous_classes')['#{wrapper_key}'].new
-            @#{name}.#{item.method_name} = value
+
+          def #{method_name}=(value)
+            @#{name} ||= wrapper_anonymous_classes['#{wrapper_key}'].new
+            @#{name}.#{method_name} = value
           end
         RUBY
       end
@@ -745,6 +747,10 @@ module HappyMapper
         xml.send("#{tag}_", '')
       end
     end
+  end
+
+  def wrapper_anonymous_classes
+    self.class.instance_variable_get(:@wrapper_anonymous_classes)
   end
 end
 
