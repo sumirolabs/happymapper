@@ -8,15 +8,6 @@ SimpleCov.start do
   enable_coverage :branch
 end
 
-if ENV['CI']
-  begin
-    require 'coveralls'
-    Coveralls.wear!
-  rescue LoadError
-    nil
-  end
-end
-
 require 'rspec'
 
 require 'nokogiri-happymapper'
