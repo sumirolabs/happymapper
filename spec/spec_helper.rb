@@ -9,6 +9,7 @@ SimpleCov.start do
 end
 
 require 'rspec'
+require 'pry'
 
 require 'nokogiri-happymapper'
 
