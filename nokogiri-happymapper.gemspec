@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('nokogiri', '~> 1.5')
 
+  s.add_development_dependency('pry', '~> 0.13.1')
   s.add_development_dependency('rake', '~> 13.0')
   s.add_development_dependency('rspec', ['~> 3.0'])
   s.add_development_dependency('rubocop', '~> 0.93.0')
