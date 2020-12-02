@@ -23,6 +23,11 @@ Metrics/BlockLength:
     - 'spec/**/*_spec.rb' # Blocks can be any length in spec files
     - '*.gemspec' # Gem spec blocks can be any size
 
+# TODO: Update code so these maxima can be lowered
+Metrics/ParameterLists:
+  Max: 6
+  MaxOptionalParameters: 4
+
 Naming/PredicateName:
   AllowedMethods:
     - 'has_one'
