@@ -103,11 +103,9 @@ module HappyMapper
     register_type Float, &:to_f
 
     register_type Time do |value|
-      begin
-        Time.parse(value.to_s)
-      rescue StandardError
-        Time.at(value.to_i)
-      end
+      Time.parse(value.to_s)
+    rescue StandardError
+      Time.at(value.to_i)
     end
 
     register_type DateTime do |value|
