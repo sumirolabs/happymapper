@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.files = `git ls-files -- lib/*`.split("\n")
   s.homepage = 'http://github.com/mvz/happymapper'
   s.require_paths = ['lib']
-  s.required_ruby_version = '>= 2.4.0'
+  s.required_ruby_version = '>= 2.5.0'
   s.summary = 'Provides a simple way to map XML to Ruby Objects and back again.'
   s.license = 'MIT'
   s.test_files = `git ls-files -- spec/*`.split("\n")
@@ -35,5 +35,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rubocop', '~> 1.8.0')
   s.add_development_dependency('rubocop-performance', '~> 1.9.1')
   s.add_development_dependency('rubocop-rspec', '~> 2.1.0')
-  s.add_development_dependency('simplecov', ['>= 0.18.0', '< 0.21.0'])
+  s.add_development_dependency('simplecov', ['~> 0.21.1'])
 end
