@@ -638,7 +638,7 @@ module HappyMapper
       # the below process
       #
       if attribute.options[:read_only]
-        []
+        next
       else
 
         value = send(attribute.method_name)
@@ -654,16 +654,16 @@ module HappyMapper
         # state that they should be expressed in the output.
         #
         if value.nil? || attribute.options[:state_when_nil]
-          []
+          next
         else
           attribute_namespace = attribute.options[:namespace]
           ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
         end
 
       end
-    end.flatten
+    end.compact
 
-    Hash[*attributes]
+    attributes.to_h
   end
 
   #
