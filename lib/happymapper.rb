@@ -637,30 +637,24 @@ module HappyMapper
       # when it comes to saving the xml document; so we will not go into any of
       # the below process
       #
-      if attribute.options[:read_only]
-        next
-      else
+      next if attribute.options[:read_only]
 
-        value = send(attribute.method_name)
-        value = nil if value == attribute.default
+      value = send(attribute.method_name)
+      value = nil if value == attribute.default
 
-        #
-        # Apply any on_save lambda/proc or value defined on the attribute.
-        #
-        value = apply_on_save_action(attribute, value)
+      #
+      # Apply any on_save lambda/proc or value defined on the attribute.
+      #
+      value = apply_on_save_action(attribute, value)
 
-        #
-        # Attributes that have a nil value should be ignored unless they explicitly
-        # state that they should be expressed in the output.
-        #
-        if value.nil? || attribute.options[:state_when_nil]
-          next
-        else
-          attribute_namespace = attribute.options[:namespace]
-          ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
-        end
+      #
+      # Attributes that have a nil value should be ignored unless they explicitly
+      # state that they should be expressed in the output.
+      #
+      next if value.nil? || attribute.options[:state_when_nil]
 
-      end
+      attribute_namespace = attribute.options[:namespace]
+      ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
     end.compact
 
     attributes.to_h
