@@ -88,8 +88,9 @@ module ToXML
       attribute :category, String, tag: 'category'
       attribute :rating, String, tag: 'rating', state_when_nil: true
 
-      def initialize(desc)
+      def initialize(desc, cat)
         @description = desc
+        @category = cat
       end
     end
 
@@ -103,8 +104,9 @@ end
 
 RSpec.describe 'Saving #to_xml', type: :feature do
   let(:xml) do
+    country_description = ToXML::Country::Description.new('A lovely country', 'positive')
     country = ToXML::Country.new(name: 'USA', code: 'us', empty_code: nil,
-                                 description: ToXML::Country::Description.new('A lovely country'))
+                                 description: country_description)
 
     address = ToXML::Address.new(street: 'Mockingbird Lane',
                                  location: 'Home',
@@ -128,7 +130,7 @@ RSpec.describe 'Saving #to_xml', type: :feature do
   end
 
   it 'saves attributes' do
-    expect(xml.xpath('@location').text).to eq 'Home-live'
+    expect(xml.xpath('country/description/@category').text).to eq 'positive'
   end
 
   it 'saves attributes that are Boolean and have a value of false' do
@@ -149,7 +151,36 @@ RSpec.describe 'Saving #to_xml', type: :feature do
 
   context "when an element has a 'state_when_nil' parameter" do
     it 'saves an empty element' do
-      expect(xml.xpath('description').text).to eq ''
+      nodeset = xml.xpath('description')
+      aggregate_failures do
+        expect(nodeset).not_to be_empty
+        expect(nodeset.text).to eq ''
+      end
+    end
+  end
+
+  context "when an attribute has a 'state_when_nil' parameter" do
+    it 'saves a non-empty attribute' do
+      country_description = ToXML::Country::Description.new('A lovely country', 'positive')
+      country_description.rating = 'good'
+      xml = Nokogiri::XML(country_description.to_xml).root
+      nodeset = xml.xpath('@rating')
+
+      aggregate_failures do
+        expect(nodeset).not_to be_empty
+        expect(nodeset.text).to eq 'good'
+      end
+    end
+
+    it 'saves an empty attribute' do
+      country_description = ToXML::Country::Description.new('A lovely country', 'positive')
+      xml = Nokogiri::XML(country_description.to_xml).root
+      nodeset = xml.xpath('@rating')
+
+      aggregate_failures do
+        expect(nodeset).not_to be_empty
+        expect(nodeset.text).to eq ''
+      end
     end
   end
 

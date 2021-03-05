@@ -78,7 +78,7 @@ module ToXMLWithNamespaces
     register_namespace 'countryName', 'http://www.company.com/countryName'
 
     attribute :code, String, tag: 'countryCode'
-    has_one :name, String, tag: 'countryName', namespace: 'countryName'
+    has_one :name, String, tag: 'countryName', namespace: 'countryName', state_when_nil: true
 
     def initialize(parameters)
       parameters.each_pair do |property, value|
@@ -159,9 +159,44 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
       expect(xml.xpath('@location').text).to eq 'Home-live'
     end
 
-    context "when an element has a 'state_when_nil' parameter" do
+    context 'when a scalar element is nil and has state_when_nil: true' do
       it 'saves an empty element' do
-        expect(xml.xpath('address:description').text).to eq ''
+        nodeset = xml.xpath('address:description')
+        aggregate_failures do
+          expect(nodeset).not_to be_empty
+          expect(nodeset.text).to eq ''
+        end
+      end
+    end
+
+    context 'when a scalar element is nil and does not have state_when_nil: true' do
+      let(:xml) do
+        address = ToXMLWithNamespaces::Address.new('street' => 'Mockingbird Lane',
+                                                   'location' => nil)
+        Nokogiri::XML(address.to_xml).root
+      end
+
+      it 'saves no element' do
+        nodeset = xml.xpath('address:location')
+        expect(nodeset).to be_empty
+      end
+    end
+
+    context 'when a scalar element with its own namespace is nil and has state_when_nil: true' do
+      let(:xml) do
+        country = ToXMLWithNamespaces::Country.new(name: nil, code: 'us')
+        address = ToXMLWithNamespaces::Address.new(street: 'Mockingbird Lane',
+                                                   country: country)
+
+        Nokogiri::XML(address.to_xml).root
+      end
+
+      it 'saves an empty element with the correct namespace' do
+        nodeset = xml.xpath('country:country/countryName:countryName')
+        aggregate_failures do
+          expect(nodeset).not_to be_empty
+          expect(nodeset.text).to eq ''
+        end
       end
     end
 
