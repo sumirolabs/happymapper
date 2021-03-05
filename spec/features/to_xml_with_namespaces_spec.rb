@@ -161,7 +161,11 @@ RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
 
     context "when an element has a 'state_when_nil' parameter" do
       it 'saves an empty element' do
-        expect(xml.xpath('address:description').text).to eq ''
+        nodeset = xml.xpath('address:description')
+        aggregate_failures do
+          expect(nodeset).not_to be_empty
+          expect(nodeset.text).to eq ''
+        end
       end
     end
 
