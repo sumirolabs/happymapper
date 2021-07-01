@@ -32,24 +32,24 @@ RSpec.describe 'Specifying elements and attributes with an xpath', type: :featur
   let(:parsed_result) { Amazing::Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
-    %(
-    <rss>
-      <amazing:item xmlns:amazing="http://www.amazing.com/amazing"
-                    xmlns:different="http://www.different.com/different">
-        <amazing:title>Test XML</amazing:title>
-        <different:link href="different_link" />
-        <amazing:link href="link_to_resources" />
-        <amazing:subitem>
-          <amazing:detail>I want to parse this</amazing:detail>
-          <amazing:more first="this one">more 1</amazing:more>
-          <amazing:more alternative="another one">more 2</amazing:more>
-        </amazing:subitem>
-        <amazing:baby>
-          <amazing:name>Jumbo</amazing:name>
-        </amazing:baby>
-      </amazing:item>
-    </rss>
-    )
+    <<~XML
+      <rss>
+        <amazing:item xmlns:amazing="http://www.amazing.com/amazing"
+                      xmlns:different="http://www.different.com/different">
+          <amazing:title>Test XML</amazing:title>
+          <different:link href="different_link" />
+          <amazing:link href="link_to_resources" />
+          <amazing:subitem>
+            <amazing:detail>I want to parse this</amazing:detail>
+            <amazing:more first="this one">more 1</amazing:more>
+            <amazing:more alternative="another one">more 2</amazing:more>
+          </amazing:subitem>
+          <amazing:baby>
+            <amazing:name>Jumbo</amazing:name>
+          </amazing:baby>
+        </amazing:item>
+      </rss>
+    XML
   end
 
   it 'has a title' do
