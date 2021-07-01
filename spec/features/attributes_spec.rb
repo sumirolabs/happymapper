@@ -12,9 +12,11 @@ end
 
 RSpec.describe 'Attribute Method Conversion', type: :feature do
   let(:xml_document) do
-    %(<document>
+    <<~XML
+      <document>
         <link data-src='http://cooking.com/roastbeef' type='recipe'>Roast Beef</link>
-      </document>)
+      </document>
+    XML
   end
 
   let(:document) do

@@ -28,14 +28,16 @@ RSpec.describe 'A document with mixed namespaces', type: :feature do
   # these child elements.
   #
   let(:xml_document) do
-    %(<prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
+    <<~XML
+      <prefix:address location='home' xmlns:prefix="http://www.unicornland.com/prefix"
         xmlns:different="http://www.trollcountry.com/different">
         <street>Milchstrasse</street>
         <street>Another Street</street>
         <housenumber>23</housenumber>
         <different:postcode>26131</different:postcode>
         <city>Oldenburg</city>
-      </prefix:address>)
+      </prefix:address>
+    XML
   end
 
   let(:address) do

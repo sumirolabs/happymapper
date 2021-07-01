@@ -30,49 +30,53 @@ RSpec.describe 'Updating existing objects with .parse and #parse', type: :featur
   let(:root) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
 
   let(:parse_instance_initial_xml) do
-    %(<root attr1="initial">
-     <item attr1="initial">
-       <description>initial</description>
-       <subitem attr1="initial">
-         <name>initial</name>
-       </subitem>
-       <subitem attr1="initial">
-         <name>initial</name>
-       </subitem>
-     </item>
-     <item attr1="initial">
-       <description>initial</description>
-       <subitem attr1="initial">
-         <name>initial</name>
-       </subitem>
-       <subitem attr1="initial">
-         <name>initial</name>
-       </subitem>
-     </item>
-   </root>)
+    <<~XML
+      <root attr1="initial">
+        <item attr1="initial">
+          <description>initial</description>
+          <subitem attr1="initial">
+            <name>initial</name>
+          </subitem>
+          <subitem attr1="initial">
+            <name>initial</name>
+          </subitem>
+        </item>
+        <item attr1="initial">
+          <description>initial</description>
+          <subitem attr1="initial">
+            <name>initial</name>
+          </subitem>
+          <subitem attr1="initial">
+            <name>initial</name>
+          </subitem>
+        </item>
+      </root>
+    XML
   end
 
   let(:parse_instance_updated_xml) do
-    %(<root attr1="updated">
-      <item attr1="updated">
-        <description>updated</description>
-        <subitem attr1="updated">
-          <name>updated</name>
-        </subitem>
-        <subitem attr1="updated">
-          <name>updated</name>
-        </subitem>
-      </item>
-      <item attr1="updated">
-        <description>updated</description>
-        <subitem attr1="updated">
-          <name>updated</name>
-        </subitem>
-        <subitem attr1="updated">
-          <name>updated</name>
-        </subitem>
-      </item>
-    </root>)
+    <<~XML
+      <root attr1="updated">
+        <item attr1="updated">
+          <description>updated</description>
+          <subitem attr1="updated">
+            <name>updated</name>
+          </subitem>
+          <subitem attr1="updated">
+            <name>updated</name>
+          </subitem>
+        </item>
+        <item attr1="updated">
+          <description>updated</description>
+          <subitem attr1="updated">
+            <name>updated</name>
+          </subitem>
+          <subitem attr1="updated">
+            <name>updated</name>
+          </subitem>
+        </item>
+      </root>
+    XML
   end
 
   def item_is_correctly_defined(item, value = 'initial')
