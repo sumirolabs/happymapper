@@ -18,6 +18,14 @@ Layout/LineLength:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
+# Assume the programmer knows how bracketed block syntax works
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+# Assume the programmer knows precendence rules
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb' # Blocks can be any length in spec files
