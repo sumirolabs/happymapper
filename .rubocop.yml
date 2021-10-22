@@ -14,10 +14,6 @@ AllCops:
 Layout/LineLength:
   Max: 110
 
-# Trailing dots
-Layout/DotPosition:
-  EnforcedStyle: trailing
-
 # Assume the programmer knows how bracketed block syntax works
 Lint/AmbiguousBlockAssociation:
   Enabled: false
