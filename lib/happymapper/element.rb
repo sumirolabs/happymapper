@@ -41,8 +41,8 @@ module HappyMapper
       result.attribute_nodes.each do |xml_attribute|
         next unless (attribute_options = options[:attributes][xml_attribute.name.to_sym])
 
-        attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options).
-                          from_xml_node(result, namespace, xpath_options)
+        attribute_value = Attribute.new(xml_attribute.name.to_sym, *attribute_options)
+                                   .from_xml_node(result, namespace, xpath_options)
 
         method_name = xml_attribute.name.tr('-', '_')
         value.define_singleton_method(method_name) { attribute_value }

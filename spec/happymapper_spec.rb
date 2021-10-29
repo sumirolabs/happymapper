@@ -719,12 +719,12 @@ describe HappyMapper do
       expect(first.tag).to eq('ruby xml gems mapping')
       expect(first.time).to eq(Time.utc(2008, 8, 9, 5, 24, 20))
       expect(first.others).to eq(56)
-      expect(first.extended).
-        to eq('ROXML is a Ruby library designed to make it easier for Ruby' \
-              ' developers to work with XML. Using simple annotations, it enables' \
-              ' Ruby classes to be custom-mapped to XML. ROXML takes care of the' \
-              ' marshalling and unmarshalling of mapped attributes so that developers can' \
-              ' focus on building first-class Ruby classes.')
+      expect(first.extended)
+        .to eq('ROXML is a Ruby library designed to make it easier for Ruby' \
+               ' developers to work with XML. Using simple annotations, it enables' \
+               ' Ruby classes to be custom-mapped to XML. ROXML takes care of the' \
+               ' marshalling and unmarshalling of mapped attributes so that developers can' \
+               ' focus on building first-class Ruby classes.')
     end
   end
 
@@ -746,8 +746,8 @@ describe HappyMapper do
       expect(first.user.screen_name).to eq('jnunemaker')
       expect(first.user.location).to eq('Mishawaka, IN, US')
       expect(first.user.description).to eq('Loves his wife, ruby, notre dame football and iu basketball')
-      expect(first.user.profile_image_url).
-        to eq('http://s3.amazonaws.com/twitter_production/profile_images/53781608/Photo_75_normal.jpg')
+      expect(first.user.profile_image_url)
+        .to eq('http://s3.amazonaws.com/twitter_production/profile_images/53781608/Photo_75_normal.jpg')
       expect(first.user.url).to eq('http://addictedtonew.com')
       expect(first.user.protected).to be_falsey
       expect(first.user.followers_count).to eq(486)
@@ -1003,8 +1003,8 @@ describe HappyMapper do
       expect(tree.status_code).to eq('200')
       expect(tree.persons.person.size).to eq(1)
       expect(tree.persons.person.first.version).to eq('1199378491000')
-      expect(tree.persons.person.first.modified).
-        to eq(Time.utc(2008, 1, 3, 16, 41, 31)) # 2008-01-03T09:41:31-07:00
+      expect(tree.persons.person.first.modified)
+        .to eq(Time.utc(2008, 1, 3, 16, 41, 31)) # 2008-01-03T09:41:31-07:00
       expect(tree.persons.person.first.id).to eq('KWQS-BBQ')
       expect(tree.persons.person.first.information.alternateIds.ids).not_to be_kind_of(String)
       expect(tree.persons.person.first.information.alternateIds.ids.size).to eq(8)
@@ -1062,11 +1062,11 @@ describe HappyMapper do
     let(:records) { Dictionary::Record.parse fixture_file('dictionary.xml') }
 
     it 'parses XmlContent' do
-      expect(records.first.definitions.first.text).
-        to eq('a large common parrot, <bn>Cacatua galerita</bn>, predominantly' \
-              ' white, with yellow on the undersides of wings and tail and a' \
-              ' forward curving yellow crest, found in Australia, New Guinea' \
-              ' and nearby islands.')
+      expect(records.first.definitions.first.text)
+        .to eq('a large common parrot, <bn>Cacatua galerita</bn>, predominantly' \
+               ' white, with yellow on the undersides of wings and tail and a' \
+               ' forward curving yellow crest, found in Australia, New Guinea' \
+               ' and nearby islands.')
     end
 
     it "saves object's xml content" do
@@ -1159,8 +1159,8 @@ describe HappyMapper do
     end
 
     it 'defaults to Nokogiri::XML::ParseOptions::STRICT' do
-      expect { default.parse(fixture_file('set_config_options.xml')) }.
-        to raise_error(Nokogiri::XML::SyntaxError)
+      expect { default.parse(fixture_file('set_config_options.xml')) }
+        .to raise_error(Nokogiri::XML::SyntaxError)
     end
 
     it 'accepts .on_config callback' do
@@ -1173,8 +1173,8 @@ describe HappyMapper do
 
     it 'can clear @nokogiri_config_callback' do
       custom.with_nokogiri_config { nil }
-      expect { custom.parse(fixture_file('set_config_options.xml')) }.
-        to raise_error(Nokogiri::XML::SyntaxError)
+      expect { custom.parse(fixture_file('set_config_options.xml')) }
+        .to raise_error(Nokogiri::XML::SyntaxError)
     end
   end
 
@@ -1183,8 +1183,8 @@ describe HappyMapper do
       xml = fixture_file('unformatted_address.xml')
       address = Address.parse(xml, single: true)
 
-      expect(address.xml_value).
-        to eq %(<address><street>Milchstrasse</street><housenumber>23</housenumber></address>)
+      expect(address.xml_value)
+        .to eq %(<address><street>Milchstrasse</street><housenumber>23</housenumber></address>)
     end
   end
 
