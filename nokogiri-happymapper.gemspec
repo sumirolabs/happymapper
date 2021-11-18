@@ -18,6 +18,9 @@ Gem::Specification.new do |spec|
 
   spec.email = 'matijs@matijs.net'
   spec.description = "Object to XML Mapping Library, using Nokogiri (fork from John Nunemaker's Happymapper)"
+
+  spec.metadata["rubygems_mfa_required"] = "true"
+
   spec.extra_rdoc_files = ['README.md', 'CHANGELOG.md', 'License']
   spec.files = `git ls-files -- lib/*`.split("\n")
   spec.homepage = 'http://github.com/mvz/happymapper'
