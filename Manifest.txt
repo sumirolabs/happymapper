@@ -1,0 +1,12 @@
+lib/happymapper.rb
+lib/happymapper/anonymous_mapper.rb
+lib/happymapper/attribute.rb
+lib/happymapper/element.rb
+lib/happymapper/item.rb
+lib/happymapper/supported_types.rb
+lib/happymapper/text_node.rb
+lib/happymapper/version.rb
+lib/nokogiri-happymapper.rb
+License
+CHANGELOG.md
+README.md
