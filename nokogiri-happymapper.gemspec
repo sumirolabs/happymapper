@@ -24,9 +24,8 @@ Gem::Specification.new do |spec|
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.files = `git ls-files -- lib/*`.split("\n")
+  spec.files = File.read('Manifest.txt').split
   spec.require_paths = ['lib']
-  spec.test_files = `git ls-files -- spec/*`.split("\n")
 
   spec.extra_rdoc_files = ['README.md', 'CHANGELOG.md', 'License']
 
@@ -34,6 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'pry', '~> 0.14.0'
   spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'rake-manifest', '~> 0.2.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 1.23.0'
   spec.add_development_dependency 'rubocop-packaging', '~> 0.5.0'
