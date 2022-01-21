@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0 / 2022-01-21
+
+* Add official support for Ruby 2.7, 3.0 and 3.1
+* Drop support for Ruby 2.3, 2.4 and 2.5
+* Fix handling of attributes and elements with `state_when_nil` set
+  ([#165](https://github.com/mvz/happymapper/pull/165))
+
 ## 0.8.1 / 2019-03-18
 
 * Allow requiring `nokogiri-happymapper`
