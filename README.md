@@ -241,7 +241,7 @@ the instance variable `@streets` if we ever need to the values as an array.
 Attributes are absolutely the same as `element` or `has_many`
 
 ```ruby
-attribute :location, String, tag: 'location
+attribute :location, String, tag: 'location'
 ```
 
 Again, you can omit the tag if the attribute accessor symbol matches the name
