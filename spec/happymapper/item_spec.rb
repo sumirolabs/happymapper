@@ -139,7 +139,7 @@ describe HappyMapper::Item do
       end
 
       it 'handles empty string' do
-        expect(item.typecast('')).to be(nil)
+        expect(item.typecast('')).to be_nil
       end
     end
 
@@ -161,11 +161,11 @@ describe HappyMapper::Item do
       end
 
       it 'handles nil' do
-        expect(item.typecast(nil)).to be(nil)
+        expect(item.typecast(nil)).to be_nil
       end
 
       it 'handles empty strings' do
-        expect(item.typecast('')).to be(nil)
+        expect(item.typecast('')).to be_nil
       end
     end
 
