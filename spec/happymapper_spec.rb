@@ -616,7 +616,7 @@ describe HappyMapper do
       aggregate_failures do
         expect(element.name).to eq('user')
         expect(element.type).to eq(User)
-        expect(element.options[:single]).to eq(true)
+        expect(element.options[:single]).to be(true)
       end
     end
 
@@ -627,7 +627,7 @@ describe HappyMapper do
       aggregate_failures do
         expect(element.name).to eq('users')
         expect(element.type).to eq(User)
-        expect(element.options[:single]).to eq(false)
+        expect(element.options[:single]).to be(false)
       end
     end
 

@@ -139,7 +139,7 @@ describe HappyMapper::Item do
       end
 
       it 'handles empty string' do
-        expect(item.typecast('')).to eq(nil)
+        expect(item.typecast('')).to be_nil
       end
     end
 
@@ -161,17 +161,17 @@ describe HappyMapper::Item do
       end
 
       it 'handles nil' do
-        expect(item.typecast(nil)).to eq(nil)
+        expect(item.typecast(nil)).to be_nil
       end
 
       it 'handles empty strings' do
-        expect(item.typecast('')).to eq(nil)
+        expect(item.typecast('')).to be_nil
       end
     end
 
     it 'works with Boolean' do
       item = described_class.new(:foo, HappyMapper::Boolean)
-      expect(item.typecast('false')).to eq(false)
+      expect(item.typecast('false')).to be(false)
     end
   end
 end

@@ -26,7 +26,7 @@ RSpec.describe 'after_parse callbacks', type: :feature do
 
     aggregate_failures do
       expect(from_cb).to eq(object)
-      expect(called).to eq(true)
+      expect(called).to be(true)
     end
   end
 end
