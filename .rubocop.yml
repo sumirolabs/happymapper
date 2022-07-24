@@ -13,6 +13,10 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.6
 
+# Spaces in strings with line continuations go at the beginning of the line.
+Layout/LineContinuationLeadingSpace:
+  EnforcedStyle: leading
+
 # Be lenient with line length
 Layout/LineLength:
   Max: 110
@@ -27,8 +31,8 @@ Lint/AmbiguousOperatorPrecedence:
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*_spec.rb' # Blocks can be any length in spec files
-    - '*.gemspec' # Gem spec blocks can be any size
+    - 'spec/**/*_spec.rb'  # Blocks can be any length in spec files
+    - '*.gemspec'  # Gem spec blocks can be any size
 
 # TODO: Update code so these maxima can be lowered
 Metrics/ParameterLists:
