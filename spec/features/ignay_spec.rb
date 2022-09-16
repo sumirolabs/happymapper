@@ -79,7 +79,7 @@ RSpec.describe 'parsing a VOD catalog', type: :feature do
       nodes = first_node.nodes
 
       aggregate_failures do
-        expect(nodes).to be_kind_of(Enumerable)
+        expect(nodes).to be_a(Enumerable)
         expect(nodes).not_to be_empty
         expect(nodes.length).to eq(1)
       end
