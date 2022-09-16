@@ -39,7 +39,7 @@ RSpec.describe HappyMapper::AnonymousMapper do
       let(:parsed_result) { anonymous_mapper.parse fixture_file('ambigous_items.xml') }
 
       it 'creates accessor methods with similar names' do
-        expect(parsed_result.my_items.item).to be_kind_of Array
+        expect(parsed_result.my_items.item).to be_a Array
       end
     end
 

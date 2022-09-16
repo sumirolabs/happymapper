@@ -793,7 +793,7 @@ describe HappyMapper do
 
       expect(first.asin).to eq('0321480791')
       expect(first.point).to eq('38.5351715088 -121.7948684692')
-      expect(first.detail_page_url).to be_a_kind_of(URI)
+      expect(first.detail_page_url).to be_a(URI)
       expect(first.detail_page_url.to_s).to eq('http://www.amazon.com/gp/redirect.html%3FASIN=0321480791%26tag=ws%26lcode=xm2%26cID=2025%26ccmID=165953%26location=/o/ASIN/0321480791%253FSubscriptionId=dontbeaswoosh')
       expect(first.manufacturer).to eq('Addison-Wesley Professional')
       expect(first.product_group).to eq('<ProductGroup>Book</ProductGroup>')
@@ -1006,7 +1006,7 @@ describe HappyMapper do
       expect(tree.persons.person.first.modified)
         .to eq(Time.utc(2008, 1, 3, 16, 41, 31)) # 2008-01-03T09:41:31-07:00
       expect(tree.persons.person.first.id).to eq('KWQS-BBQ')
-      expect(tree.persons.person.first.information.alternateIds.ids).not_to be_kind_of(String)
+      expect(tree.persons.person.first.information.alternateIds.ids).not_to be_a(String)
       expect(tree.persons.person.first.information.alternateIds.ids.size).to eq(8)
     end
   end
