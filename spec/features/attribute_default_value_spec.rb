@@ -8,7 +8,7 @@ class Meal
   attribute :type, String, default: 'omnivore'
 end
 
-RSpec.describe 'Attribute Default Value', type: :feature do
+RSpec.describe 'Attribute Default Value' do
   context 'when given a default value' do
     let(:default_meal_type) { 'omnivore' }
 

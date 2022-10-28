@@ -20,7 +20,7 @@ module MixedNamespaces
   end
 end
 
-RSpec.describe 'A document with mixed namespaces', type: :feature do
+RSpec.describe 'A document with mixed namespaces' do
   #
   # Note that the parent element of the xml has the namespacing. The elements
   # contained within the xml do not share the parent element namespace so a

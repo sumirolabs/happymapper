@@ -20,7 +20,7 @@ module SameTagSpec
   end
 end
 
-RSpec.describe 'parsing the same tag differently in different contexts', type: :feature do
+RSpec.describe 'parsing the same tag differently in different contexts' do
   let(:xml) do
     <<~XML
       <foo>

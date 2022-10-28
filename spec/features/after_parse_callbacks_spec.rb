@@ -9,7 +9,7 @@ module AfterParseSpec
   end
 end
 
-RSpec.describe 'after_parse callbacks', type: :feature do
+RSpec.describe 'after_parse callbacks' do
   after do
     AfterParseSpec::Address.after_parse_callbacks.clear
   end

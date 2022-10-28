@@ -126,7 +126,7 @@ module CoffeeMaking
   end
 end
 
-RSpec.describe 'Saving #to_xml with xml namespaces', type: :feature do
+RSpec.describe 'Saving #to_xml with xml namespaces' do
   context 'with namespaces' do
     let(:xml) do
       country = ToXMLWithNamespaces::Country.new(name: 'USA', code: 'us')

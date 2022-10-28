@@ -28,7 +28,7 @@ module Inheritance
   end
 end
 
-RSpec.describe 'Using inheritance to share elements and attributes', type: :feature do
+RSpec.describe 'Using inheritance to share elements and attributes' do
   describe 'Overwrite' do
     let(:overwrite) do
       xml =

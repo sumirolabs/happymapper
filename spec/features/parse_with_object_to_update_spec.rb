@@ -26,7 +26,7 @@ module ParseInstanceSpec
   end
 end
 
-RSpec.describe 'Updating existing objects with .parse and #parse', type: :feature do
+RSpec.describe 'Updating existing objects with .parse and #parse' do
   let(:root) { ParseInstanceSpec::Root.parse(parse_instance_initial_xml) }
 
   let(:parse_instance_initial_xml) do

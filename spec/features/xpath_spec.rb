@@ -28,7 +28,7 @@ module Amazing
   end
 end
 
-RSpec.describe 'Specifying elements and attributes with an xpath', type: :feature do
+RSpec.describe 'Specifying elements and attributes with an xpath' do
   let(:parsed_result) { Amazing::Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
