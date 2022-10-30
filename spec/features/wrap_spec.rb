@@ -23,7 +23,7 @@ module Wrap
   end
 end
 
-RSpec.describe 'wrap which allows you to specify a wrapper element', type: :feature do
+RSpec.describe 'wrap which allows you to specify a wrapper element' do
   describe '.parse' do
     context 'when given valid XML' do
       let(:root) { Wrap::Root.parse fixture_file('wrapper.xml') }

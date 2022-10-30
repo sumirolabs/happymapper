@@ -10,7 +10,7 @@ module AttributeMethodConversion
   end
 end
 
-RSpec.describe 'Attribute Method Conversion', type: :feature do
+RSpec.describe 'Attribute Method Conversion' do
   let(:xml_document) do
     <<~XML
       <document>

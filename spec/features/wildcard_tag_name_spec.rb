@@ -68,7 +68,7 @@ module GenericBase
   end
 end
 
-RSpec.describe 'classes with a wildcard tag', type: :feature do
+RSpec.describe 'classes with a wildcard tag' do
   let(:root) { GenericBase::Root.parse(generic_class_xml) }
   let(:generic_class_xml) do
     <<~XML

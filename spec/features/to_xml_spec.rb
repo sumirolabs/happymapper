@@ -102,7 +102,7 @@ module ToXML
   end
 end
 
-RSpec.describe 'Saving #to_xml', type: :feature do
+RSpec.describe 'Saving #to_xml' do
   let(:xml) do
     country_description = ToXML::Country::Description.new('A lovely country', 'positive')
     country = ToXML::Country.new(name: 'USA', code: 'us', empty_code: nil,
