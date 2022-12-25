@@ -631,7 +631,7 @@ module HappyMapper
     # Find the attributes for the class and collect them into an array
     # that will be placed into a Hash structure
     #
-    attributes = self.class.attributes.collect do |attribute|
+    attributes = self.class.attributes.filter_map do |attribute|
       #
       # If an attribute is marked as read_only then we want to ignore the attribute
       # when it comes to saving the xml document; so we will not go into any of
@@ -655,7 +655,7 @@ module HappyMapper
 
       attribute_namespace = attribute.options[:namespace]
       ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
-    end.compact
+    end
 
     attributes.to_h
   end
