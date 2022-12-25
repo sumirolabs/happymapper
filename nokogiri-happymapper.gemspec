@@ -4,7 +4,7 @@ require_relative 'lib/happymapper/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'nokogiri-happymapper'
-  spec.version = ::HappyMapper::VERSION
+  spec.version = HappyMapper::VERSION
   spec.authors = [
     'Damien Le Berrigaud',
     'John Nunemaker',
