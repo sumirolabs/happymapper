@@ -91,8 +91,8 @@ RSpec.describe 'classes with a wildcard tag' do
   describe '.parse' do
     it 'maps different elements to same class' do
       aggregate_failures do
-        expect(root.blargs).to match_array [GenericBase::Wild, GenericBase::Wild]
-        expect(root.jellos).to match_array [GenericBase::Wild]
+        expect(root.blargs).to contain_exactly(GenericBase::Wild, GenericBase::Wild)
+        expect(root.jellos).to contain_exactly(GenericBase::Wild)
       end
     end
 
