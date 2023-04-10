@@ -991,7 +991,7 @@ describe HappyMapper do
   it 'allows speficying child element class with a string' do
     bar = StringFoo::Bar.parse '<bar><thing/></bar>'
 
-    expect(bar.things).to match_array [StringFoo::Thing]
+    expect(bar.things).to contain_exactly(StringFoo::Thing)
   end
 
   it 'parses family search xml' do
