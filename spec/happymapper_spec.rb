@@ -32,7 +32,7 @@ module Analytics
     attribute :value, Float
 
     def clean_name
-      name.gsub(/ga:/, '')
+      name.gsub('ga:', '')
     end
   end
 
