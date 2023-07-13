@@ -35,12 +35,12 @@ module HappyMapper
     def from_xml_node(node, namespace, xpath_options)
       namespace = options[:namespace] if options.key?(:namespace)
 
-      if suported_type_registered?
+      if custom_parser_defined?
+        find(node, namespace, xpath_options) { |n| process_node_with_custom_parser(n) }
+      elsif suported_type_registered?
         find(node, namespace, xpath_options) { |n| process_node_as_supported_type(n) }
       elsif constant == XmlContent
         find(node, namespace, xpath_options) { |n| process_node_as_xml_content(n) }
-      elsif custom_parser_defined?
-        find(node, namespace, xpath_options) { |n| process_node_with_custom_parser(n) }
       else
         process_node_with_default_parser(node, namespaces: xpath_options)
       end
