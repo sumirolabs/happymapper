@@ -1,3 +1,4 @@
 <parsertest numbers="1,2,3">
   <strings>a, b, c</strings>
+  <bool>0</bool>
 </parsertest>

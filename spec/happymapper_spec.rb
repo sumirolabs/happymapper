@@ -571,6 +571,7 @@ class ParserTest
   tag 'parsertest'
   attribute :numbers, Coerce, parser: :number_list
   element :strings, self, parser: :string_list
+  element :bool, String, parser: ->(val) { val.to_s == '1' }
 
   def self.string_list(val)
     val.to_s.split(',').map(&:strip)
@@ -1233,6 +1234,7 @@ describe HappyMapper do
     aggregate_failures do
       expect(parsed.numbers).to eq [1, 2, 3]
       expect(parsed.strings).to eq %w(a b c)
+      expect(parsed.bool).to be false
     end
   end
 end
