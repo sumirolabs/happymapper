@@ -118,17 +118,21 @@ module HappyMapper
                 node.to_s
               end
 
-      custom_parser = options[:parser]
+      custom_parser = create_custom_parser(options[:parser])
 
       begin
-        if custom_parser.respond_to?(:call)
-          custom_parser.call(value)
-        else
-          constant.send(custom_parser.to_sym, value)
-        end
+        custom_parser.call(value)
       rescue StandardError
         nil
       end
+    end
+
+    def create_custom_parser(parser)
+      return parser if parser.respond_to?(:call)
+
+      proc { |value|
+        constant.send(parser.to_sym, value)
+      }
     end
 
     def process_node_with_default_parser(node, parse_options)
