@@ -35,12 +35,12 @@ module HappyMapper
     def from_xml_node(node, namespace, xpath_options)
       namespace = options[:namespace] if options.key?(:namespace)
 
-      if suported_type_registered?
+      if custom_parser_defined?
+        find(node, namespace, xpath_options) { |n| process_node_with_custom_parser(n) }
+      elsif suported_type_registered?
         find(node, namespace, xpath_options) { |n| process_node_as_supported_type(n) }
       elsif constant == XmlContent
         find(node, namespace, xpath_options) { |n| process_node_as_xml_content(n) }
-      elsif custom_parser_defined?
-        find(node, namespace, xpath_options) { |n| process_node_with_custom_parser(n) }
       else
         process_node_with_default_parser(node, namespaces: xpath_options)
       end
@@ -118,11 +118,21 @@ module HappyMapper
                 node.to_s
               end
 
+      custom_parser = create_custom_parser(options[:parser])
+
       begin
-        constant.send(options[:parser].to_sym, value)
+        custom_parser.call(value)
       rescue StandardError
         nil
       end
+    end
+
+    def create_custom_parser(parser)
+      return parser if parser.respond_to?(:call)
+
+      proc { |value|
+        constant.send(parser.to_sym, value)
+      }
     end
 
     def process_node_with_default_parser(node, parse_options)
