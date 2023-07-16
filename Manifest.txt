@@ -5,6 +5,7 @@ lib/happymapper/class_methods.rb
 lib/happymapper/element.rb
 lib/happymapper/item.rb
 lib/happymapper/supported_types.rb
+lib/happymapper/syntax_error.rb
 lib/happymapper/text_node.rb
 lib/happymapper/version.rb
 lib/nokogiri-happymapper.rb

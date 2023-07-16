@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "happymapper/syntax_error"
+
 module HappyMapper
   # Class methods to be applied to classes that include the HappyMapper module.
   module ClassMethods
@@ -183,7 +185,11 @@ module HappyMapper
     # @param [String] new_tag_name the name for the tag
     #
     def tag(new_tag_name)
-      @tag_name = new_tag_name.to_s unless new_tag_name.nil? || new_tag_name.to_s.empty?
+      return if new_tag_name.nil? || (name = new_tag_name.to_s).empty?
+
+      raise SyntaxError, "Unexpected ':' in tag name #{new_tag_name}" if name.include? ":"
+
+      @tag_name = name
     end
 
     #
