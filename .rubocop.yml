@@ -5,9 +5,9 @@ inherit_mode:
     - Exclude
 
 require:
-  - rubocop-rspec
-  - rubocop-performance
   - rubocop-packaging
+  - rubocop-performance
+  - rubocop-rspec
 
 AllCops:
   NewCops: enable
