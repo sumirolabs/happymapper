@@ -120,11 +120,7 @@ module HappyMapper
 
       custom_parser = create_custom_parser(options[:parser])
 
-      begin
-        custom_parser.call(value)
-      rescue StandardError
-        nil
-      end
+      custom_parser.call(value)
     end
 
     def create_custom_parser(parser)
