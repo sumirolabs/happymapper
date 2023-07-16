@@ -200,13 +200,13 @@ RSpec.describe "Saving #to_xml with xml namespaces" do
       end
     end
 
-    context "when an element has a 'on_save' parameter" do
-      context "with a symbol which represents a function" do
-        it "saves the element with the result of a function call and not the value of the ivar" do
-          expect(xml.xpath("address:housenumber").text).to eq "[1313]"
-        end
+    context "when an element has a custom reader method" do
+      it "saves the element with the result of the method call" do
+        expect(xml.xpath("address:housenumber").text).to eq "[1313]"
       end
+    end
 
+    context "when an element has a 'on_save' parameter" do
       context "with a lambda" do
         it "saves the results" do
           expect(xml.xpath("address:date_created").text).to eq "15:00:00 01/01/11"
