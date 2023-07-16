@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 module MixedNamespaces
   class Address
@@ -12,15 +12,15 @@ module MixedNamespaces
     # Here each of the elements have their namespace set to nil to reset their
     # namespace so that it is not the same as the prefix namespace
 
-    has_many :streets, String, tag: 'street', namespace: nil
+    has_many :streets, String, tag: "street", namespace: nil
 
-    has_one :house_number, String, tag: 'housenumber', namespace: nil
-    has_one :postcode, String, namespace: 'different'
+    has_one :house_number, String, tag: "housenumber", namespace: nil
+    has_one :postcode, String, namespace: "different"
     has_one :city, String, namespace: nil
   end
 end
 
-RSpec.describe 'A document with mixed namespaces' do
+RSpec.describe "A document with mixed namespaces" do
   #
   # Note that the parent element of the xml has the namespacing. The elements
   # contained within the xml do not share the parent element namespace so a
@@ -44,19 +44,19 @@ RSpec.describe 'A document with mixed namespaces' do
     MixedNamespaces::Address.parse(xml_document, single: true)
   end
 
-  it 'has the correct streets' do
-    expect(address.streets).to eq ['Milchstrasse', 'Another Street']
+  it "has the correct streets" do
+    expect(address.streets).to eq ["Milchstrasse", "Another Street"]
   end
 
-  it 'house number' do
-    expect(address.house_number).to eq '23'
+  it "house number" do
+    expect(address.house_number).to eq "23"
   end
 
-  it 'postcode' do
-    expect(address.postcode).to eq '26131'
+  it "postcode" do
+    expect(address.postcode).to eq "26131"
   end
 
-  it 'city' do
-    expect(address.city).to eq 'Oldenburg'
+  it "city" do
+    expect(address.city).to eq "Oldenburg"
   end
 end

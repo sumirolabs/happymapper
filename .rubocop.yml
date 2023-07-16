@@ -53,6 +53,14 @@ RSpec/FilePath:
   CustomTransform:
     HappyMapper: 'happymapper'
 
+# Do not commit to use of interpolation
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# Make quoting outside and inside interpolation consistent
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
 # Use older RuboCop default
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

@@ -20,7 +20,7 @@ module HappyMapper
       self.tag = options[:tag] || name.to_s
       self.options = { single: true }.merge(options.merge(name: self.name))
 
-      @xml_type = self.class.to_s.split('::').last.downcase
+      @xml_type = self.class.to_s.split("::").last.downcase
     end
 
     def constant
@@ -47,8 +47,8 @@ module HappyMapper
     end
 
     def xpath(namespace = self.namespace)
-      xpath  = ''
-      xpath += './/' if options[:deep]
+      xpath  = ""
+      xpath += ".//" if options[:deep]
       xpath += "#{namespace}:" if namespace
       xpath += tag
       # puts "xpath: #{xpath}"
@@ -56,7 +56,7 @@ module HappyMapper
     end
 
     def method_name
-      @method_name ||= name.tr('-', '_')
+      @method_name ||= name.tr("-", "_")
     end
 
     #
@@ -148,7 +148,7 @@ module HappyMapper
     end
 
     def convert_string_to_constant(type)
-      names = type.split('::')
+      names = type.split("::")
       constant = Object
       names.each do |name|
         constant =

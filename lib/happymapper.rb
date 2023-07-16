@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'nokogiri'
-require 'date'
-require 'time'
-require 'happymapper/version'
-require 'happymapper/anonymous_mapper'
+require "nokogiri"
+require "date"
+require "time"
+require "happymapper/version"
+require "happymapper/anonymous_mapper"
 
 module HappyMapper
   class Boolean; end
@@ -229,7 +229,7 @@ module HappyMapper
     # @return [String] the name of the tag as a string, downcased
     #
     def tag_name
-      @tag_name ||= name && name.to_s.split('::')[-1].downcase
+      @tag_name ||= name && name.to_s.split("::")[-1].downcase
     end
 
     # There is an XML tag that needs to be known for parsing and should be generated
@@ -336,7 +336,7 @@ module HappyMapper
       # or use the namespace provided by the class
       # or use the 'xmlns' namespace if defined
 
-      namespace = options[:namespace] || self.namespace || namespaces.key?('xmlns') && 'xmlns'
+      namespace = options[:namespace] || self.namespace || namespaces.key?("xmlns") && "xmlns"
 
       # from the options grab any nodes present and if none are present then
       # perform the following to find the nodes for the given class
@@ -404,9 +404,9 @@ module HappyMapper
       xpath = if options[:xpath]
                 options[:xpath].to_s.sub(%r{([^/])$}, '\1/')
               elsif root
-                '/'
+                "/"
               else
-                './/'
+                ".//"
               end
       if namespace
         return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
@@ -583,7 +583,7 @@ module HappyMapper
     # xml generated from the object. If an XML builder instance was specified
     # then we assume that has been called recursively to generate a larger
     # XML document.
-    write_out_to_xml ? builder.to_xml.force_encoding('UTF-8') : builder
+    write_out_to_xml ? builder.to_xml.force_encoding("UTF-8") : builder
   end
 
   # Parse the xml and update this instance. This does not update instances
@@ -656,7 +656,7 @@ module HappyMapper
       next if value.nil? && !attribute.options[:state_when_nil]
 
       attribute_namespace = attribute.options[:namespace]
-      ["#{attribute_namespace ? "#{attribute_namespace}:" : ''}#{attribute.tag}", value]
+      ["#{attribute_namespace ? "#{attribute_namespace}:" : ""}#{attribute.tag}", value]
     end
 
     attributes.to_h
@@ -674,7 +674,7 @@ module HappyMapper
     return unless self.class.instance_variable_get(:@registered_namespaces)
 
     self.class.instance_variable_get(:@registered_namespaces).sort.each do |name, href|
-      name = nil if name == 'xmlns'
+      name = nil if name == "xmlns"
       builder.doc.root.add_namespace(name, href)
     end
   end
@@ -745,8 +745,8 @@ module HappyMapper
   end
 end
 
-require 'happymapper/supported_types'
-require 'happymapper/item'
-require 'happymapper/attribute'
-require 'happymapper/element'
-require 'happymapper/text_node'
+require "happymapper/supported_types"
+require "happymapper/item"
+require "happymapper/attribute"
+require "happymapper/element"
+require "happymapper/text_node"

@@ -1,55 +1,55 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 class CatalogTree
   include HappyMapper
 
-  tag 'CatalogTree'
-  register_namespace 'xmlns', 'urn:eventis:prodis:onlineapi:1.0'
-  register_namespace 'xsi', 'http://www.w3.org/2001/XMLSchema-instance'
-  register_namespace 'xsd', 'http://www.w3.org/2001/XMLSchema'
+  tag "CatalogTree"
+  register_namespace "xmlns", "urn:eventis:prodis:onlineapi:1.0"
+  register_namespace "xsi", "http://www.w3.org/2001/XMLSchema-instance"
+  register_namespace "xsd", "http://www.w3.org/2001/XMLSchema"
 
   attribute :code, String
 
-  has_many :nodes, 'CatalogNode', tag: 'Node', xpath: '.'
+  has_many :nodes, "CatalogNode", tag: "Node", xpath: "."
 end
 
 class CatalogNode
   include HappyMapper
 
-  tag 'Node'
+  tag "Node"
 
-  attribute :back_office_id, String, tag: 'vodBackOfficeId'
+  attribute :back_office_id, String, tag: "vodBackOfficeId"
 
-  has_one :name, String, tag: 'Name'
+  has_one :name, String, tag: "Name"
   # other important fields
 
-  has_many :translations, 'CatalogNode::Translations', tag: 'Translation', xpath: 'child::*'
+  has_many :translations, "CatalogNode::Translations", tag: "Translation", xpath: "child::*"
 
   class Translations
     include HappyMapper
-    tag 'Translation'
+    tag "Translation"
 
-    attribute :language, String, tag: 'Language'
-    has_one :name, String, tag: 'Name'
+    attribute :language, String, tag: "Language"
+    has_one :name, String, tag: "Name"
   end
 
-  has_many :nodes, CatalogNode, tag: 'Node', xpath: 'child::*'
+  has_many :nodes, CatalogNode, tag: "Node", xpath: "child::*"
 end
 
-RSpec.describe 'parsing a VOD catalog' do
-  let(:catalog_tree) { CatalogTree.parse(fixture_file('inagy.xml'), single: true) }
+RSpec.describe "parsing a VOD catalog" do
+  let(:catalog_tree) { CatalogTree.parse(fixture_file("inagy.xml"), single: true) }
 
-  it 'is not nil' do
+  it "is not nil" do
     expect(catalog_tree).not_to be_nil
   end
 
-  it 'has the attribute code' do
-    expect(catalog_tree.code).to eq('NLD')
+  it "has the attribute code" do
+    expect(catalog_tree.code).to eq("NLD")
   end
 
-  it 'has many nodes' do
+  it "has many nodes" do
     nodes = catalog_tree.nodes
 
     aggregate_failures do
@@ -58,24 +58,24 @@ RSpec.describe 'parsing a VOD catalog' do
     end
   end
 
-  describe 'first node' do
+  describe "first node" do
     let(:first_node) { catalog_tree.nodes.first }
 
-    it 'has a name' do
-      expect(first_node.name).to eq('Parent 1')
+    it "has a name" do
+      expect(first_node.name).to eq("Parent 1")
     end
 
-    it 'has translations' do
+    it "has translations" do
       translations = first_node.translations
 
       aggregate_failures do
         expect(translations.length).to eq(2)
-        expect(translations.first.language).to eq('en-GB')
-        expect(translations.last.name).to eq('Parent 1 de')
+        expect(translations.first.language).to eq("en-GB")
+        expect(translations.last.name).to eq("Parent 1 de")
       end
     end
 
-    it 'has subnodes' do
+    it "has subnodes" do
       nodes = first_node.nodes
 
       aggregate_failures do
@@ -85,8 +85,8 @@ RSpec.describe 'parsing a VOD catalog' do
       end
     end
 
-    it 'first node - first node name' do
-      expect(first_node.nodes.first.name).to eq('First')
+    it "first node - first node name" do
+      expect(first_node.nodes.first.name).to eq("First")
     end
   end
 end

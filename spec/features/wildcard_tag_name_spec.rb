@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 module GenericBase
   class Wild
@@ -13,7 +13,7 @@ module GenericBase
       @other = params[:other]
     end
 
-    tag '*'
+    tag "*"
     attribute :name, String
     attribute :href, String
     attribute :other, String
@@ -31,15 +31,15 @@ module GenericBase
 
   class SubList
     include HappyMapper
-    tag 'sublist'
+    tag "sublist"
 
-    has_many :jellos, Wild, tag: 'jello'
-    has_many :puddings, Wild, tag: 'pudding'
+    has_many :jellos, Wild, tag: "jello"
+    has_many :puddings, Wild, tag: "pudding"
   end
 
   class Fixed
     include HappyMapper
-    tag 'fixed_element'
+    tag "fixed_element"
 
     attribute :name, String
   end
@@ -52,23 +52,23 @@ module GenericBase
 
   class Root
     include HappyMapper
-    tag 'root'
+    tag "root"
     element :description, String
-    has_many :blargs, Wild, tag: 'blarg', xpath: '.'
-    has_many :jellos, Wild, tag: 'jello', xpath: '.'
+    has_many :blargs, Wild, tag: "blarg", xpath: "."
+    has_many :jellos, Wild, tag: "jello", xpath: "."
 
     has_one :sublist, SubList
 
-    has_many :subjellos, Wild, xpath: 'sublist/.', tag: 'jello', read_only: true
-    has_many :subwilds, Wild, xpath: 'sublist/.', read_only: true
+    has_many :subjellos, Wild, xpath: "sublist/.", tag: "jello", read_only: true
+    has_many :subwilds, Wild, xpath: "sublist/.", read_only: true
 
-    has_one :renamed_fixed, Fixed, tag: 'myfixed'
+    has_one :renamed_fixed, Fixed, tag: "myfixed"
     has_one :fixed_element, Fixed
     has_one :auto, Auto
   end
 end
 
-RSpec.describe 'classes with a wildcard tag' do
+RSpec.describe "classes with a wildcard tag" do
   let(:root) { GenericBase::Root.parse(generic_class_xml) }
   let(:generic_class_xml) do
     <<~XML
@@ -88,15 +88,15 @@ RSpec.describe 'classes with a wildcard tag' do
     XML
   end
 
-  describe '.parse' do
-    it 'maps different elements to same class' do
+  describe ".parse" do
+    it "maps different elements to same class" do
       aggregate_failures do
         expect(root.blargs).to contain_exactly(GenericBase::Wild, GenericBase::Wild)
         expect(root.jellos).to contain_exactly(GenericBase::Wild)
       end
     end
 
-    it 'filters on xpath appropriately' do
+    it "filters on xpath appropriately" do
       aggregate_failures do
         expect(root.jellos.size).to eq 1
         expect(root.subjellos.size).to eq 1
@@ -107,23 +107,23 @@ RSpec.describe 'classes with a wildcard tag' do
       GenericBase::Wild.new(name: name, href: href, other: other)
     end
 
-    it 'parses correct values onto generic class' do
+    it "parses correct values onto generic class" do
       aggregate_failures do
-        expect(root.blargs[0]).to eq base_with('blargname1', 'http://blarg.com', nil)
-        expect(root.blargs[1]).to eq base_with('blargname2', 'http://blarg.com', nil)
-        expect(root.jellos[0]).to eq base_with('jelloname', 'http://jello.com', nil)
-        expect(root.subjellos[0]).to eq base_with('subjelloname', 'http://ohnojello.com', 'othertext')
+        expect(root.blargs[0]).to eq base_with("blargname1", "http://blarg.com", nil)
+        expect(root.blargs[1]).to eq base_with("blargname2", "http://blarg.com", nil)
+        expect(root.jellos[0]).to eq base_with("jelloname", "http://jello.com", nil)
+        expect(root.subjellos[0]).to eq base_with("subjelloname", "http://ohnojello.com", "othertext")
       end
     end
 
-    it 'maps all elements matching xpath if tag is not specified' do
+    it "maps all elements matching xpath if tag is not specified" do
       aggregate_failures do
         expect(root.subwilds.size).to eq 2
       end
     end
   end
 
-  describe '#to_xml' do
+  describe "#to_xml" do
     let(:xml) { Nokogiri::XML(root.to_xml) }
 
     def validate_xpath(xpath, name, href, other)
@@ -132,27 +132,27 @@ RSpec.describe 'classes with a wildcard tag' do
       expect(xml.xpath("#{xpath}/@other").text).to eq other
     end
 
-    it 'uses the tag name specified by the parent element for wildcard elements' do
+    it "uses the tag name specified by the parent element for wildcard elements" do
       aggregate_failures do
-        expect(xml.xpath('/root/description').text).to eq('some description')
-        validate_xpath('/root/blarg[1]', 'blargname1', 'http://blarg.com', '')
-        validate_xpath('/root/blarg[2]', 'blargname2', 'http://blarg.com', '')
-        validate_xpath('/root/jello[1]', 'jelloname', 'http://jello.com', '')
-        validate_xpath('/root/sublist/jello[1]', 'subjelloname', 'http://ohnojello.com', 'othertext')
-        validate_xpath('/root/sublist/pudding[1]', 'puddingname', 'http://pudding.com', '')
+        expect(xml.xpath("/root/description").text).to eq("some description")
+        validate_xpath("/root/blarg[1]", "blargname1", "http://blarg.com", "")
+        validate_xpath("/root/blarg[2]", "blargname2", "http://blarg.com", "")
+        validate_xpath("/root/jello[1]", "jelloname", "http://jello.com", "")
+        validate_xpath("/root/sublist/jello[1]", "subjelloname", "http://ohnojello.com", "othertext")
+        validate_xpath("/root/sublist/pudding[1]", "puddingname", "http://pudding.com", "")
       end
     end
 
-    it 'uses the tag name specified by the parent element for fixed elements' do
-      expect(xml.xpath('/root/myfixed').size).to eq 1
+    it "uses the tag name specified by the parent element for fixed elements" do
+      expect(xml.xpath("/root/myfixed").size).to eq 1
     end
 
     it "uses the element's specified tag name if the tag is not specified by the parent" do
-      expect(xml.xpath('root/fixed_element').size).to eq(1)
+      expect(xml.xpath("root/fixed_element").size).to eq(1)
     end
 
     it "uses the element's auto-generated tag name if the tag is not specified elsewhere" do
-      expect(xml.xpath('root/auto').size).to eq(1)
+      expect(xml.xpath("root/auto").size).to eq(1)
     end
   end
 end
