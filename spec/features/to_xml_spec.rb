@@ -39,7 +39,8 @@ module ToXML
     #
     # Perform the on_save operation when saving
     #
-    has_one :date_created, Time, on_save: ->(time) { Time.parse(time).strftime("%T %D") if time }
+    has_one :date_created, Time,
+            on_save: ->(time) { Time.parse(time).strftime("%T %D") if time }
 
     #
     # Execute the method with the same name
@@ -123,7 +124,8 @@ RSpec.describe "Saving #to_xml" do
   end
 
   it "saves elements" do
-    elements = { "street" => "Mockingbird Lane", "postcode" => "98103", "city" => "Seattle" }
+    elements = { "street" => "Mockingbird Lane", "postcode" => "98103",
+                 "city" => "Seattle" }
     elements.each_pair do |property, value|
       expect(xml.xpath(property.to_s).text).to eq value
     end

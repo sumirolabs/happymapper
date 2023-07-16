@@ -117,7 +117,8 @@ RSpec.describe HappyMapper::AnonymousMapper do
       end
     end
 
-    context "when parsing an element with a nested value element with a different namespace" do
+    context \
+      "when parsing an element with a nested value element with a different namespace" do
       let(:xml) do
         <<~XML
           <a:foo xmlns:a="http://foo.org/a" xmlns:b="http://foo.org/b">

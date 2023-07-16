@@ -47,7 +47,8 @@ module ToXMLWithNamespaces
     #
     # Perform the on_save operation when saving
     #
-    has_one :date_created, Time, on_save: ->(time) { Time.parse(time).strftime("%T %D") if time }
+    has_one :date_created, Time,
+            on_save: ->(time) { Time.parse(time).strftime("%T %D") if time }
 
     #
     # Write multiple elements and call on_save when saving
@@ -78,7 +79,8 @@ module ToXMLWithNamespaces
     register_namespace "countryName", "http://www.company.com/countryName"
 
     attribute :code, String, tag: "countryCode"
-    has_one :name, String, tag: "countryName", namespace: "countryName", state_when_nil: true
+    has_one :name, String, tag: "countryName", namespace: "countryName",
+                           state_when_nil: true
 
     def initialize(parameters)
       parameters.each_pair do |property, value|
@@ -104,7 +106,9 @@ module ToXMLWithNamespaces
     has_many :ingredients, String
 
     def initialize(parameters)
-      parameters.each_pair { |property, value| send("#{property}=", value) if respond_to?("#{property}=") }
+      parameters.each_pair do |property, value|
+        send("#{property}=", value) if respond_to?("#{property}=")
+      end
     end
   end
 end
@@ -148,7 +152,8 @@ RSpec.describe "Saving #to_xml with xml namespaces" do
     end
 
     it "saves elements" do
-      elements = { "street" => "Mockingbird Lane", "postcode" => "98103", "city" => "Seattle" }
+      elements = { "street" => "Mockingbird Lane", "postcode" => "98103",
+                   "city" => "Seattle" }
 
       elements.each_pair do |property, value|
         expect(xml.xpath("address:#{property}").text).to eq value
@@ -182,7 +187,8 @@ RSpec.describe "Saving #to_xml with xml namespaces" do
       end
     end
 
-    context "when a scalar element with its own namespace is nil and has state_when_nil: true" do
+    context \
+      "when a scalar element with its own namespace is nil and has state_when_nil: true" do
       let(:xml) do
         country = ToXMLWithNamespaces::Country.new(name: nil, code: "us")
         address = ToXMLWithNamespaces::Address.new(street: "Mockingbird Lane",
@@ -249,7 +255,8 @@ RSpec.describe "Saving #to_xml with xml namespaces" do
 
   context "with a default namespace" do
     it "writes the default namespace to xml without repeating xmlns" do
-      recipe = ToXMLWithNamespaces::Recipe.new(ingredients: ["One Cup Flour", "Two Scoops of Lovin"])
+      recipe = ToXMLWithNamespaces::Recipe.new(ingredients: ["One Cup Flour",
+                                                             "Two Scoops of Lovin"])
       expect(recipe.to_xml).to match(/xmlns="urn:eventis:prodis:onlineapi:1\.0"/)
     end
   end

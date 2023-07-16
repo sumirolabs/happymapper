@@ -246,8 +246,9 @@ module HappyMapper
       wrapper_key = wrapper.inspect
       @wrapper_anonymous_classes[wrapper_key] = wrapper
 
-      # Create getter/setter for each element and attribute defined on the anonymous HappyMapper
-      # onto this class. They get/set the value by passing thru to the anonymous class.
+      # Create getter/setter for each element and attribute defined on the
+      # anonymous HappyMapper onto this class. They get/set the value by
+      # passing thru to the anonymous class.
       passthrus = wrapper.attributes + wrapper.elements
       passthrus.each do |item|
         method_name = item.method_name
@@ -336,7 +337,10 @@ module HappyMapper
       # or use the namespace provided by the class
       # or use the 'xmlns' namespace if defined
 
-      namespace = options[:namespace] || self.namespace || namespaces.key?("xmlns") && "xmlns"
+      namespace =
+        options[:namespace] ||
+        self.namespace ||
+        namespaces.key?("xmlns") && "xmlns"
 
       # from the options grab any nodes present and if none are present then
       # perform the following to find the nodes for the given class
@@ -409,7 +413,9 @@ module HappyMapper
                 ".//"
               end
       if namespace
-        return [] unless namespaces.find { |name, _url| ["xmlns:#{namespace}", namespace].include? name }
+        unless namespaces.find { |name, _| ["xmlns:#{namespace}", namespace].include? name }
+          return []
+        end
 
         xpath += "#{namespace}:"
       end
@@ -458,7 +464,8 @@ module HappyMapper
       end
 
       if (content = defined_content)
-        obj.send("#{content.method_name}=", content.from_xml_node(node, namespace, namespaces))
+        obj.send("#{content.method_name}=",
+                 content.from_xml_node(node, namespace, namespaces))
       end
 
       # If the HappyMapper class has the method #xml_value=,
@@ -725,7 +732,10 @@ module HappyMapper
 
       elsif !item.nil? || element.options[:state_when_nil]
 
-        item_namespace = element.options[:namespace] || self.class.namespace || default_namespace
+        item_namespace =
+          element.options[:namespace] ||
+          self.class.namespace ||
+          default_namespace
 
         #
         # When a value exists or the tag should always be emitted,

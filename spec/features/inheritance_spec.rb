@@ -40,8 +40,10 @@ RSpec.describe "Using inheritance to share elements and attributes" do
 
     it "overrides the parent elements and attributes" do
       aggregate_failures do
-        expect(Inheritance::Overwrite.attributes.count).to eq Inheritance::Parent.attributes.count
-        expect(Inheritance::Overwrite.elements.count).to eq Inheritance::Parent.elements.count
+        expect(Inheritance::Overwrite.attributes.count)
+          .to eq Inheritance::Parent.attributes.count
+        expect(Inheritance::Overwrite.elements.count)
+          .to eq Inheritance::Parent.elements.count
       end
     end
 

@@ -112,7 +112,8 @@ RSpec.describe "classes with a wildcard tag" do
         expect(root.blargs[0]).to eq base_with("blargname1", "http://blarg.com", nil)
         expect(root.blargs[1]).to eq base_with("blargname2", "http://blarg.com", nil)
         expect(root.jellos[0]).to eq base_with("jelloname", "http://jello.com", nil)
-        expect(root.subjellos[0]).to eq base_with("subjelloname", "http://ohnojello.com", "othertext")
+        expect(root.subjellos[0])
+          .to eq base_with("subjelloname", "http://ohnojello.com", "othertext")
       end
     end
 
@@ -138,7 +139,8 @@ RSpec.describe "classes with a wildcard tag" do
         validate_xpath("/root/blarg[1]", "blargname1", "http://blarg.com", "")
         validate_xpath("/root/blarg[2]", "blargname2", "http://blarg.com", "")
         validate_xpath("/root/jello[1]", "jelloname", "http://jello.com", "")
-        validate_xpath("/root/sublist/jello[1]", "subjelloname", "http://ohnojello.com", "othertext")
+        validate_xpath("/root/sublist/jello[1]", "subjelloname", "http://ohnojello.com",
+                       "othertext")
         validate_xpath("/root/sublist/pudding[1]", "puddingname", "http://pudding.com", "")
       end
     end

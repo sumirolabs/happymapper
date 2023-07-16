@@ -332,7 +332,8 @@ module PITA
     element :detail_page_url, URI, tag: "DetailPageURL", parser: :parse
     element :manufacturer, String, tag: "Manufacturer", deep: true
     element :point, String, tag: "point", namespace: "georss"
-    element :product_group, ProductGroup, tag: "ProductGroup", deep: true, parser: :new, raw: true
+    element :product_group, ProductGroup, tag: "ProductGroup", deep: true,
+                                          parser: :new, raw: true
   end
 
   class Items
@@ -742,8 +743,8 @@ describe HappyMapper do
         .to eq("ROXML is a Ruby library designed to make it easier for Ruby" \
                " developers to work with XML. Using simple annotations, it enables" \
                " Ruby classes to be custom-mapped to XML. ROXML takes care of the" \
-               " marshalling and unmarshalling of mapped attributes so that developers can" \
-               " focus on building first-class Ruby classes.")
+               " marshalling and unmarshalling of mapped attributes so that developers" \
+               " can focus on building first-class Ruby classes.")
     end
   end
 
@@ -764,7 +765,8 @@ describe HappyMapper do
       expect(first.user.name).to eq("John Nunemaker")
       expect(first.user.screen_name).to eq("jnunemaker")
       expect(first.user.location).to eq("Mishawaka, IN, US")
-      expect(first.user.description).to eq("Loves his wife, ruby, notre dame football and iu basketball")
+      expect(first.user.description)
+        .to eq "Loves his wife, ruby, notre dame football and iu basketball"
       expect(first.user.profile_image_url)
         .to eq("http://s3.amazonaws.com/twitter_production/profile_images/53781608/Photo_75_normal.jpg")
       expect(first.user.url).to eq("http://addictedtonew.com")
@@ -846,7 +848,9 @@ describe HappyMapper do
   end
 
   it "parses xml with optional elements with embedded attributes" do
-    expect { CurrentWeather.parse(fixture_file("current_weather_missing_elements.xml")) }.not_to raise_error
+    expect do
+      CurrentWeather.parse(fixture_file("current_weather_missing_elements.xml"))
+    end.not_to raise_error
   end
 
   it "returns nil rather than empty array for absent values when :single => true" do
@@ -854,9 +858,10 @@ describe HappyMapper do
     expect(address).to be_nil
   end
 
-  it "returns same result for absent values when :single => true, regardless of :in_groups_of" do
+  it "ignores :in_groups_of when :single is true" do
     addr1 = Address.parse('<?xml version="1.0" encoding="UTF-8"?><foo/>', single: true)
-    addr2 = Address.parse('<?xml version="1.0" encoding="UTF-8"?><foo/>', single: true, in_groups_of: 10)
+    addr2 = Address.parse('<?xml version="1.0" encoding="UTF-8"?><foo/>', single: true,
+                                                                          in_groups_of: 10)
     expect(addr1).to eq(addr2)
   end
 
@@ -1097,7 +1102,8 @@ describe HappyMapper do
   end
 
   it "parses ambigous items" do
-    items = AmbigousItems::Item.parse(fixture_file("ambigous_items.xml"), xpath: "/ambigous/my-items")
+    items = AmbigousItems::Item.parse(fixture_file("ambigous_items.xml"),
+                                      xpath: "/ambigous/my-items")
     expect(items.map(&:name)).to eq(%w(first second third).map { |s| "My #{s} item" })
   end
 
@@ -1203,7 +1209,8 @@ describe HappyMapper do
       address = Address.parse(xml, single: true)
 
       expect(address.xml_value)
-        .to eq %(<address><street>Milchstrasse</street><housenumber>23</housenumber></address>)
+        .to eq "<address><street>Milchstrasse</street>" \
+               "<housenumber>23</housenumber></address>"
     end
   end
 
@@ -1212,7 +1219,8 @@ describe HappyMapper do
       xml = fixture_file("unformatted_address.xml")
       address = Address.parse(xml)
 
-      expect(address.xml_content).to eq %(<street>Milchstrasse</street><housenumber>23</housenumber>)
+      expect(address.xml_content)
+        .to eq "<street>Milchstrasse</street><housenumber>23</housenumber>"
     end
   end
 

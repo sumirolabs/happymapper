@@ -23,7 +23,7 @@ Layout/LineContinuationLeadingSpace:
 
 # Be lenient with line length
 Layout/LineLength:
-  Max: 110
+  Max: 92
 
 # Assume the programmer knows how bracketed block syntax works
 Lint/AmbiguousBlockAssociation:

@@ -21,7 +21,8 @@ module Amazing
     element :detail, String, xpath: "amazing:subitem/amazing:detail"
     has_many :more_details_text, String, xpath: "amazing:subitem/amazing:more"
     has_many :more_details, String,
-             xpath: "amazing:subitem/amazing:more/@first|amazing:subitem/amazing:more/@alternative"
+             xpath: "amazing:subitem/amazing:more/@first" \
+                    "|amazing:subitem/amazing:more/@alternative"
     has_many :more_details_alternative, String, xpath: "amazing:subitem/amazing:more/@*"
 
     has_one :baby, Baby, namespace: "amazing"

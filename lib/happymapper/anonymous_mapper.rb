@@ -3,8 +3,9 @@
 module HappyMapper
   class AnonymousMapper
     def parse(xml_content)
-      # TODO: this should be able to handle all the types of functionality that parse is able
-      #   to handle which includes the text, xml document, node, fragment, etc.
+      # TODO: this should be able to handle all the types of functionality that
+      # parse is able to handle which includes the text, xml document, node,
+      # fragment, etc.
       xml = Nokogiri::XML(xml_content)
 
       klass = create_happymapper_class_from_node(xml.root)

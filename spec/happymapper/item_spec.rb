@@ -124,7 +124,8 @@ describe HappyMapper::Item do
 
     it "works with Times" do
       item = described_class.new(:foo, Time)
-      expect(item.typecast("2000-01-01 01:01:01.123456")).to eq(Time.local(2000, 1, 1, 1, 1, 1, 123_456))
+      expect(item.typecast("2000-01-01 01:01:01.123456"))
+        .to eq(Time.local(2000, 1, 1, 1, 1, 1, 123_456))
     end
 
     context "with Date" do

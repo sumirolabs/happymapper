@@ -17,7 +17,8 @@ Gem::Specification.new do |spec|
   spec.email = "matijs@matijs.net"
 
   spec.summary = "Provides a simple way to map XML to Ruby Objects and back again."
-  spec.description = "Object to XML Mapping Library, using Nokogiri (fork from John Nunemaker's Happymapper)"
+  spec.description = "Object to XML Mapping Library, using Nokogiri" \
+                     " (fork from John Nunemaker's Happymapper)"
   spec.homepage = "http://github.com/mvz/happymapper"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.7.0"
