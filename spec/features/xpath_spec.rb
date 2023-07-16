@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 module Amazing
   class Baby
@@ -12,23 +12,24 @@ module Amazing
   class Item
     include HappyMapper
 
-    tag 'item'
-    namespace 'amazing'
+    tag "item"
+    namespace "amazing"
 
     element :title, String
-    attribute :link, String, xpath: 'amazing:link/@href'
-    has_one :different_link, String, xpath: 'different:link/@href'
-    element :detail, String, xpath: 'amazing:subitem/amazing:detail'
-    has_many :more_details_text, String, xpath: 'amazing:subitem/amazing:more'
+    attribute :link, String, xpath: "amazing:link/@href"
+    has_one :different_link, String, xpath: "different:link/@href"
+    element :detail, String, xpath: "amazing:subitem/amazing:detail"
+    has_many :more_details_text, String, xpath: "amazing:subitem/amazing:more"
     has_many :more_details, String,
-             xpath: 'amazing:subitem/amazing:more/@first|amazing:subitem/amazing:more/@alternative'
-    has_many :more_details_alternative, String, xpath: 'amazing:subitem/amazing:more/@*'
+             xpath: "amazing:subitem/amazing:more/@first" \
+                    "|amazing:subitem/amazing:more/@alternative"
+    has_many :more_details_alternative, String, xpath: "amazing:subitem/amazing:more/@*"
 
-    has_one :baby, Baby, namespace: 'amazing'
+    has_one :baby, Baby, namespace: "amazing"
   end
 end
 
-RSpec.describe 'Specifying elements and attributes with an xpath' do
+RSpec.describe "Specifying elements and attributes with an xpath" do
   let(:parsed_result) { Amazing::Item.parse(xml_string, single: true) }
 
   let(:xml_string) do
@@ -52,35 +53,35 @@ RSpec.describe 'Specifying elements and attributes with an xpath' do
     XML
   end
 
-  it 'has a title' do
-    expect(parsed_result.title).to eq 'Test XML'
+  it "has a title" do
+    expect(parsed_result.title).to eq "Test XML"
   end
 
-  it 'finds the link href value' do
-    expect(parsed_result.link).to eq 'link_to_resources'
+  it "finds the link href value" do
+    expect(parsed_result.link).to eq "link_to_resources"
   end
 
-  it 'finds the other link href value' do
-    expect(parsed_result.different_link).to eq 'different_link'
+  it "finds the other link href value" do
+    expect(parsed_result.different_link).to eq "different_link"
   end
 
-  it 'finds this subitem based on the xpath' do
-    expect(parsed_result.detail).to eq 'I want to parse this'
+  it "finds this subitem based on the xpath" do
+    expect(parsed_result.detail).to eq "I want to parse this"
   end
 
-  it 'finds the subitem texts based on the xpath' do
-    expect(parsed_result.more_details_text).to eq ['more 1', 'more 2']
+  it "finds the subitem texts based on the xpath" do
+    expect(parsed_result.more_details_text).to eq ["more 1", "more 2"]
   end
 
-  it 'finds the subitem attributes based on the xpath' do
-    expect(parsed_result.more_details).to eq ['this one', 'another one']
+  it "finds the subitem attributes based on the xpath" do
+    expect(parsed_result.more_details).to eq ["this one", "another one"]
   end
 
-  it 'finds the subitem attributes based on the xpath with a wildcard' do
-    expect(parsed_result.more_details_alternative).to eq ['this one', 'another one']
+  it "finds the subitem attributes based on the xpath with a wildcard" do
+    expect(parsed_result.more_details_alternative).to eq ["this one", "another one"]
   end
 
-  it 'has a baby name' do
-    expect(parsed_result.baby.name).to eq 'Jumbo'
+  it "has a baby name" do
+    expect(parsed_result.baby.name).to eq "Jumbo"
   end
 end

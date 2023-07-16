@@ -122,7 +122,7 @@ module HappyMapper
 
     register_type Integer do |value|
       value_to_i = value.to_i
-      if value_to_i == 0 && !value.to_s.start_with?('0')
+      if value_to_i == 0 && !value.to_s.start_with?("0")
         nil
       else
         value_to_i

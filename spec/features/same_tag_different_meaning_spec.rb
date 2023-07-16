@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 module SameTagSpec
   class Bar
@@ -16,11 +16,11 @@ module SameTagSpec
   class Foo
     include HappyMapper
     has_one :bar, Bar
-    has_one :baz, Baz, xpath: '.'
+    has_one :baz, Baz, xpath: "."
   end
 end
 
-RSpec.describe 'parsing the same tag differently in different contexts' do
+RSpec.describe "parsing the same tag differently in different contexts" do
   let(:xml) do
     <<~XML
       <foo>
@@ -34,11 +34,11 @@ RSpec.describe 'parsing the same tag differently in different contexts' do
     XML
   end
 
-  it 'parses both uses correctly if xpath limits recursion' do
+  it "parses both uses correctly if xpath limits recursion" do
     result = SameTagSpec::Foo.parse xml
     aggregate_failures do
-      expect(result.bar.baz).to eq 'Hello'
-      expect(result.baz.qux).to eq 'Hi'
+      expect(result.bar.baz).to eq "Hello"
+      expect(result.baz.qux).to eq "Hi"
     end
   end
 end

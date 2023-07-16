@@ -3,8 +3,9 @@
 module HappyMapper
   class AnonymousMapper
     def parse(xml_content)
-      # TODO: this should be able to handle all the types of functionality that parse is able
-      #   to handle which includes the text, xml document, node, fragment, etc.
+      # TODO: this should be able to handle all the types of functionality that
+      # parse is able to handle which includes the text, xml document, node,
+      # fragment, etc.
       xml = Nokogiri::XML(xml_content)
 
       klass = create_happymapper_class_from_node(xml.root)
@@ -26,7 +27,7 @@ module HappyMapper
       word = camel_cased_word.to_s.dup
       word.gsub!(/([A-Z\d]+)([A-Z][a-z])/, '\1_\2')
       word.gsub!(/([a-z\d])([A-Z])/, '\1_\2')
-      word.tr!('-', '_')
+      word.tr!("-", "_")
       word.downcase!
       word
     end
@@ -80,7 +81,7 @@ module HappyMapper
       # some content.
 
       if node.text?
-        klass.content :content, String if node.content.strip != ''
+        klass.content :content, String if node.content.strip != ""
         return
       end
 
@@ -101,7 +102,7 @@ module HappyMapper
       options[:tag] = node.name
       namespace = node.namespace
       options[:namespace] = namespace.prefix if namespace
-      options[:xpath] = './' unless element_type == String
+      options[:xpath] = "./" unless element_type == String
 
       klass.send(method, element_name, element_type, options)
     end

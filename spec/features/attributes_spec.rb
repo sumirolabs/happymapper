@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 module AttributeMethodConversion
   class Document
     include HappyMapper
 
-    has_many :link, String, attributes: { 'data-src': String, type: String, href: String }
+    has_many :link, String, attributes: { "data-src": String, type: String, href: String }
   end
 end
 
-RSpec.describe 'Attribute Method Conversion' do
+RSpec.describe "Attribute Method Conversion" do
   let(:xml_document) do
     <<~XML
       <document>
@@ -23,15 +23,15 @@ RSpec.describe 'Attribute Method Conversion' do
     AttributeMethodConversion::Document.parse(xml_document, single: true)
   end
 
-  it 'link' do
-    expect(document.link).to eq ['Roast Beef']
+  it "link" do
+    expect(document.link).to eq ["Roast Beef"]
   end
 
-  it 'link.data_src' do
-    expect(document.link.first.data_src).to eq 'http://cooking.com/roastbeef'
+  it "link.data_src" do
+    expect(document.link.first.data_src).to eq "http://cooking.com/roastbeef"
   end
 
-  it 'link.type' do
-    expect(document.link.first.type).to eq 'recipe'
+  it "link.type" do
+    expect(document.link.first.type).to eq "recipe"
   end
 end
