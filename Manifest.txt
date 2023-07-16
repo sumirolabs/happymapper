@@ -1,6 +1,7 @@
 lib/happymapper.rb
 lib/happymapper/anonymous_mapper.rb
 lib/happymapper/attribute.rb
+lib/happymapper/class_methods.rb
 lib/happymapper/element.rb
 lib/happymapper/item.rb
 lib/happymapper/supported_types.rb
