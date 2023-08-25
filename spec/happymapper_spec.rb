@@ -565,7 +565,7 @@ class ParserTest
 
   class Coerce
     def self.number_list(val)
-      val.to_s.split(",").map(&:strip).map(&:to_i)
+      val.to_s.split(",").map { _1.strip.to_i }
     end
   end
 
