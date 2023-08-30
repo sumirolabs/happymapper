@@ -21,6 +21,15 @@ module Wrap
     end
     element :number, Integer
   end
+
+  class Root2
+    include HappyMapper
+    tag "root"
+
+    wrap "tag_wrapper", tag: "mywraptag" do
+      element :description, String
+    end
+  end
 end
 
 RSpec.describe "wrap which allows you to specify a wrapper element" do
@@ -39,6 +48,14 @@ RSpec.describe "wrap which allows you to specify a wrapper element" do
           expect(root.subclass.items[1]).to eq "item2"
           expect(root.number).to eq 12_345
         end
+      end
+    end
+
+    context "with alternate wrapper name" do
+      let(:root) { Wrap::Root2.parse fixture_file("wrapper.xml") }
+
+      it "sets the values correctly" do
+        expect(root.description).to eq "some description"
       end
     end
 
