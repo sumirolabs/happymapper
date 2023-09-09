@@ -208,7 +208,7 @@ module HappyMapper
     # @param [String] name the name of the element that is just a place holder
     # @param [Proc] blk the element definitions inside the place holder tag
     #
-    def wrap(name, &blk)
+    def wrap(name, options = {}, &blk)
       # Get an anonymous HappyMapper that has 'name' as its tag and defined
       # in '&blk'.  Then save that to a class instance variable for later use
       wrapper = AnonymousWrapperClassFactory.get(name, &blk)
@@ -236,7 +236,7 @@ module HappyMapper
         RUBY
       end
 
-      has_one name, wrapper
+      has_one name, wrapper, options
     end
 
     # The callback defined through {.with_nokogiri_config}.
