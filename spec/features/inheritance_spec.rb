@@ -49,11 +49,11 @@ RSpec.describe "Using inheritance to share elements and attributes" do
 
     context "when parsing xml" do
       it "parses the new overwritten attribut" do
-        expect(overwrite.love).to be == "love"
+        expect(overwrite.love).to eq "love"
       end
 
       it "parses the new overwritten element" do
-        expect(overwrite.genetics).to be == 1001
+        expect(overwrite.genetics).to eq 1001
       end
     end
 
@@ -66,11 +66,11 @@ RSpec.describe "Using inheritance to share elements and attributes" do
       end
 
       it "has only 1 genetics element" do
-        expect(xml.xpath("//genetics").count).to be == 1
+        expect(xml.xpath("//genetics").count).to eq 1
       end
 
       it "has only 1 love attribute" do
-        expect(xml.xpath("@love").text).to be == "love"
+        expect(xml.xpath("@love").text).to eq "love"
       end
     end
   end
