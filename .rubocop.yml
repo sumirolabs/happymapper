@@ -49,7 +49,7 @@ Naming/PredicateName:
     - 'has_many'
     - 'has_xml_content'
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   CustomTransform:
     HappyMapper: 'happymapper'
 
