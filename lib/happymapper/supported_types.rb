@@ -128,5 +128,9 @@ module HappyMapper
         value_to_i
       end
     end
+
+    register_type BigDecimal do |value|
+      BigDecimal(value) if value && !value.empty?
+    end
   end
 end
